@@ -319,7 +319,7 @@ These interface specifications come from Andrea and Andrew, who are building the
     <td>string</td>
   </tr>
   <tr>
-    <td>named exactly <b>id</b></td>
+    <td>has suffix <b>id</b></td>
     <td>integer</td>
   </tr>
   <tr>

@@ -1,9 +1,9 @@
-def auth_login(email, password):
+def auth_login_v1(email, password):
     return {
-        'u_id': 1,
+        'auth_user_id': 1,
     }
 
-def auth_register(email, password, name_first, name_last):
+def auth_register_v1(email, password, name_first, name_last):
     return {
-        'u_id': 1,
+        'auth_user_id': 1,
     }
