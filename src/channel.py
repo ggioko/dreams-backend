@@ -1,8 +1,8 @@
-def channel_invite(auth_user_id, channel_id, u_id):
+def channel_invite_v1(auth_user_id, channel_id, u_id):
     return {
     }
 
-def channel_details(auth_user_id, channel_id):
+def channel_details_v1(auth_user_id, channel_id):
     return {
         'name': 'Hayden',
         'owner_members': [
@@ -21,7 +21,7 @@ def channel_details(auth_user_id, channel_id):
         ],
     }
 
-def channel_messages(auth_user_id, channel_id, start):
+def channel_messages_v1(auth_user_id, channel_id, start):
     return {
         'messages': [
             {
@@ -35,18 +35,18 @@ def channel_messages(auth_user_id, channel_id, start):
         'end': 50,
     }
 
-def channel_leave(auth_user_id, channel_id):
+def channel_leave_v1(auth_user_id, channel_id):
     return {
     }
 
-def channel_join(auth_user_id, channel_id):
+def channel_join_v1(auth_user_id, channel_id):
     return {
     }
 
-def channel_addowner(auth_user_id, channel_id, u_id):
+def channel_addowner_v1(auth_user_id, channel_id, u_id):
     return {
     }
 
-def channel_removeowner(auth_user_id, channel_id, u_id):
+def channel_removeowner_v1(auth_user_id, channel_id, u_id):
     return {
     }
