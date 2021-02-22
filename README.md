@@ -1,5 +1,9 @@
 # COMP1531 Major Project
 
+## Change Log
+
+ * 22/02: Please note, while `channel_leave`, `channel_addowner`, `channel_removeowner` are included in `channel.py` during iteration 1, you are **not** required to implement these as part of iteration 1 (they are also not included in the interface table until iteration 2).
+
 ## Contents
 
   1. Aims
