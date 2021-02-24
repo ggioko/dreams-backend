@@ -3,7 +3,9 @@
 ## Change Log
 
  * 22/02: Please note, while `channel_leave`, `channel_addowner`, `channel_removeowner` are included in `channel.py` during iteration 1, you are **not** required to implement these as part of iteration 1 (they are also not included in the interface table until iteration 2).
-
+ * 24/02: In section 7, changed "Code and report due" to "Due date" to avoid confusion
+ * 24/02: Renamed "Interface (Iteration 1)" to "Iteration 1" to avoid confusing students who missed the part of section 3 saying you don't need to implement the entire interface. The interface in section 6 covers topics broader than iteration 1.
+ * 24/02: Updated the description of `auth_login_v1` to state "and returns their `auth_user_id` value". Removing the use of token as it has been confusing.
 ## Contents
 
   1. Aims
@@ -219,7 +221,7 @@ Here are a few examples of bad assumptions:
 * Assume that all groups store their data in a field called data which is located in auth.py
 * Assume all individual return values are returned as single values rather than being stored in a dictionary
 * Assume the functions are written correctly
-* Assume the input token is valid
+* Assume the input token or auth_user_id is valid
 
 Bad assumptions are usually ones that directly contradict an explicit or implicit requirement in the specification. Good assumptions are ones that fill holes in gaps of requirements.
 
@@ -311,7 +313,7 @@ These interface specifications come from Andrea and Andrew, who are building the
 
 ### 6.1. Data types
 
-#### 6.1.1. Iteration 1+ Data Types
+#### 6.1.1. Data Types
 
 <table>
   <tr>
@@ -380,7 +382,7 @@ These interface specifications come from Andrea and Andrew, who are building the
   </tr>
 </table>
 
-### 6.2. Interface (Iteration 1)
+### 6.2. Interface
 
 <table>
   <tr>
@@ -389,7 +391,7 @@ These interface specifications come from Andrea and Andrew, who are building the
     <th>Exceptions</th>
   </tr>
   <tr>
-    <td><code>auth_login_v1</code><br /><br />Given a registered users' email and password and generates a valid token for the user to remain authenticated</td>
+    <td><code>auth_login_v1</code><br /><br />Given a registered users' email and password and returns their `auth_user_id` value</td>
     <td><b>Parameters:</b><br /><code>(email, password)</code><br /><br /><b>Return Type:</b><br /><code>{ auth_user_id }</code></td>
     <td>
       <b>InputError</b> when any of:
@@ -401,7 +403,7 @@ These interface specifications come from Andrea and Andrew, who are building the
     </td>
   </tr>
   <tr>
-    <td><code>auth_register_v1</code><br /><br />Given a user's first and last name, email address, and password, create a new account for them and return a new token for authentication in their session. A handle is generated that is the concatenation of a lowercase-only first name and last name. If the concatenation is longer than 20 characters, it is cutoff at 20 characters. The handle will not include any whitespace or the '@' character. If the handle is already taken, append the concatenated names with the smallest number (starting at 0) that forms a new handle that isn't already taken. The addition of this final number may result in the handle exceeding the 20 character limit.</td>
+    <td><code>auth_register_v1</code><br /><br />Given a user's first and last name, email address, and password, create a new account for them and return a new `auth_user_id`. A handle is generated that is the concatenation of a lowercase-only first name and last name. If the concatenation is longer than 20 characters, it is cutoff at 20 characters. The handle will not include any whitespace or the '@' character. If the handle is already taken, append the concatenated names with the smallest number (starting at 0) that forms a new handle that isn't already taken. The addition of this final number may result in the handle exceeding the 20 character limit.</td>
     <td><b>Parameters:</b><br /><code>(email, password, name_first, name_last)</code><br /><br /><b>Return Type:</b><br /><code>{ auth_user_id }</code></td>
     <td>
       <b>InputError</b> when any of:
@@ -576,10 +578,10 @@ One exception is that, even though it's not listed in the table, for all functio
 
 The behaviour in which channel_messages returns data is called **pagination**. It's a commonly used method when it comes to getting theoretially unbounded amounts of data from a server to display on a page in chunks. Most of the timelines you know and love - Facebook, Instagram, LinkedIn - do this.
 
-For example, if we imagine a user with token "12345" is trying to read messages from channel with ID 6, and this channel has 124 messages in it, 3 calls from the client to the server would be made. These calls, and their corresponding return values would be:
- * channel_messages("12345", 6, 0) => { [messages], 0, 50 }
- * channel_messages("12345", 6, 50) => { [messages], 50, 100 }
- * channel_messages("12345", 6, 100) => { [messages], 100, -1 }
+For example, in iteration 1, if we imagine a user with `auth_user_id` "12345" is trying to read messages from channel with ID 6, and this channel has 124 messages in it, 3 calls from the client to the server would be made. These calls, and their corresponding return values would be:
+ * channel_messages(12345, 6, 0) => { [messages], 0, 50 }
+ * channel_messages(12345, 6, 50) => { [messages], 50, 100 }
+ * channel_messages(12345, 6, 100) => { [messages], 100, -1 }
 
 ### 6.5. Permissions
  * Members in a channel have one of two channel permissions.
@@ -597,7 +599,7 @@ A user's primary permissions are their global permissions. Then the channel perm
 
 ## 7. Due Dates and Weightings
 
-|Iteration|Code and report due                  |Demonstration to tutor(s)      |Assessment weighting of project (%)|
+|Iteration|Due date                             |Demonstration to tutor(s)      |Assessment weighting of project (%)|
 |---------|-------------------------------------|-------------------------------|-----------------------------------|
 |   1     |10am Monday 8th March (**week 4**)   |In YOUR **week 4** laboratory  |30%                                |
 |   2     |10am Monday 5th April (**week 8**)   |In YOUR **week 8** laboratory  |40%                                |
