@@ -6,6 +6,8 @@
  * 24/02: In section 7, changed "Code and report due" to "Due date" to avoid confusion
  * 24/02: Renamed "Interface (Iteration 1)" to "Iteration 1" to avoid confusing students who missed the part of section 3 saying you don't need to implement the entire interface. The interface in section 6 covers topics broader than iteration 1.
  * 24/02: Updated the description of `auth_login_v1` to state "and returns their `auth_user_id` value". Removing the use of token as it has been confusing.
+ * 25/02: Added `auth_user_id` parameter to `search_v1` function
+
 ## Contents
 
   1. Aims
@@ -553,7 +555,7 @@ These interface specifications come from Andrea and Andrew, who are building the
   </tr>
   <tr>
     <td><code>search_v1</code><br /><br />Given a query string, return a collection of messages in all of the channels that the user has joined that match the query</td>
-    <td><b>Parameters:</b><br /><code>(query_str)</code><br /><br /><b>Return Type:</b><br /><code>{ messages }</code></td>
+    <td><b>Parameters:</b><br /><code>(auth_user_id, query_str)</code><br /><br /><b>Return Type:</b><br /><code>{ messages }</code></td>
     <td>
       <b>InputError</b> when any of:
       <ul>
