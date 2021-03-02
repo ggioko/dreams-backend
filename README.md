@@ -9,6 +9,7 @@
  * 25/02: Added `auth_user_id` parameter to `search_v1` function
  * 26/02: Clarified that `channel_leave_v1`, `channel_addowner_v1`, `channel_removeowner_v1` are not required to be implemented in iteration 1. These 3 functions exist in `src/channel.py` stub, however they were not included in the interface. This is because we removed them from the interface for iteration 1, but forgot to remove them from the stub files. So therefore you do not have to implement them.
  * 27/02: Correctly moved the clarification above to be associated with `channel.py` instead of `channels.py`
+ * 02/03: Removed "not" from the channels.py clarification (see commit)
  
 ## Contents
 
@@ -135,7 +136,7 @@ As packages you will be able to import Python code from a directory with the sam
 
 A number of files have been added to your `/src/` folder in your repository. These files are:
  * `auth.py`
- * `channel.py` (all except `channel_leave_v1`, `channel_addowner_v1`, `channel_removeowner_v1` are not *required* for iteration 1)
+ * `channel.py` (all except `channel_leave_v1`, `channel_addowner_v1`, `channel_removeowner_v1` are *required* for iteration 1)
  * `channels.py`
  * `user.py` (not *required* for iteration 1)
  * `message.py` (not *required* for iteration 1)
