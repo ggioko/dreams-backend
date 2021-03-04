@@ -1,3 +1,6 @@
+from src.error import InputError
+import re
+
 # Data storage global variable
 data = {
     'users': [
@@ -28,6 +31,25 @@ def auth_login_v1(email, password):
 
 
 def auth_register_v1(email, password, name_first, name_last):
+    # Email in use check
+    emails = [data['users'][c]['email'] for c in range(len(data['users']))]
+    if email in emails:
+        raise InputError('Email already in use')
+
+    # Password size check
+    if len(password) < 6:
+        raise InputError('Password needs to be longer than 6 characters')
+
+    # Name size check
+    if len(name_first) < 1 or len(name_first) > 50:
+        raise InputError('First name needs to be between 1 and 50 characters')
+    if len(name_last) < 1 or len(name_last) > 50:
+        raise InputError('Last name needs to be between 1 and 50 characters')
+
+    # Email syntax check
+    if not re.match('^[a-zA-Z0-9]+[\\._]?[a-zA-Z0-9]+[@]\\w+[.]\\w{2,3}$',email):
+        raise InputError('Incorrect email format')
+
     # Gets a new id
     ids = [data['users'][c]['u_id'] for c in range(len(data['users']))]
     for i in range(1,len(data['users']) + 2):
@@ -57,11 +79,7 @@ def auth_register_v1(email, password, name_first, name_last):
         'name_last': name_last,
         'handle_str': handle,
     }
-
     data['users'].append(user)
-    
-    print(data['users'])
-    print(f"id: {id}    handle: {handle}")
 
     return {
         'auth_user_id': id,
