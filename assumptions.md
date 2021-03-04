@@ -8,6 +8,6 @@
 * No assumptions
 
 ### auth_login
-* No assumptions
+* Since invalid emails are already detected by auth_register the additional check in auth_login was removed
 
 ## channels
