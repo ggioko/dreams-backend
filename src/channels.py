@@ -37,10 +37,10 @@ def channels_create_v1(auth_user_id, name, is_public):
             }
     
     # Find the channel number, which is channel id
-    channels_num = len(channels) + 1
+    channel_num = len(channels) + 1
 
     channels.append({
-                    'channel_id' : channels_num,
+                    'channel_id' : channel_num,
                     'name' : name,
                     'is_public' : is_public,
                     'owner_members' : [reuser],
@@ -50,6 +50,6 @@ def channels_create_v1(auth_user_id, name, is_public):
 
     # returns channel id
     return {
-        'channel_id': channel_num
+        'channel_id': channel_num,
     }
 
