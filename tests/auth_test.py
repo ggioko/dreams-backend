@@ -25,7 +25,6 @@ def test_auth_register_invalid_email():
         assert auth_register_v1("ab@~`example.com", password, firstName, lastName)
         assert auth_register_v1("ab@example.!c!o!m", password, firstName, lastName)
         assert auth_register_v1("numbers@0934.23980477", password, firstName, lastName)
-        assert auth_register_v1("numbers@0934.23980477", password, firstName, lastName)
         assert auth_register_v1("numbers@0934.com", password, firstName, lastName)
         assert auth_register_v1("numbers@example.1337", password, firstName, lastName)
         assert auth_register_v1('invalidemailgmail.com', '1234567', 'Hayden', 'Everest')
