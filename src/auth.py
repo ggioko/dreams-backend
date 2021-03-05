@@ -5,6 +5,11 @@ import re
 def auth_login_v1(email, password):
     # Given a registered users' email and password and returns their `auth_user_id` value
     # Loop checking if email in list of registered users
+
+    emails = [data['users'][c]['email'] for c in range(len(data['users']))]
+    if email not in emails:
+        raise InputError
+
     if len(data['users']) != 0:
         for user in data['users']:
             if email == user['email']:
@@ -18,8 +23,6 @@ def auth_login_v1(email, password):
                     return auth_user_id
                 else:
                     raise InputError
-            else:
-                raise InputError
     else:
         raise InputError
 
