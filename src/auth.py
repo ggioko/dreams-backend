@@ -4,11 +4,15 @@ import re
 
 def auth_login_v1(email, password):
     # Given a registered users' email and password and returns their `auth_user_id` value
+
+    # Check email syntax
+    if not re.match('^[a-zA-Z0-9]+[\\._]?[a-zA-Z0-9]+[@]\\w+[.]\\w{2,3}$',email):
+        raise InputError('Email entered is not a valid email')
     
     # Loop checking if email is not in list of registered users
     emails = [data['users'][c]['email'] for c in range(len(data['users']))]
     if email not in emails:
-        raise InputError
+        raise InputError('Email entered does not belong to a user')
     
     if len(data['users']) != 0:
         # Loop until an email match
@@ -24,9 +28,9 @@ def auth_login_v1(email, password):
                     auth_user_id = reuser.get('u_id')
                     return auth_user_id
                 else:
-                    raise InputError
+                    raise InputError('Password is not correct')
     else:
-        raise InputError
+        raise InputError('No registered users detected')
 
 """
 Registers the user and puts their information into a database

@@ -69,19 +69,18 @@ def test_auth_login_valid_multiple_users():
 def test_auth_login_invalid_email():
     clear_v1()
     password = "Pass123"
-    firstName = "John"
-    lastName = "Smith"
+    
     with pytest.raises(InputError):
-        assert auth_login_v1("hayden@coolem@ildomail.com", password, firstName, lastName)
-        assert auth_login_v1("@example.com", password, firstName, lastName)
-        assert auth_login_v1("hi@!$%$#!!.com", password, firstName, lastName)
-        assert auth_login_v1("ab@~`example.com", password, firstName, lastName)
-        assert auth_login_v1("ab@example.!c!o!m", password, firstName, lastName)
-        assert auth_login_v1("numbers@0934.23980477", password, firstName, lastName)
-        assert auth_login_v1("numbers@0934.com", password, firstName, lastName)
-        assert auth_login_v1("numbers@example.1337", password, firstName, lastName)
-        assert auth_login_v1('invalidemailgmail.com', '1234567', 'Hayden', 'Everest')
-        assert auth_login_v1('invalidemail@gmail', '7654321', 'Haydena', 'Everesta')
+        assert auth_login_v1("hayden@coolem@ildomail.com", password)
+        assert auth_login_v1("@example.com", password)
+        assert auth_login_v1("hi@!$%$#!!.com", password)
+        assert auth_login_v1("ab@~`example.com", password)
+        assert auth_login_v1("ab@example.!c!o!m", password)
+        assert auth_login_v1("numbers@0934.23980477", password)
+        assert auth_login_v1("numbers@0934.com", password)
+        assert auth_login_v1("numbers@example.1337", password)
+        assert auth_login_v1('invalidemailgmail.com', password)
+        assert auth_login_v1('invalidemail@gmail', password)
 
 def test_auth_login_unregistered_email():
     clear_v1()
