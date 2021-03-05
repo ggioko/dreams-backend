@@ -14,10 +14,34 @@ data = {
         {
             'id': 1,
             'name' : 'channel1',
+            'public': True,
+            'owner_members': [
+                {
+                    'u_id': 1,
+                    'email': 'cs1531@cse.unsw.edu.au',
+                    'name_first': 'Hayden',
+                    'name_last': 'Jacobs',
+                    'handle_str': 'haydenjacobs',
+                },
+            ],
+            'all_members': [
+                {
+                    'u_id': 1,
+                    'email': 'cs1531@cse.unsw.edu.au',
+                    'name_first': 'Hayden',
+                    'name_last': 'Jacobs',
+                    'handle_str': 'haydenjacobs',
+                },
+            ],
         },
         {
-            'id': 2,
-            'name' : 'channel2',
+            'id': 1,
+            'name' : 'channel1',
+            'public': True,
+            'owner_members': [
+            ],
+            'all_members': [
+            ],
         },
     ],
 }
