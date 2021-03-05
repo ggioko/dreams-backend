@@ -24,7 +24,7 @@ def channels_listall_v1(auth_user_id):
 def channels_create_v1(auth_user_id, name, is_public):
     
     # Input error checking 
-    if (len(name) > 20):
+    if len(name) > 20:
         raise InputError("Error the channel name is more than 20 characters")
 
     # If user ids match, store details of user
