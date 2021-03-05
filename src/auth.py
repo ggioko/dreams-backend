@@ -2,8 +2,8 @@ from src.error import InputError
 from src.data import data
 import re
 
-
 def auth_login_v1(email, password):
+    email = email.lower()
     return {
         'auth_user_id': 1,
     }
@@ -85,6 +85,4 @@ def auth_register_v1(email, password, name_first, name_last):
     }
     data['users'].append(user)
 
-    return {
-        'auth_user_id': id,
-    }
+    return id

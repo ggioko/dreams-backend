@@ -18,16 +18,6 @@ def test_auth_register_invalid_email():
     firstName = "John"
     lastName = "Smith"
 
-<<<<<<< HEAD
-=======
-    '''
-    result = auth.auth_register('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
-    with pytest.raises(InputError) as e:
-        auth.auth_login('didntusethis@gmail.com', '123abcd!@#') # Expect fail since never registered
-
-    '''
-
->>>>>>> Fixed test formatting. Added emails with numbers to test cases
     with pytest.raises(InputError):
         assert auth_register_v1("hayden@coolem@ildomail.com", password, firstName, lastName)
         assert auth_register_v1("@example.com", password, firstName, lastName)
@@ -35,16 +25,10 @@ def test_auth_register_invalid_email():
         assert auth_register_v1("ab@~`example.com", password, firstName, lastName)
         assert auth_register_v1("ab@example.!c!o!m", password, firstName, lastName)
         assert auth_register_v1("numbers@0934.23980477", password, firstName, lastName)
-<<<<<<< HEAD
         assert auth_register_v1("numbers@0934.com", password, firstName, lastName)
         assert auth_register_v1("numbers@example.1337", password, firstName, lastName)
         assert auth_register_v1('invalidemailgmail.com', '1234567', 'Hayden', 'Everest')
         assert auth_register_v1('invalidemail@gmail', '7654321', 'Haydena', 'Everesta')
-=======
-        assert auth_register_v1("numbers@0934.23980477", password, firstName, lastName)
-        assert auth_register_v1("numbers@0934.com", password, firstName, lastName)
-        assert auth_register_v1("numbers@example.1337", password, firstName, lastName)
->>>>>>> Fixed test formatting. Added emails with numbers to test cases
 
 def test_auth_register_taken_email():
     clear_v1()
