@@ -4,6 +4,7 @@ data = {
         {
             'u_id': 1,
             'email': 'cs1531@cse.unsw.edu.au',
+            'password': 'abc1234',
             'name_first': 'Hayden',
             'name_last': 'Jacobs',
             'handle_str': 'haydenjacobs',
