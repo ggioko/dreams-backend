@@ -66,6 +66,23 @@ def test_auth_login_valid_multiple_users():
     assert auth_login_v1('another@gmail.com', 'anoth432$%^') == 2
     assert auth_login_v1('randomguy@gmail.com', 'abcEZ!123') == 3
 
+def test_auth_login_invalid_email():
+    clear_v1()
+    password = "Pass123"
+    firstName = "John"
+    lastName = "Smith"
+    with pytest.raises(InputError):
+        assert auth_login_v1("hayden@coolem@ildomail.com", password, firstName, lastName)
+        assert auth_login_v1("@example.com", password, firstName, lastName)
+        assert auth_login_v1("hi@!$%$#!!.com", password, firstName, lastName)
+        assert auth_login_v1("ab@~`example.com", password, firstName, lastName)
+        assert auth_login_v1("ab@example.!c!o!m", password, firstName, lastName)
+        assert auth_login_v1("numbers@0934.23980477", password, firstName, lastName)
+        assert auth_login_v1("numbers@0934.com", password, firstName, lastName)
+        assert auth_login_v1("numbers@example.1337", password, firstName, lastName)
+        assert auth_login_v1('invalidemailgmail.com', '1234567', 'Hayden', 'Everest')
+        assert auth_login_v1('invalidemail@gmail', '7654321', 'Haydena', 'Everesta')
+
 def test_auth_login_unregistered_email():
     clear_v1()
     auth_register_v1('registered@gmail.com', '123abc!@#', 'Hayden', 'Everest')
