@@ -26,7 +26,7 @@ def auth_login_v1(email, password):
                 # Check if the passwords match
                 if password == reuser.get('password'):
                     auth_user_id = reuser.get('u_id')
-                    return auth_user_id
+                    return {'auth_user_id':auth_user_id}
                 else:
                     raise InputError('Password is not correct')
     else:
@@ -108,4 +108,4 @@ def auth_register_v1(email, password, name_first, name_last):
     }
     data['users'].append(user)
 
-    return id
+    return {'auth_user_id':id}
