@@ -25,11 +25,11 @@ def channels_create_v1(auth_user_id, name, is_public):
     
     # Input error checking 
     if (len(name) > 20):
-        raise InputError('Error the channel name is more than 20 characters')
+        raise InputError("Error the channel name is more than 20 characters")
 
     # If user ids match, store details of user
-    for user in users:
-        if user['u_id'] = auth_user_id:
+    for user in data['users']:
+        if user['u_id'] == auth_user_id:
             reuser = {
                     'u_id' : user['u_id'],
                     'email' : user['email'],
@@ -40,9 +40,9 @@ def channels_create_v1(auth_user_id, name, is_public):
             }
     
     # Find the channel number, which is channel id
-    channel_num = len(channels) + 1
+    channel_num = len(data['channels']) + 1
 
-    channels.append({
+    data['channels'].append({
                     'channel_id' : channel_num,
                     'name' : name,
                     'is_public' : is_public,
