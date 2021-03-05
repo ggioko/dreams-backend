@@ -5,36 +5,23 @@ import re
 def auth_login_v1(email, password):
     # Given a registered users' email and password and returns their `auth_user_id` value
     # Loop checking if email in list of registered users
-    for user in data['users']:
-        if email in user['email']:
-            reuser = {
-                'u_id' : user['u_id'],
-                'password' : user['password']
-            }
-            # Check if the passwords match
-            if password == reuser.get('password'):
-                auth_user_id = reuser.get('u_id')
-                return auth_user_id
+    if len(data['users']) != 0:
+        for user in data['users']:
+            if email == user['email']:
+                reuser = {
+                    'u_id' : user['u_id'],
+                    'password' : user['password']
+                }
+                # Check if the passwords match
+                if password == reuser.get('password'):
+                    auth_user_id = reuser.get('u_id')
+                    return auth_user_id
+                else:
+                    raise InputError
             else:
                 raise InputError
-        else:
-            raise InputError
-
-    '''
-    if len(data['users']) != 0:
-        # Check if email is registered
-        email_registered = [data['users'][c]['email'] for c in range(len(data['users']))]
-        if email not in email_registered:
-            raise InputError
-        elif email in email_registered:
-            # Check if the password given matches
-            password_check = [data['users'][c]['password']for c in range(len(data['users']))]
-            if password not in password_check: 
-                raise InputError
-            elif password in password_check:
-                get_id = int(data['users'][c]['u_id'])
-                return {'auth_user_id': get_id}
-    '''
+    else:
+        raise InputError
 
 """
 Registers the user and puts their information into a database
