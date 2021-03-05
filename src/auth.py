@@ -84,6 +84,4 @@ def auth_register_v1(email, password, name_first, name_last):
     }
     data['users'].append(user)
 
-    return {
-        'auth_user_id': id,
-    }
+    return id

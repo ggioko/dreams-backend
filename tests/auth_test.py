@@ -7,7 +7,9 @@ from src.other import clear_v1
 
 def test_auth_register_valid():
     clear_v1
-    assert auth_register_v1('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    id1 = auth_register_v1('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    id2 = auth_register_v1('valid2email@gmail.com', '123abc!@#', 'Haydens', 'Everests')
+    assert id1 != id2
 
 def test_auth_register_invalid_email():
     clear_v1
