@@ -2,12 +2,6 @@ from src.error import InputError
 from src.data import data
 import re
 
-def isEmailValid(email):
-    if re.match('^[a-zA-Z0-9]+[\\._]?[a-zA-Z0-9]+[@]\\w+[.]\\w{2,3}$', email):
-	    return True
-    return False
-
-
 def auth_login_v1(email, password):
     email = email.lower()
     return {
@@ -35,10 +29,6 @@ Return Value:
 
 
 def auth_register_v1(email, password, name_first, name_last):
-    # Checks if email format is correct
-    if (isEmailValid(email) == False):
-        raise InputError('Invalid email format')
-
     # Check if users data is empty
     if len(data['users']) != 0:
         # Email in use check
