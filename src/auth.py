@@ -4,15 +4,17 @@ import re
 
 def auth_login_v1(email, password):
     # Given a registered users' email and password and returns their `auth_user_id` value
-    # Loop checking if email in list of registered users
-
+    
+    # Loop checking if email is not in list of registered users
     emails = [data['users'][c]['email'] for c in range(len(data['users']))]
     if email not in emails:
         raise InputError
-
+    
     if len(data['users']) != 0:
+        # Loop until an email match
         for user in data['users']:
             if email == user['email']:
+                # Copy the password and user_id for the email match
                 reuser = {
                     'u_id' : user['u_id'],
                     'password' : user['password']
