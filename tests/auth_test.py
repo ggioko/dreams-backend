@@ -35,7 +35,10 @@ def test_auth_register_invalid_firstname():
         assert auth_register_v1('invalidfirstname2@gmail.com', 'abc123123', 'asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2', 'Everest')
 
 def test_auth_register_invalid_lastname():
-    pass
+    clear_v1
+    with pytest.raises(InputError):
+        assert auth_register_v1('invalidlastname@gmail.com', 'abc123123', 'Everest', '')
+        assert auth_register_v1('invalidlastname2@gmail.com', 'abc123123', 'Everest', 'asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2')
 
 def test_auth_login_valid_single_user():
     clear_v1
