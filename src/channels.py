@@ -1,3 +1,5 @@
+from src.data import data
+
 def channels_list_v1(auth_user_id):
     return {
         'channels': [
@@ -9,14 +11,7 @@ def channels_list_v1(auth_user_id):
     }
 
 def channels_listall_v1(auth_user_id):
-    return {
-        'channels': [
-        	{
-        		'channel_id': 1,
-        		'name': 'My Channel',
-        	}
-        ],
-    }
+    return {'channels': data['channels']}
 
 def channels_create_v1(auth_user_id, name, is_public):
     return {
