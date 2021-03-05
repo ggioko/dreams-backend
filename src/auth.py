@@ -1,33 +1,31 @@
 from src.error import InputError
+from src.data import data
 import re
 
-# Data storage global variable
-data = {
-    'users': [
-        {
-            'u_id': 1,
-            'email': 'cs1531@cse.unsw.edu.au',
-            'name_first': 'Hayden',
-            'name_last': 'Jacobs',
-            'handle_str': 'haydenjacobs',
-        },
-    ],
-    'channels': [
-        {
-            'id': 1,
-            'name' : 'channel1',
-        },
-        {
-            'id': 2,
-            'name' : 'channel2',
-        },
-    ],
-}
 
 def auth_login_v1(email, password):
     return {
         'auth_user_id': 1,
     }
+
+"""
+Registers the user and puts their information into a database
+
+Arguments:
+    email (string)    - Users email
+    password (string)    - Users set password
+    name_first (string)    - Users first name
+    name_last (string)    - Users last name
+
+Exceptions:
+    InputError  - Occurs when email in use, password shorter than 6 characters
+                first name or last name not within 1-50 characters, incorrect 
+                email format
+
+Return Value:
+    Returns {'auth_user_id': id,} on sucess
+
+"""
 
 
 def auth_register_v1(email, password, name_first, name_last):
@@ -89,6 +87,3 @@ def auth_register_v1(email, password, name_first, name_last):
     return {
         'auth_user_id': id,
     }
-
-if __name__ == "__main__":
-    auth_register_v1("a@gmail.com", "password","123456789012345678901","user")
