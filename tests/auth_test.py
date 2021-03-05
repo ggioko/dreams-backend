@@ -15,26 +15,24 @@ def test_auth_register_invalid_email():
     password = "Pass123"
     firstName = "John"
     lastName = "Smith"
+
+    '''
+    result = auth.auth_register('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     with pytest.raises(InputError) as e:
-        auth_register_v1("fold@home@stanford.edu", password, firstName, lastName)
+        auth.auth_login('didntusethis@gmail.com', '123abcd!@#') # Expect fail since never registered
 
-    with pytest.raises(InputError) as e:
-        auth_register_v1("hayden@coolem@ildomail.com", password, firstName, lastName)
+    '''
 
-    with pytest.raises(InputError) as e:
-        auth_register_v1("@example.com", password, firstName, lastName)
-
-    with pytest.raises(InputError) as e:
-        auth_register_v1("hi@examp!e.com", password, firstName, lastName)
-
-    with pytest.raises(InputError) as e:
-        auth_register_v1("ab@~`example.com", password, firstName, lastName)
-
-    with pytest.raises(InputError) as e:
-        auth_register_v1("ab@example.!com", password, firstName, lastName)
-
-
-
+    with pytest.raises(InputError):
+        assert auth_register_v1("hayden@coolem@ildomail.com", password, firstName, lastName)
+        assert auth_register_v1("@example.com", password, firstName, lastName)
+        assert auth_register_v1("hi@!$%$#!!.com", password, firstName, lastName)
+        assert auth_register_v1("ab@~`example.com", password, firstName, lastName)
+        assert auth_register_v1("ab@example.!c!o!m", password, firstName, lastName)
+        assert auth_register_v1("numbers@0934.23980477", password, firstName, lastName)
+        assert auth_register_v1("numbers@0934.23980477", password, firstName, lastName)
+        assert auth_register_v1("numbers@0934.com", password, firstName, lastName)
+        assert auth_register_v1("numbers@example.1337", password, firstName, lastName)
 
 def test_auth_register_taken_email():
     pass
