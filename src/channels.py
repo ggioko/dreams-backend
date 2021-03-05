@@ -19,6 +19,37 @@ def channels_listall_v1(auth_user_id):
     }
 
 def channels_create_v1(auth_user_id, name, is_public):
+    
+    # Input error checking 
+    if (len(name) > 20):
+        raise InputError('Error the channel name is more than 20 characters')
+
+    # If user ids match, store details of user
+    for user in users:
+        if user['u_id'] = auth_user_id:
+            reuser = {
+                    'u_id' : user['u_id'],
+                    'email' : user['email'],
+                    'first_name' : user['name_first'],
+                    'last_name' : user['name_last'],
+                    'handle' : user['handle_str'],
+                    'password' : user['password']
+            }
+    
+    # Find the channel number, which is channel id
+    channels_num = len(channels) + 1
+
+    channels.append({
+                    'channel_id' : channels_num,
+                    'name' : name,
+                    'is_public' : is_public,
+                    'owner_members' : [reuser],
+                    'all_members' : [reuser],
+                    'messages': {}
+    })
+
+    # returns channel id
     return {
-        'channel_id': 1,
+        'channel_id': channel_num
     }
+
