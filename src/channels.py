@@ -1,6 +1,3 @@
-import os
-import sys
-sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from src.data import data
 from src.error import AccessError
 
@@ -30,6 +27,3 @@ def channels_create_v1(auth_user_id, name, is_public):
     return {
         'channel_id': 1,
     }
-
-if __name__ == "__main__":
-    print(channels_listall_v1(1))
