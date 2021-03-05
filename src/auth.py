@@ -78,6 +78,7 @@ def auth_register_v1(email, password, name_first, name_last):
     user = {
         'u_id': id,
         'email': email,
+        'password' : password,
         'name_first': name_first,
         'name_last': name_last,
         'handle_str': handle,
