@@ -31,7 +31,7 @@ Arguments:
 
 Exceptions:
     InputError - Occurs when the channel name is more than 20 characters, or
-                when is_public is not give True or False 
+                when is_public is not given a value of type bool 
     AccessError - Occurs when auth_user_id is not registered on the database,
                 does not match any u_id
 
