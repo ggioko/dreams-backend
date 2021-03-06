@@ -10,14 +10,16 @@ def test_channels_create_invalid_channel_name():
     pass
 
 def test_channels_listall_runs():
+    clear_v1()
+    auth_register_v1('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     assert channels_listall_v1(1)
 
 def test_channels_listall_check():
     clear_v1()
-    id = auth_register_v1('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    auth_register_v1('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     name = "My Channel"
     channels_create_v1(1,name,True)
-    channels = [channels_listall_v1(id)['channels'][c]['name'] for c in range(len(channels_listall_v1(1)['channels']))]
+    channels = [channels_listall_v1(1)['channels'][c]['name'] for c in range(len(channels_listall_v1(1)['channels']))]
     assert name in channels
 
 def test_channels_listall_access_error():
