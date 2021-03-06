@@ -51,7 +51,37 @@ def channel_details_v1(auth_user_id, channel_id):
     if authorisation == 0:
         raise AccessError("Error occurred authorised user is not a member of channel with channel_id")
     
+    # Main functionality of channel_details_v1
+    # Must append current member to channelDetails as well as all listed members.
+    channelDetails = {} 
     
+    
+    # Loop through each channel in data.
+    for channel in data['channels']:
+        if channel['id'] == channel_id: # Make sure we're on the right channel.
+            channelDetails['name'] = channel['name']    
+        # Check the all_members section of each channel.
+            channelDetails['owner_members'] = []
+            channelDetails['all_members'] = []
+            for member in channel['owner_members']:
+                channelDetails['owner_members'].append({
+                    'u_id': member['u_id'],
+                    'email': member['email'],
+                    'name_first': member['name_first'],
+                    'name_last': member['name_last'],
+                    'handle_str': member['handle_str'],            
+                })
+            for member in channel['all_members']:
+                channelDetails['all_members'].append({
+                    'u_id': member['u_id'],
+                    'email': member['email'],
+                    'name_first': member['name_first'],
+                    'name_last': member['name_last'],
+                    'handle_str': member['handle_str'],            
+                })
+                
+    return channelDetails
+ 
 #    return {
 #        'name': 'Hayden',
 #        'owner_members': [
@@ -60,7 +90,7 @@ def channel_details_v1(auth_user_id, channel_id):
 #                'email': 'cs1531@cse.unsw.edu.au',
 #                'name_first': 'Hayden',
 #                'name_last': 'Jacobs',
-#                'handle_str': 'haydenjacobs',
+#                'handle_str': 'HaydenJacobs',
 #            }
 #        ],
 #        'all_members': [
@@ -69,7 +99,7 @@ def channel_details_v1(auth_user_id, channel_id):
 #                'email': 'cs1531@cse.unsw.edu.au',
 #                'name_first': 'Hayden',
 #                'name_last': 'Jacobs',
-#                'handle_str': 'haydenjacobs',
+#                'handle_str': 'HaydenJacobs',
 #            }
 #        ],
 #    }
