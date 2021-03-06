@@ -4,7 +4,7 @@ from src.auth import auth_register_v1
 from src.other import clear_v1
 from src.error import InputError, AccessError
 
-# test the case that Auth_user_id is invalid for channels create
+# Test the case that Auth_user_id is invalid for channels create
 # Expected AccessError
 def test_channels_create_invalid_Auth_user_id():
     clear_v1()
@@ -20,7 +20,7 @@ def test_channels_create_invalid_channel_name():
     with pytest.raises(InputError):         
         assert channels_create_v1(1, 'Nameismorethan20characters', True) 
 
-# Test the case where the is_public is not true or false
+# Test the case where is_public is of type bool
 # Expected InputError
 def test_channels_create_invalid_is_public():
     clear_v1()
