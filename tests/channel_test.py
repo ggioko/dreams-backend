@@ -15,7 +15,6 @@ def test_channel_invite_invalid_user():
 def test_channel_invite_invalid_authoriser():
     pass
 
-
 def test_channel_details_invalid_channel_id():
     clear_v1()
     auth_register_v1('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
@@ -30,7 +29,6 @@ def test_channel_details_unauthorised_user():
     with pytest.raises(AccessError):
         assert channel_details_v1(2, 1)  # User 2 is not a member.      
 
-# Throw access error if auth_user_id is invalid (Section 6.3)
 def test_channel_details_invalid_user():
     clear_v1()
     auth_register_v1('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
@@ -38,8 +36,33 @@ def test_channel_details_invalid_user():
     with pytest.raises(AccessError):
         # Pass a string into channels_list_v1 - should return access error.
         assert channel_details_v1('invalid', 1) # Invalid user id entered.
-        
-        
+
+def test_channel_details_runs():
+    clear_v1()
+    auth_register_v1('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    channels_create_v1(1, 'Channel1', True)
+    assert channel_details_v1(1,1) == {
+        'name': 'Channel1',
+        'owner_members': [
+            {
+                'u_id': 1,
+                'email': 'validemail@gmail.com',
+                'name_first': 'Hayden',
+                'name_last': 'Everest',
+                'handle_str': 'haydeneverest',
+            }
+        ],
+        'all_members': [
+            {
+                'u_id': 1,
+                'email': 'validemail@gmail.com',
+                'name_first': 'Hayden',
+                'name_last': 'Everest',
+                'handle_str': 'haydeneverest',
+            }
+        ],
+    }     
+       
 def test_channel_messages_invalid_id():
     pass
 
