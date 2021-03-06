@@ -14,7 +14,7 @@
 * New user id is the lowest integer value not in use that is greater than 1
 
 ## channels
-* Auth_register is working correctly to store user with id 1
+* In testing Auth_register is working correctly to store user with id 1
 
 ### channels_listall
 * Channels_create is working correctly
