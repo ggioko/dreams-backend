@@ -23,9 +23,8 @@ def channels_list_v1(auth_user_id):
     # Check if auth_user_id matches an id in the database.
     valid = 0
     for user in data['users']:
-        if auth_user_id == user['u_id']:
-            ++valid
-            
+        if user['u_id'] == auth_user_id:
+            valid = 1
     if valid == 0:
         raise AccessError("Error occurred auth_user_id is not valid")
     
@@ -38,7 +37,7 @@ def channels_list_v1(auth_user_id):
             if auth_user_id == member['u_id']: 
                 # Append the channel to the userChannels dictionary
                 userChannels['channels'].append({
-                    'channel id' : channel['id'],
+                    'channel_id' : channel['id'],
                     'name' : channel['name'],    
                 })
     return userChannels
