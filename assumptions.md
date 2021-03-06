@@ -12,7 +12,7 @@
 
 ### auth_register
 * User ids start at index 1
-* New user id is the lowest integer value not in use that is greater than 1
+* New user id is the lowest integer value not in use that is greater than or equal to 1
 
 ## channels
 * In testing Auth_register is working correctly to store user with id 1
