@@ -11,3 +11,7 @@
 * No assumptions made
 
 ## channels
+* No assumptions made
+
+### channels_create
+* Input error raised if is_public was not of type bool
