@@ -34,7 +34,7 @@ def channels_list_v1(auth_user_id):
     for channel in data['channels']:
         # Check the all_members section of each channel.
         for member in channel['all_members']:
-            if auth_user_id == member['u_id']: 
+            if member['u_id'] == auth_user_id: 
                 # Append the channel to the userChannels dictionary
                 userChannels['channels'].append({
                     'channel_id' : channel['id'],
