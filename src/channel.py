@@ -1,6 +1,9 @@
 from src.error import InputError, AccessError
 from src.data import data
 
+from src.auth import auth_register_v1
+
+
 '''
 Invites a user (with user id u_id) to join a channel with ID channel_id.
 Once invited the user is added to the channel immediately
@@ -89,5 +92,3 @@ def channel_removeowner_v1(auth_user_id, channel_id, u_id):
     return {
     }
 
-if __name__ == ("__main__"):
-    channel_invite_v1(1, 1, 1)

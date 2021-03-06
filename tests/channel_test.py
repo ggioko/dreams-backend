@@ -21,10 +21,10 @@ def test_channel_invite_invalid_channel():
 
     adminID = auth_register_v1('madladadmin@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     userID = auth_register_v1('peasantuser@gmail.com', 'diffpassword!', 'Everest', 'Hayden')    
-    channelID = channels_create_v1(adminID, 'dankmemechannel', True)
+    channelID = channels_create_v1(adminID['auth_user_id'], 'dankmemechannel', True)
 
     with pytest.raises(InputError):
-        channel_invite_v1(adminID, channelID + 1, userID)
+        channel_invite_v1(adminID['auth_user_id'], channelID['channel_id'] + 1, userID['auth_user_id'])
 
 
 def test_channel_invite_invalid_user():
@@ -32,21 +32,21 @@ def test_channel_invite_invalid_user():
 
     adminID = auth_register_v1('madladadmin@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     userID = auth_register_v1('peasantuser@gmail.com', 'diffpassword!', 'Everest', 'Hayden')    
-    channelID = channels_create_v1(adminID, 'dankmemechannel', True)
+    channelID = channels_create_v1(adminID['auth_user_id'], 'dankmemechannel', True)
 
     with pytest.raises(InputError):
-        channel_invite_v1(adminID, channelID, userID + 1)
+        channel_invite_v1(adminID['auth_user_id'], channelID['channel_id'], userID['auth_user_id'] + 1)
 
 def test_channel_invite_invalid_authoriser():
     clear_v1()
 
-    adminID = auth_register_v1('madladadmin@gmail.com', '123abc!@#', 'Hayden', 'Everest')
-    user1ID = auth_register_v1('peasantuser1@gmail.com', 'diffpassword!', 'Everest', 'Hayden')    
-    user2ID = auth_register_v1('peasantuser2@gmail.com', 'diffpassword.', 'Hayrest', 'Everden')
-    channelID = channels_create_v1(adminID, 'dankmemechannel', True)
+    adminID = auth_register_v1('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user1ID = auth_register_v1('validemail2@gmail.com', '1234abc!@#', 'Haydenn', 'Everestt')
+    user2ID = auth_register_v1('validemail3@gmail.com', '123abcd!@#', 'Haydeen', 'Everesst')
+    channelID = channels_create_v1(adminID['auth_user_id'], 'DankMemeChannel', True) 
 
     with pytest.raises(AccessError):
-        channel_invite_v1(user1ID, channelID, user2ID)
+        channel_invite_v1(user1ID['auth_user_id'], channelID['channel_id'], user2ID['auth_user_id'])
 
 def test_channel_details_invalid_id():
     pass
