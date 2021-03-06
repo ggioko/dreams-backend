@@ -99,13 +99,10 @@ def test_channels_list_one_channel():
     # Add 2 new id's to data set. (1st id required to make channels, 2nd required to test.)
     auth_register_v1('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     auth_register_v1('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
-    channel1Name = "Channel1" 
-    channel2Name = "Channel2"
-    channel3Name = "Channel3"
-    channels_create_v1(1, channel1Name, True) # User who created channel will be a member.
-    channels_create_v1(1, channel2Name, True)
-    channels_create_v1(1, channel3Name, True) 
-#    channel_join_v1(2, channel2Name)   # WAITING ON CHANNEL_JOIN_V1              
+    channels_create_v1(1, "Channel1", True) # User who created channel will be a member.
+    channels_create_v1(1, "Channel2", True)
+    channels_create_v1(1, "Channel3", True) 
+#    channel_join_v1(2, "Channel2")   # WAITING ON CHANNEL_JOIN_V1              
 #    
 #    assert channels_list_v1(2) == {
 #        'channels': [
@@ -124,24 +121,20 @@ def test_channels_list_multi_channels():
     # Add new id to data set
     auth_register_v1('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     auth_register_v1('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')                
-    channel1Name = "Channel1" 
-    channel2Name = "Channel2"
-    channel3Name = "Channel3"
-    channel4Name = "Channel4"
     # Create 4 channels, and join 2 of them
-    channels_create_v1(1, channel1Name, True)
-    channels_create_v1(1, channel2Name, True)
-    channels_create_v1(1, channel3Name, True)
-    channels_create_v1(1, channel4Name, True)
-#    channel_join_v1(2, channel1Name)     # WAITING ON CHANNEL_JOIN_V1
-#    channel_join_v1(2, channel3Name)
+    channels_create_v1(1, "Channel1", True)
+    channels_create_v1(1, "Channel2", True)
+    channels_create_v1(1, "Channel3", True)
+    channels_create_v1(1, "Channel4", True)
+#    channel_join_v1(2, "Channel1")     # WAITING ON CHANNEL_JOIN_V1
+#    channel_join_v1(2, "Channel3")
 #    
 #    # Number of channels the user is found to be joined to.
 #    channelCount = 0    
 #    for k in range(len(channels_list_v1(2)['channels'])):
-#        if channels_list_v1(2)['channels'][k]['name'] == channel1Name:
+#        if channels_list_v1(2)['channels'][k]['name'] == "Channel1":
 #            channelCount = channelCount + 1
-#        elif channels_list_v1(2)['channels'][k]['name'] == channel3Name:
+#        elif channels_list_v1(2)['channels'][k]['name'] == "Channel3":
 #            channelCount = channelCount + 1
 #            
 #    # User should be in 2 channels.
