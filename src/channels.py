@@ -21,14 +21,32 @@ def channels_listall_v1(auth_user_id):
         ],
     }
 
-def channels_create_v1(auth_user_id, name, is_public):
-    
+"""
+Creates a new channel with that name that is either a public or private channel
+
+Arguments:
+    auth_user_id (int)    - Users id
+    name (string)    - Channel name
+    is_public (bool)    - Channel is public
+
+Exceptions:
+    InputError - Occurs when the channel name is more than 20 characters, or
+                when is_public is not give True or False 
+    AccessError - Occurs when auth_user_id is not registered on the database,
+                does not match any u_id
+
+Return Value:
+    Returns {'channel_id': channel_num,} on success
+
+"""
+
+def channels_create_v1(auth_user_id, name, is_public):   
     # Input error checking
     # If length of name is more thant 20 characters raise InputError 
     if len(name) > 20:
         raise InputError("Error the channel name is more than 20 characters")
     
-    # If is_public is not true or false raise InputError
+    # Input error also raised if is_public was not of type bool
     if type(is_public) != bool:
         raise InputError("Error the is_public value is not valid can only be True or False")
 
@@ -41,11 +59,12 @@ def channels_create_v1(auth_user_id, name, is_public):
             reuser = {
                     'u_id' : user['u_id'],
                     'email' : user['email'],
-                    'first_name' : user['name_first'],
-                    'last_name' : user['name_last'],
+                    'name_first' : user['name_first'],
+                    'name_last' : user['name_last'],
                     'handle' : user['handle_str'],
                     'password' : user['password']
             }
+            # user id has been matched
             valid = 1
 
     # If user id hasnt been matched, raise AccessError
