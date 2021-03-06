@@ -22,7 +22,8 @@ from src.other import clear_v1
 # Throw access error if auth_user_id is invalid (Section 6.3)
 def test_channels_list_access_error():
     with pytest.raises(AccessError):
-        assert channels_list_v1(-1)
+        # Pass a string into channels_list_v1 - should return access error.
+        assert channels_list_v1('invalid')
         
 # Do we need this??
 def test_channels_list_runs():
