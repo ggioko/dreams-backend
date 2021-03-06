@@ -38,7 +38,7 @@ def test_channel_messages_invalid_start_pos():
     auth_register_v1('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     channel_1 = channels_create_v1(1, 'channel_1', True)
     with pytest.raises(InputError):
-        assert channel_messages(1, channel_1['channel_id'], 100)
+        assert channel_messages(1, channel_1['channel_id'], 50)
 
 # Test the case Authorised user is not a member of channel
 # Expected AccessError
