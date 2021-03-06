@@ -49,7 +49,7 @@ def test_channel_details_runs():
                 'email': 'validemail@gmail.com',
                 'name_first': 'Hayden',
                 'name_last': 'Everest',
-                'handle_str': 'haydeneverest',
+                'handle_str': 'HaydenEverest',
             }
         ],
         'all_members': [
@@ -58,7 +58,7 @@ def test_channel_details_runs():
                 'email': 'validemail@gmail.com',
                 'name_first': 'Hayden',
                 'name_last': 'Everest',
-                'handle_str': 'haydeneverest',
+                'handle_str': 'HaydenEverest',
             }
         ],
     }     
