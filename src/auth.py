@@ -23,7 +23,7 @@ Exceptions:
                 email format
 
 Return Value:
-    Returns {'auth_user_id': id,} on sucess
+    Returns {'auth_user_id': id,} on success
 
 """
 

@@ -11,6 +11,20 @@ def channels_list_v1(auth_user_id):
         ],
     }
 
+"""
+Lists all the channels present in the database
+
+Arguments:
+    auth_user_id (int)    - Users ID
+
+Exceptions:
+    InputError  - Occurs users ID is not in the database
+
+Return Value:
+    Returns {'channels': [{channel_id: id, name: name}...} on success
+
+"""
+
 def channels_listall_v1(auth_user_id):
     ids = [data['users'][c]['u_id'] for c in range(len(data['users']))]
     if auth_user_id not in ids:
