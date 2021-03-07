@@ -74,7 +74,6 @@ def test_channels_list_access_error():
         # Pass a string into channels_list_v1 - should return access error.
         assert channels_list_v1('invalid')
         
-# Do we need this??
 def test_channels_list_runs():
     clear_v1()
     auth_register_v1('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
