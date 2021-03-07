@@ -2,9 +2,24 @@ from src.error import InputError
 from src.data import data
 import re
 
-def auth_login_v1(email, password):
-    # Given a registered users' email and password and returns their `auth_user_id` value
+"""
+Given a registered users' email and password and returns their `auth_user_id` value
 
+Arguments:
+    email (string)    - Users email
+    password (string)    - Users password
+
+Exceptions:
+    InputError  - Occurs when email has an incorrect format, email is not
+                registered or when the password does not match the given
+                email
+
+Return Value:
+    Returns {'auth_user_id': id,} on success
+
+"""
+
+def auth_login_v1(email, password):
     # Check email syntax
     if not re.match('^[a-zA-Z0-9]+[\\._]?[a-zA-Z0-9]+[@]\\w+[.]\\w{2,3}$',email):
         raise InputError('Email entered is not a valid email')
