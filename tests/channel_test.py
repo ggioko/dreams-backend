@@ -95,7 +95,7 @@ def test_channel_details_multiple_members():
     
     channels_create_v1(1, 'Channel1', True)
     channel_join_v1(2, 1)       
-    channel_join_v1(3, 1)       # Commented out as requires channel_join_v1 to work
+    channel_join_v1(3, 1)
     channel_join_v1(4, 1)
     
     correct = 0
