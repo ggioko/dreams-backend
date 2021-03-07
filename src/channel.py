@@ -61,6 +61,11 @@ Return Value:
 
 def channel_join_v1(auth_user_id, channel_id):
 
+    # Under 6.3 of the spec raise an assesserror if the auth_user_id is invalid
+    ids = [data['users'][c]['u_id'] for c in range(len(data['users']))]
+    if auth_user_id not in ids:
+        raise AccessError('Invalid auth_user_id')
+
     reuser = {}
     # Loop until u_id match
     for user in data['users']:

@@ -39,6 +39,17 @@ def test_channel_join_invalid_channel_id():
     id2 = auth_register_v1('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
     channelid1 = channels_create_v1(1, "Channel1", True)
     channelid2 = channels_create_v1(2, "Channel2", True)
+    with pytest.raises(AccessError):
+        assert channel_join_v1(7, 1)
+        assert channel_join_v1(8, 1)
+        assert channel_join_v1(9, 1)
+
+def test_channel_join_invalid_channel_id():
+    clear_v1()
+    id1 = auth_register_v1('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    id2 = auth_register_v1('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    channelid1 = channels_create_v1(1, "Channel1", True)
+    channelid2 = channels_create_v1(2, "Channel2", True)
     with pytest.raises(InputError):
         assert channel_join_v1(2, 7)
         assert channel_join_v1(1, 9)
