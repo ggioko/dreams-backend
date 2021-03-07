@@ -1,11 +1,9 @@
 # Assumptions
-[toc]
 
 ## General
 * No assumptions made
 
 ## auth
-* No assumptions made
 
 ### auth_login
 * No assumptions made
@@ -18,13 +16,19 @@
 * In testing Auth_register is working correctly to store user with id 1
 
 ### channels_listall
-* In tesing Channels_create is working correctly
+* In testing Channels_create is working correctly
 
 ### channels_create
 * Input error raised if is_public was not of type bool
 
+### channels_list
+* In testing channels_create and channel_join are working correctly
+
 ## channel
 * In testing Auth_register is working correctly to store user with id 1
+
+### channel_join
+* No assumptions made
 
 ### channel_details
 * In testing, channels_create and channel_join are working correctly
