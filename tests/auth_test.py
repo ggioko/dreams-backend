@@ -55,16 +55,16 @@ def test_auth_register_invalid_lastname():
 
 def test_auth_login_valid_single_user():
     clear_v1()
-    auth_register_v1('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
-    assert auth_login_v1('validemail@gmail.com', '123abc!@#') == {'auth_user_id': 1}
+    id = auth_register_v1('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    assert auth_login_v1('validemail@gmail.com', '123abc!@#') == id
 
 def test_auth_login_valid_multiple_users():
     clear_v1()
-    auth_register_v1('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
-    auth_register_v1('another@gmail.com', 'anoth432$%^', 'Random', 'Stranger')
-    auth_register_v1('randomguy@gmail.com', 'abcEZ!123', 'Haydena', 'Friend')
-    assert auth_login_v1('another@gmail.com', 'anoth432$%^') == {'auth_user_id': 2}
-    assert auth_login_v1('randomguy@gmail.com', 'abcEZ!123') == {'auth_user_id': 3}
+    id_1 = auth_register_v1('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    id_2 = auth_register_v1('another@gmail.com', 'anoth432$%^', 'Random', 'Stranger')
+    id_3 = auth_register_v1('randomguy@gmail.com', 'abcEZ!123', 'Haydena', 'Friend')
+    assert auth_login_v1('another@gmail.com', 'anoth432$%^') == id_2
+    assert auth_login_v1('randomguy@gmail.com', 'abcEZ!123') == id_3
 
 def test_auth_login_invalid_email():
     clear_v1()

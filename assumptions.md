@@ -1,11 +1,9 @@
 # Assumptions
-[toc]
 
 ## General
 * No assumptions made
 
 ## auth
-* No assumptions made
 
 ### auth_login
 * No assumptions made
@@ -25,4 +23,7 @@
 
 ### channels_list
 * In testing channels_create and channel_join are working correctly
+
+### channel_join
+* No assumptions made
 
