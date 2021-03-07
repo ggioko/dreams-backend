@@ -14,7 +14,7 @@ data = {
         {
             'id': 1,
             'name' : 'channel1',
-            'public': True,
+            'is_public': True,
             'owner_members': [
                 {
                     'u_id': 1,
@@ -35,9 +35,9 @@ data = {
             ],
         },
         {
-            'id': 1,
-            'name' : 'channel1',
-            'public': True,
+            'id': 2,
+            'name' : 'channel2',
+            'is_public': True,
             'owner_members': [
             ],
             'all_members': [

@@ -87,13 +87,13 @@ def channel_join_v1(auth_user_id, channel_id):
             channel_valid = 1
             data_copy = {
                 'name' : channel['name'],
-                'public': channel.get('public'),
+                'is_public': channel.get('is_public'),
             }
     
     if channel_valid == 0:
         raise InputError("Invalid channel_id")
 
-    if data_copy.get('public') == True:
+    if data_copy.get('is_public') == True:
         # Added user to all members for channel
         for channel in data['channels']:
             if channel['id'] == channel_id:
