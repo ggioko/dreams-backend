@@ -22,3 +22,9 @@
 
 ### channels_create
 * Input error raised if is_public was not of type bool
+
+## channel
+* In testing Auth_register is working correctly to store user with id 1
+
+### channel_details
+* In testing, channels_create and channel_join are working correctly
