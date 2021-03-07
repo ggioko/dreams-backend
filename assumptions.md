@@ -24,6 +24,11 @@
 ### channels_list
 * In testing channels_create and channel_join are working correctly
 
+## channel
+* In testing Auth_register is working correctly to store user with id 1
+
 ### channel_join
 * No assumptions made
 
+### channel_details
+* In testing, channels_create and channel_join are working correctly
