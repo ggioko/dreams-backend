@@ -81,8 +81,8 @@ def channel_join_v1(auth_user_id, channel_id):
         if channel['id'] == channel_id:
             channel_valid = 1
             data_copy = {
-                'name' : 'channel1',
-                'public': True,
+                'name' : channel['name'],
+                'public': channel.get('public'),
             }
     
     if channel_valid == 0:
@@ -92,8 +92,8 @@ def channel_join_v1(auth_user_id, channel_id):
         # Added user to all members for channel
         for channel in data['channels']:
             if channel['id'] == channel_id:
-                channelData['all_members'].append(reuser)
-    elif data_copy.get('public') == False:
+                channel['all_members'].append(reuser)
+    else:
         raise AccessError('The channel you are trying to join is private')
     
     return {}
