@@ -41,6 +41,8 @@ def test_channel_join_invalid_channel_id():
     channelid2 = channels_create_v1(2, "Channel2", True)
     with pytest.raises(InputError):
         assert channel_join_v1(2, 7)
+        assert channel_join_v1(1, 9)
+        assert channel_join_v1(2, 20)
 
 def test_channel_join_private_channel():
     clear_v1()
