@@ -71,7 +71,7 @@ def channel_messages_v1(auth_user_id, channel_id, start):
     if authorisation == 0:
         raise AccessError("Error occurred authorised user is not a member of channel with channel_id")
 
-    # Gets a list of all the messages reversed and also the length of the list
+    # Gets a list of all the messages and also the length of the list
     for channel in data['channels']:
         if channel['id'] == channel_id:
             messages = list(channel['messages'])
