@@ -33,7 +33,7 @@ def test_channel_messages_invalid_start_pos():
 def test_channel_messages_unauthorised_user():
     pass
 
-def test_channel_join_invalid_channel_id():
+def test_channel_join_invalid_user_id():
     clear_v1()
     id1 = auth_register_v1('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     id2 = auth_register_v1('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
