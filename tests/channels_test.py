@@ -1,10 +1,12 @@
 import pytest
 
-#from src.channel import channel_join_v1  
+from src.channel import channel_join_v1  
 from src.channels import channels_create_v1, channels_listall_v1, channels_list_v1
 from src.auth import auth_register_v1
 from src.other import clear_v1
 from src.error import InputError, AccessError
+
+from src.data import data
 
 # Test the case that Auth_user_id is invalid for channels create
 # Expected AccessError
@@ -102,17 +104,18 @@ def test_channels_list_one_channel():
     channels_create_v1(1, "Channel1", True) # User who created channel will be a member.
     channels_create_v1(1, "Channel2", True)
     channels_create_v1(1, "Channel3", True) 
-#    channel_join_v1(2, "Channel2")   # WAITING ON CHANNEL_JOIN_V1              
-#    
-#    assert channels_list_v1(2) == {
-#        'channels': [
-#        {
-#            'channel_id': 2,
-#            	'name': 'Channel2',
-#        }     
-#        ],            
-#    }
-    pass
+
+    channel_join_v1(2, 2)              
+    
+    assert channels_list_v1(2) == {
+        'channels': [
+        {
+            'channel_id': 2,
+            	'name': 'Channel2',
+        }     
+        ],            
+    }
+
     
 # Test for user that is in multiple channels
 # Output should be a dictionary {channels} with one set of data.
@@ -126,18 +129,17 @@ def test_channels_list_multi_channels():
     channels_create_v1(1, "Channel2", True)
     channels_create_v1(1, "Channel3", True)
     channels_create_v1(1, "Channel4", True)
-#    channel_join_v1(2, "Channel1")     # WAITING ON CHANNEL_JOIN_V1
-#    channel_join_v1(2, "Channel3")
-#    
-#    # Number of channels the user is found to be joined to.
-#    channelCount = 0    
-#    for k in range(len(channels_list_v1(2)['channels'])):
-#        if channels_list_v1(2)['channels'][k]['name'] == "Channel1":
-#            channelCount = channelCount + 1
-#        elif channels_list_v1(2)['channels'][k]['name'] == "Channel3":
-#            channelCount = channelCount + 1
-#            
-#    # User should be in 2 channels.
-#    assert channelCount == 2
-#    
-    pass
+    channel_join_v1(2, 1)     # WAITING ON CHANNEL_JOIN_V1
+    channel_join_v1(2, 3)
+    
+    # Number of channels the user is found to be joined to.
+    channelCount = 0    
+    for k in range(len(channels_list_v1(2)['channels'])):
+        if channels_list_v1(2)['channels'][k]['name'] == "Channel1":
+            channelCount = channelCount + 1
+        elif channels_list_v1(2)['channels'][k]['name'] == "Channel3":
+            channelCount = channelCount + 1
+            
+    # User should be in 2 channels.
+    assert channelCount == 2
+    
