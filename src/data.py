@@ -42,6 +42,14 @@ data = {
             ],
             'all_members': [
             ],
+            'messages' : [
+                {
+                    'message_id': 1,
+                    'u_id': 1,
+                    'message': 'Hello world',
+                    'time_created': 1582426789,
+                }
+        ],
         },
     ],
 }
