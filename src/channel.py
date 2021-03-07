@@ -38,8 +38,8 @@ Arguments:
 Exceptions:
     InputError - Occurs when the channel ID is not a valid channel or start is 
                 greater than the total number of messages in the channel
-    AccessError - Occurs when authorised user is not a member of channel with  
-                channel_id
+    AccessError - Occurs when id is not in data or authorised user is not a 
+                member of channel with channel_id
 
 Return Value:
     Returns { messages, start, end } on success
