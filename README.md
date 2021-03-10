@@ -1,24 +1,14 @@
 # COMP1531 Major Project
 
-## Change Log
-
- * 22/02: Please note, while `channel_leave`, `channel_addowner`, `channel_removeowner` are included in `channel.py` during iteration 1, you are **not** required to implement these as part of iteration 1 (they are also not included in the interface table until iteration 2).
- * 24/02: In section 7, changed "Code and report due" to "Due date" to avoid confusion
- * 24/02: Renamed "Interface (Iteration 1)" to "Iteration 1" to avoid confusing students who missed the part of section 3 saying you don't need to implement the entire interface. The interface in section 6 covers topics broader than iteration 1.
- * 24/02: Updated the description of `auth_login_v1` to state "and returns their `auth_user_id` value". Removing the use of token as it has been confusing.
- * 25/02: Added `auth_user_id` parameter to `search_v1` function
- * 26/02: Clarified that `channel_leave_v1`, `channel_addowner_v1`, `channel_removeowner_v1` are not required to be implemented in iteration 1. These 3 functions exist in `src/channel.py` stub, however they were not included in the interface. This is because we removed them from the interface for iteration 1, but forgot to remove them from the stub files. So therefore you do not have to implement them.
- * 27/02: Correctly moved the clarification above to be associated with `channel.py` instead of `channels.py`
- * 02/03: Removed "not" from the channels.py clarification (see commit)
- * 04/03: Please note: The stub code provided for `channel_details_v1` (in terms of the lists given in owner_members and all_members) is missing fields email and handle_str. No changes to the interface, it's just the stub code that is wrong - please follow the interface (just like normal)
+ **✨ Teamwork makes the [UNSW] Dream[s] work 🌈**
 
 ## Contents
 
   1. Aims
   2. Overview
   3. Iteration 1: Basic functionality and tests
-  4. Iteration 2: Coming Soon
-  5. Iteration 3: Coming Soon
+  4. Iteration 2: Building a web server
+  5. Iteration 3: Completing the lifecycle
   6. Interface specifications
   7. Style and documentation
   8. Due Dates and Weightings
@@ -73,29 +63,61 @@ The specific capabilities that need to be built for this project are described i
 
 ## 3. Iteration 1: Basic functionality and tests
 
-### 3.1. Task
+This iteration is now complete. Please see commit history to view information pertaining to iteration 1.
+
+## 4. Iteration 2: Building a web server
+
+### 4.1. Task
+
+**NOTE:** In merging the instructions for this iteration into your repo, you may get a failed pipeline. This is most likely because your code is not pylint compliant. If this is the case, that is the *first* thing you should address for this iteration. It is important you have a *stable* master branch before proceeding to add additional features.
+
+In this iteration, more features were added to the specification, and the focus has been changed to HTTP endpoints. Many of the theory surrounding iteration 2 will be covered in week 4-6 lectures. Note that there will still be 1 or 2 features of the frontend that will not work because the routes will not appear until iteration 3.
 
 In this iteration, you are expected to:
 
-1. Write tests for and implement the basic functionality of Dreams. The basic functionality is defined as the `auth_*`, `channel_*`, `channels_*` capabilities/functions, as per the interface section below.
+1. Implement and test the HTTP Flask server according to the entire interface provided in the specification.
 
-    * Test files you add should all be in the form `*_test.py`.
+    * Part of this section may be automarked.
 
-2. Write down any assumptions that you feel you are making in your interpretation of the specification.
+    * Pylint has been added to your continuous integration file, meaning that code that isn't pylint compliant will now fail the pipeline. The provided `.pylintrc` file is *very* lenient, so there is no reason you should have to disable any additional checks.
 
-    *  The marking will be heavily biased toward how well you follow good practices and work together as a team. Just having a "working" solution at the end is not, on its own, sufficient to even get a passing mark.
+    * Additionally, CI pipelines will measure *branch* coverage for all `.py` files that aren't tests. The coverage percentage for master is visible in a badge at the top of this repo and changes in coverage will appear in Merge Requests. Do note that coverage of `server.py` is not measured, nor will what is executed by your HTTP tests. This is because, when running HTTP tests, the server is run in a separate process.
 
-    * The `assumptions.md` file described above should be in the root of your repository. If you've not written markdown before (which we assume most of you haven't), it's not necessary to research the format. Markdown is essentially plain text with a few extra features for basic formatting. You can just stick with plain text if you find that easier.
+    * Your implementation should build upon your work in iteration 1, and ideally your HTTP layer is just a wrapper for underlying functions you've written that handle the logic. Your implementation will rely on topics taught in week 4 (HTTP servers and testing) as well as week 5 (authentication and authorisation).
 
-    * Do NOT attempt to try and write or start a web server. Don't overthink how these functions are meant to connect to a frontend yet. That is for the next iteration. In this iteration you are just focusing on the basic backend functionality.
+    * Your implementation will need to implement persistence of data (see section 4.4).
 
-3. Follow best practices for git, project management, and effective teamwork, as discussed in lectures.
+    * You can structure your tests however you choose, as long as they are appended with `_test.py`. It's important you consider how to separate (or combine) your **unit/integration** tests from iteration 1 with the extra **system** tests (HTTP with requests library) in iteration 2. You will be marked on both tests being present/used in this iteration. **An example of a HTTP test has been provided for you in `http_tests/echo_http_test.py`**.
 
-    * You need to use the **GitLab Taskboard** for your task tracking and allocation. Don't do it in a google doc or some other method - your tutor will not award marks for this. Spend some time getting to know how to use the taskboard.
+    * You do not have to rewrite all of your pytests as HTTP tests - the latter can test the system at a higher level. For example, to test a success case for `message/send` via HTTP routes you will need to call `auth/register` and `channels/create`; this means you do not need the success case for those two functions seperately. Your HTTP tests will need to cover all success/error conditions for each endpoint, however.
 
-    * For this iteration you and will need to collectively make a minimum of **12** merge requests into `master`.
+    * Ensure that you correctly manage sessions and tokens in terms of authentication and authorisation, as per requirements laid out in section 6.9
 
-### 3.2. Implementing and testing features
+2. Continue demonstrating effective project management and effective git usage
+
+    * Part of this section may be automarked.
+
+    * You will be heavily marked for your use of thoughtful project management and use of git effectively. The degree to which your team works effectively will also be assessed.
+
+    * As for iteration 1 all task tracking and management will need to be done via the GitLab Taskboard.
+
+    * You are required to regularly and thoughtfully make merge requests for the smallest reasonable units, and merge them into `master`.
+
+To run the server you should always use the command
+
+```bash
+python3 src/server.py
+```
+
+This will start the server on the next available port. If you get any errors relating to `flask_cors`, ensure you have installed all the necessary Python libraries for this course (the list of libraries was updated for this iteration). You can do this with:
+
+```bash
+pip3 install $(curl https://www.cse.unsw.edu.au/~cs1531/21T1/requirements.txt)
+```
+
+A frontend has been built by Andrea and Andrew that you can use in this iteration, and use your backend to power it (note: an incomplete backend will mean the frontend cannot work). **You can, if you wish, make changes to the frontend code, but it is not required for this iteration.** The source code for the frontend is only provided for your own fun or curiosity.
+
+### 4.2. Implementing and testing features
 
 You should first approach this project by considering its distinct "features". Each feature should add some meaningful functionality to the project, but still be as small as possible. You should aim to size features as the smallest amount of functionality that adds value without making the project more unstable. For each feature you should:
 
@@ -103,11 +125,10 @@ You should first approach this project by considering its distinct "features". E
 2. Write tests for that feature and commit them to the branch.
 3. Implement that feature.
 4. Make any changes to the tests such that they pass with the given implementation. You should not have to do a lot here. If you find that you are, you're not spending enough time on step 2.
-5. Consider any assumptions you made in the previous steps and add them to `assumptions.md`.
-6. Create a merge request for the branch.
-7. Get someone in your team who **did not** work on the feature to review the merge request.
-8. Fix any issues identified in the review.
-9. Merge the merge request into master.
+5. Create a merge request for the branch.
+6. Get someone in your team who **did not** work on the feature to review the merge request. When reviewing, **not only should you ensure the new feature has tests that pass, but you should also check that the coverage percentage has not been significantly reduced.**
+7. Fix any issues identified in the review.
+8. Merge the merge request into master.
 
 For this project, a feature is typically sized somewhere between a single function, and a whole file of functions (e.g. `auth.py`). It is up to you and your team to decide what each feature is.
 
@@ -115,129 +136,39 @@ There is no requirement that each feature be implemented by only one person. In 
 
 Please pay careful attention to the following:
 
+Your tests, keep in mind the following:
 * We want to see **evidence that you wrote your tests before writing the implementation**. As noted above, the commits containing your initial tests should appear *before* your implementation for every feature branch. If we don't see this evidence, we will assume you did not write your tests first and your mark will be reduced.
+* You should have black-box tests for all tests required (i.e. testing each function/endpoint). However, you are also welcome to write whitebox unit tests in this iteration if you see that as important.
 * Merging in merge requests with failing pipelines is **very bad practice**. Not only does this interfere with your teams ability to work on different features at the same time, and thus slow down development, it is something you will be penalised for in marking.
 * Similarly, merging in branches with untested features is also **very bad practice**. We will assume, and you should too, that any code without tests does not work.
 * Pushing directly to `master` is not possible for this repo. The only way to get code into master is via a merge request. If you discover you have a bug in `master` that got through testing, create a bugfix branch and merge that in via a merge request.
 
-### 3.3. File Structure and stub code
+### 4.3. Recommended approach
 
-The tests you write should be as small and independent as possible. This makes it easier to identify why a particular test may be failing. Similarly, try to make it clear what each test is testing for. Meaningful test names and documentation help with this. An example of how to structure tests has been done in:
+Our recommendation with this iteration is that you:
 
-* `/src/echo.py`
-* `/tests/echo_test.py`
+1. Start out trying to implement the new functions the same way you did in iteration 1 (a series of implemented functions, categorised in files, with black-box pytests testing them).
+2. Write another layer of HTTP tests that test the inputs/outputs on routes according to the specific, and while writing tests for each component/feature, write the Flask route/endpoint for that feature too.
 
-The echo functionality is tested, both for correct behaviour and for failing behaviour. As echo is relatively simple functionality, only 2 tests are required. For the larger features, you will need many tests to account for many different behaviours.
+This approach means that you can essentially finish the project/testing logic without worrying about HTTP, and then simply wrap the HTTP/Flask layer on top of it at the end.
 
-Be sure to turn your `src` and `tests` directories into Python packages. This can be done by creating two files:
-  * `src/__init__.py`
-  * `tests/__init__.py`
+### 4.4. Storing data
 
-As packages you will be able to import Python code from a directory with the same syntax as you would a module. More information can be found <a href="https://docs.python.org/3.7/tutorial/modules.html#packages"> here.</a>
+You are required to store data persistently in this iteration.
 
-A number of files have been added to your `/src/` folder in your repository. These files are:
- * `auth.py`
- * `channel.py` (all except `channel_leave_v1`, `channel_addowner_v1`, `channel_removeowner_v1` are *required* for iteration 1)
- * `channels.py`
- * `user.py` (not *required* for iteration 1)
- * `message.py` (not *required* for iteration 1)
- * `other.py` (all except `clear` are not *required* for iteration 1)
+Modify your backend such that it is able to persist and reload its data store if the process is stopped and started again. The persistence should happen at regular intervals so that in the event of unexpected program termination (e.g. sudden power outage) a minimal amount of data is lost. You may implement this using whatever method of serialisation you prefer (e.g. pickle, JSON).
 
-They do not contain any real implementation, but do contain some stub code to give you a feel for what the different functions should return. You will replace these stubs with actual implementations as you develop.
+### 4.5. Submission
 
-#### 3.3.1. `auth.py`
+This iteration due date and demonstrate week is described in section 7. You will demonstrate this submission inline with the information provided in section 7.
 
-Elements of securely storing passwords and other tricky authorisation methods are not required for iteration 1. You can simply store passwords plainly, and the user ID is used to identify them. We will discuss ways to improve the quality and methods of these capabilities in iteration 2.
+### 4.6. Versioning
 
-#### 3.3.2 Test writing guidelines
+You might notice that some routes are suffixed with `v1` and `v2`, and that all the new routes are `v1` yet all the old routes are `v2`. Why is this? When you make changes to specifications, it's usually good practice to give the new function/capability/route a different unique name. This way, if people are using older versions of the specification they can't accidentally call the updated function/route with the wrong data input.
 
-To test basic functionality you will likely need code like:
+Hint: Yes, your `v2` routes can use the `X_Y_v1` functions you had in iteration 1, regardless of whether you rename the functions or not. The layer of abstraction in iteration 2 has changed from the function interface to the HTTP interface, and therefore your 'functions' from iteration 1 are essentailly now just implementation details, and therefore are completely modifiable by you.
 
-```python
-result = auth.auth_register('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
-auth.auth_login('validemail@gmail.com', '123abc!@#') # Expect to work since we registered
-```
-
-and
-
-```python
-result = auth.auth_register('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
-with pytest.raises(InputError) as e:
-    auth.auth_login('didntusethis@gmail.com', '123abcd!@#') # Expect fail since never registered
-```
-
-However, when deciding how to structure your tests, keep in mind the following:
-
-* Your tests should be *black box* unit tests.
-  * Black box means they should not depend your implementation, but rather *any* working implementation. You should design your tests such that if they were run against another group's backend they would still pass
-  * Unit tests mean the tests focus on testing particular functions, rather than the system as a whole. Certain unit tests will depend on other tests succeeding. It's OK to write tests that are only a valid test if other functions are correct (e.g. to test `channel` functions you can assume that `auth` is implemented correctly).
-* Avoid writing your tests such that they need to be run in a particular order. That can make it hard to identify what exactly is failing.
-* Consider resetting the state of the application (e.g. deleting all users, channels, messages, etc.) at the start of every test. That way you know none of them are accidentally dependent on an earlier test. You can add an extra function for this that is run at the beginning of each test.
-* If you find yourself needing similar code at the start of a series of tests, consider using a fixture to avoid repetition.
-
-### 3.3.3 Valid email format
-
-A valid email should match the following regular expression:
-
-```
-'^[a-zA-Z0-9]+[\\._]?[a-zA-Z0-9]+[@]\\w+[.]\\w{2,3}$'
-```
-
-The python `re` (regular expression) module allows you to determine whether a string matches a regular expression. You do not need to understand regular expressions to effectively utilise the `re` module to check if the email is correct.
-
-### 3.4. Storing data
-
-Nearly all of the functions will likely have to reference some "data source" to store information. E.G. If you register two users, create two channels, and then add a user to a channel, all of that information needs to be "stored" somewhere. The most important thing for iteration 1 is not to overthink this problem.
-
-Firstly, you do **not have to use an SQL database, or something like firebase**.
-
-Secondly, you don't need to make anything persist. What that means is that if you run all your pytests, and then run them again later, the data is OK to be "fresh" every time you run `pytest`. We will cover persistence in another iteration.
-
-Our recommended approach is simply using a global variable, or series of global variables, and having your functions use and import them. For example, you could define a structure in a file that is empty, and as functions are called it populates and fills up like the one below:
-
-```python
-data = {
-    'users': [
-        {
-            'id': 1,
-            'name' : 'user1',
-        },
-        {
-            'id': 2,
-            'name' : 'user2',
-        },
-    ],
-    'channels': [
-        {
-            'id': 1,
-            'name' : 'channel1',
-        },
-        {
-            'id': 2,
-            'name' : 'channel2',
-        },
-    ],
-}
-```
-
-### 3.5. Bad Assumptions
-
-Here are a few examples of bad assumptions:
-
-* Assume that all groups store their data in a field called data which is located in auth.py
-* Assume all individual return values are returned as single values rather than being stored in a dictionary
-* Assume the functions are written correctly
-* Assume the input token or auth_user_id is valid
-
-Bad assumptions are usually ones that directly contradict an explicit or implicit requirement in the specification. Good assumptions are ones that fill holes in gaps of requirements.
-
-### 3.6. Working in parallel
-
-Iteration provides challenges for many groups when it comes to working in parallel. Your group's initial reaction will be that you need to complete registration before you can complete login, and then login must be done before channel creation, etc.
-
-The most appropriate approach is to have people working on down-stream tasks (like the channels implementation) work with _stubbed_ versions of the up-stream tasks. E.G. The login function is stubbed to return a successful dummy response, and therefore two people can work in parallel: 
-
-### 3.7. Marking Criteria
+### 4.7. Marking Criteria
 
 <table>
   <tr>
@@ -246,40 +177,43 @@ The most appropriate approach is to have people working on down-stream tasks (li
     <th>Criteria</th>
   </tr>
   <tr>
-    <td>Automarking (Testing & Implementation)</td>
+    <td>Automarking (Testing)</td>
+    <td>15%</td>
+    <td><ul>
+      <li>Correctly written tests based on the specification requirements</li>
+      <li>Code coverage (99% coverage gives 30% of the marks for this section)</li>
+    </ul>
+  </td>
+  </ul>
+  <tr>
+    <td>Automarking (Implementation)</td>
     <td>35%</td>
     <td><ul>
       <li>Correct implementation of specified functions</li>
-      <li>Correctly written tests based on the specification requirements</li>
+      <li>Correctly linted code (worth 10% of this section)</li>
     </ul>
   </td>
   </ul>
   <tr>
     <td>Code Quality</td>
-    <td>20%</td>
+    <td>30%</td>
     <td><ul>
       <li>Demonstrated an understanding of good test <b>coverage</b></li>
       <li>Demonstrated an understanding of the importance of <b>clarity</b> on the communication test and code purposes</li>
       <li>Demonstrated an understanding of thoughtful test <b>design</b></li>
       <li>Appropriate use of python data structures (lists, dictionaries, etc.)</li>
-      <li>Appropriate style as described in section 8.4
+      <li>Appropriate style as described in section 8.4</li>
+      <li>Appropriate application of good software design and pythonic patterns</li>
+      <li>Implementation of persistent state</li>
     </ul>
   </td>
   </ul>
   <tr>
-    <td>Git Practices</td>
-    <td>20%</td>
-    <td><ul>
-      <li>Meaningful and informative git commit names being used</li>
-      <li>Effective use of merge requests (from branches being made) across the team (as covered in lectures)</li>
-      <li>At least 12 merge requests into master made</li>
-    </ul>
-  </td>
-  </ul>
-  <tr>
-    <td>Project Management & Teamwork</td>
+    <td>Git & Project Management</td>
     <td>15%</td>
     <td><ul>
+      <li>Meaningful and informative git commit names being used</li>
+      <li>At least 12 merge requests into master made</li>
       <li>A generally equal contribution between team members</li>
       <li>Clear evidence of reflection on group's performance and state of the team, with initiative to improve in future iterations</li>
       <li>Effective use of course-provided MS Teams for communicating, demonstrating an ability to communicate and manage effectivelly digitally</li>
@@ -288,28 +222,12 @@ The most appropriate approach is to have people working on down-stream tasks (li
       <li>Minutes/notes taken from group meetings (and stored in a logical place in the repo)</li>
     </ul>
   </td>
-  </ul>
-  <tr>
-    <td>Assumptions markdown file</td>
-    <td>10%</td>
-    <td><ul>
-      <li>Clear and obvious effort and time gone into thinking about possible assumptions that are being made when interpreting the specification</li>
-    </ul>
-  </td>
   </tr>
 </table>
 
 For this and for all future milestones, you should consider the other expectations as outlined in section 8 below.
 
-### 3.8. Submission
-
-This iteration due date and demonstrate week is described in section 7. You will demonstrate this submission inline with the information provided in section 7.
-
-## 4. Iteration 2: Coming Soon
-
-Coming Soon
-
-## 5. Iteration 3: Coming Soon
+## 5. Iteration 3: Completing the lifecycle
 
 Coming Soon
 
@@ -318,8 +236,6 @@ Coming Soon
 These interface specifications come from Andrea and Andrew, who are building the frontend to the requirements set out below.
 
 ### 6.1. Data types
-
-#### 6.1.1. Data Types
 
 <table>
   <tr>
@@ -375,6 +291,10 @@ These interface specifications come from Andrea and Andrew, who are building the
     <td>string</td>
   </tr>
   <tr>
+    <td>(outputs only) named exactly <b>dms</b></td>
+    <td>List of dictionaries, where each dictionary contains types { dm_id, name }</td>
+  </tr>
+  <tr>
     <td>(outputs only) name ends in <b>members</b></td>
     <td>List of dictionaries, where each dictionary contains types of <b>user</b></td>
   </tr>
@@ -386,6 +306,11 @@ These interface specifications come from Andrea and Andrew, who are building the
     <td>(outputs only) named exactly <b>users</b></td>
     <td>List of dictionaries, where each dictionary contains types of <b>user</b></td>
   </tr>
+  <tr>
+    <td>(outputs only) named exactly <b>notifications</b></td>
+    <td>List of dictionaries, where each dictionary contains types { channel_id, dm_id, notification_message } where channel_id is the id of the channel that the event happened in, and is <code>-1</code> if it is being sent to a DM. dm_id is the DM that the event happened in, and is <code>-1</code> if it is being sent to a channel. Notification_message is a string of the following format for each trigger action:<ul><li>tagged: "{User’s handle} tagged you in {channel name}: {first 20 characters of the message}"</li>  <li>reacted message: "{User’s handle} reacted to your message in {channel name}"</li><li>added to a channel: "{User’s handle} added you to {channel name}"</li></ul>
+    </td>
+  </tr>
 </table>
 
 ### 6.2. Interface
@@ -393,12 +318,14 @@ These interface specifications come from Andrea and Andrew, who are building the
 <table>
   <tr>
     <th>Name & Description</th>
+    <th>HTTP Method</th>
     <th>Data Types</th>
     <th>Exceptions</th>
   </tr>
   <tr>
-    <td><code>auth_login_v1</code><br /><br />Given a registered users' email and password and returns their `auth_user_id` value</td>
-    <td><b>Parameters:</b><br /><code>(email, password)</code><br /><br /><b>Return Type:</b><br /><code>{ auth_user_id }</code></td>
+    <td><code>auth/login/v2</code><br /><br />Given a registered users' email and password and returns a new `token` for that session</td>
+    <td style="font-weight: bold; color: blue;">POST</td>
+    <td><b>Parameters:</b><br /><code>(email, password)</code><br /><br /><b>Return Type:</b><br /><code>{ token, auth_user_id }</code></td>
     <td>
       <b>InputError</b> when any of:
       <ul>
@@ -409,8 +336,9 @@ These interface specifications come from Andrea and Andrew, who are building the
     </td>
   </tr>
   <tr>
-    <td><code>auth_register_v1</code><br /><br />Given a user's first and last name, email address, and password, create a new account for them and return a new `auth_user_id`. A handle is generated that is the concatenation of a lowercase-only first name and last name. If the concatenation is longer than 20 characters, it is cutoff at 20 characters. The handle will not include any whitespace or the '@' character. If the handle is already taken, append the concatenated names with the smallest number (starting at 0) that forms a new handle that isn't already taken. The addition of this final number may result in the handle exceeding the 20 character limit.</td>
-    <td><b>Parameters:</b><br /><code>(email, password, name_first, name_last)</code><br /><br /><b>Return Type:</b><br /><code>{ auth_user_id }</code></td>
+    <td><code>auth/register/v2</code><br /><br />Given a user's first and last name, email address, and password, create a new account for them and return a new `token` for that session. A handle is generated that is the concatenation of a lowercase-only first name and last name. If the concatenation is longer than 20 characters, it is cutoff at 20 characters. The handle will not include any whitespace or the '@' character. If the handle is already taken, append the concatenated names with the smallest number (starting from 0) that forms a new handle that isn't already taken. The addition of this final number may result in the handle exceeding the 20 character limit.</td>
+    <td style="font-weight: bold; color: blue;">POST</td>
+    <td><b>Parameters:</b><br /><code>(email, password, name_first, name_last)</code><br /><br /><b>Return Type:</b><br /><code>{ token, auth_user_id }</code></td>
     <td>
       <b>InputError</b> when any of:
       <ul>
@@ -423,8 +351,15 @@ These interface specifications come from Andrea and Andrew, who are building the
     </td>
   </tr>
   <tr>
-    <td><code>channel_invite_v1</code><br /><br />Invites a user (with user id u_id) to join a channel with ID channel_id. Once invited the user is added to the channel immediately</td>
-    <td><b>Parameters:</b><br /><code>(auth_user_id, channel_id, u_id)</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
+    <td><code>auth/logout/v1</code><br /><br />Given an active token, invalidates the token to log the user out. If a valid token is given, and the user is successfully logged out, it returns true, otherwise false.</td>
+    <td style="font-weight: bold; color: blue;">POST</td>
+    <td><b>Parameters:</b><br /><code>(token)</code><br /><br /><b>Return Type:</b><br /><code>{ is_success }</code></td>
+    <td>N/A</td>
+  </tr>
+  <tr>
+    <td><code>channel/invite/v2</code><br /><br />Invites a user (with user id u_id) to join a channel with ID channel_id. Once invited the user is added to the channel immediately</td>
+    <td style="font-weight: bold; color: blue;">POST</td>
+    <td><b>Parameters:</b><br /><code>(token, channel_id, u_id)</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
     <td>
       <b>InputError</b> when any of:
       <ul>
@@ -438,8 +373,9 @@ These interface specifications come from Andrea and Andrew, who are building the
     </td>
   </tr>
   <tr>
-    <td><code>channel_details_v1</code><br /><br />Given a Channel with ID channel_id that the authorised user is part of, provide basic details about the channel</td>
-    <td><b>Parameters:</b><br /><code>(auth_user_id, channel_id)</code><br /><br /><b>Return Type:</b><br /><code>{ name, owner_members, all_members }</code></td>
+    <td><code>channel/details/v2</code><br /><br />Given a Channel with ID channel_id that the authorised user is part of, provide basic details about the channel</td>
+    <td style="font-weight: bold; color: green;">GET</td>
+    <td><b>Parameters:</b><br /><code>(token, channel_id)</code><br /><br /><b>Return Type:</b><br /><code>{ name, is_public, owner_members, all_members }</code></td>
     <td>
       <b>InputError</b> when any of:
       <ul>
@@ -452,8 +388,9 @@ These interface specifications come from Andrea and Andrew, who are building the
     </td>
   </tr>
   <tr>
-    <td><code>channel_messages_v1</code><br /><br />Given a Channel with ID channel_id that the authorised user is part of, return up to 50 messages between index "start" and "start + 50". Message with index 0 is the most recent message in the channel. This function returns a new index "end" which is the value of "start + 50", or, if this function has returned the least recent messages in the channel, returns -1 in "end" to indicate there are no more messages to load after this return.</td>
-    <td><b>Parameters:</b><br /><code>(auth_user_id, channel_id, start)</code><br /><br /><b>Return Type:</b><br /><code>{ messages, start, end }</code></td>
+    <td><code>channel/messages/v2</code><br /><br />Given a Channel with ID channel_id that the authorised user is part of, return up to 50 messages between index "start" and "start + 50". Message with index 0 is the most recent message in the channel. This function returns a new index "end" which is the value of "start + 50", or, if this function has returned the least recent messages in the channel, returns -1 in "end" to indicate there are no more messages to load after this return.</td>
+    <td style="font-weight: bold; color: green;">GET</td>
+    <td><b>Parameters:</b><br /><code>(token, channel_id, start)</code><br /><br /><b>Return Type:</b><br /><code>{ messages, start, end }</code></td>
     <td>
       <b>InputError</b> when any of:
       <ul>
@@ -467,8 +404,9 @@ These interface specifications come from Andrea and Andrew, who are building the
     </td>
   </tr>
   <tr>
-    <td><code>channel_join_v1</code><br /><br />Given a channel_id of a channel that the authorised user can join, adds them to that channel</td>
-    <td><b>Parameters:</b><br /><code>(auth_user_id, channel_id)</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
+    <td><code>channel/join/v2</code><br /><br />Given a channel_id of a channel that the authorised user can join, adds them to that channel</td>
+    <td style="font-weight: bold; color: blue;">POST</td>
+    <td><b>Parameters:</b><br /><code>(token, channel_id)</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
     <td>
       <b>InputError</b> when any of:
       <ul>
@@ -480,19 +418,68 @@ These interface specifications come from Andrea and Andrew, who are building the
       </ul>
     </td>
   </tr>
+
   <tr>
-    <td><code>channels_list_v1</code><br /><br />Provide a list of all channels (and their associated details) that the authorised user is part of</td>
-    <td><b>Parameters:</b><br /><code>(auth_user_id)</code><br /><br /><b>Return Type:</b><br /><code>{ channels }</code></td>
+    <td><code>channel/addowner/v1</code><br /><br />Make user with user id u_id an owner of this channel</td>
+    <td style="font-weight: bold; color: blue;">POST</td>
+    <td><b>Parameters:</b><br /><code>(token, channel_id, u_id)</code><br /><br /><b>Return Type:</b><code>{}</code>
+    </td>
+    <td>
+      <b>InputError</b> when any of:
+      <ul>
+        <li>Channel ID is not a valid channel</li>
+        <li>When user with user id u_id is already an owner of the channel</li>
+      </ul>
+      <b>AccessError</b> when the authorised user is not an owner of the **Dreams**, or an owner of this channel</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td><code>channel/removeowner/v1</code><br /><br />Remove user with user id u_id an owner of this channel</td>
+    <td style="font-weight: bold; color: blue;">POST</td>
+    <td><b>Parameters:</b><br /><code>(token, channel_id, u_id)</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
+    <td>
+      <b>InputError</b> when any of:
+      <ul>
+        <li>Channel ID is not a valid channel</li>
+        <li>When user with user id u_id is not an owner of the channel</li>
+        <li>The user is currently the only owner</li>
+      </ul>
+      <b>AccessError</b> when the authorised user is not an owner of the **Dreams**, or an owner of this channel</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td><code>channel/leave/v1</code><br /><br />Given a channel ID, the user removed as a member of this channel</td>
+    <td style="font-weight: bold; color: blue;">POST</td>
+    <td><b>Parameters:</b><br /><code>(token, channel_id)</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
+    <td>
+      <b>InputError</b> when any of:
+      <ul>
+        <li>Channel ID is not a valid channel</li>
+      </ul>
+      <b>AccessError</b> when
+      <ul>
+        <li>Authorised user is not a member of channel with channel_id</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td><code>channels/list/v2</code><br /><br />Provide a list of all channels (and their associated details) that the authorised user is part of</td>
+    <td style="font-weight: bold; color: green;">GET</td>
+    <td><b>Parameters:</b><br /><code>(token)</code><br /><br /><b>Return Type:</b><br /><code>{ channels }</code></td>
     <td>N/A</td>
   </tr>
   <tr>
-    <td><code>channels_listall_v1</code><br /><br />Provide a list of all channels (and their associated details)</td>
-    <td><b>Parameters:</b><br /><code>(auth_user_id)</code><br /><br /><b>Return Type:</b><br /><code>{ channels }</code></td>
+    <td><code>channels/listall/v2</code><br /><br />Provide a list of all channels (and their associated details)</td>
+    <td style="font-weight: bold; color: green;">GET</td>
+    <td><b>Parameters:</b><br /><code>(token)</code><br /><br /><b>Return Type:</b><br /><code>{ channels }</code></td>
     <td>N/A</td>
   </tr>
   <tr>
-    <td><code>channels_create_v1</code><br /><br />Creates a new channel with that name that is either a public or private channel</td>
-    <td><b>Parameters:</b><br /><code>(auth_user_id, name, is_public)</code><br /><br /><b>Return Type:</b><br /><code>{ channel_id }</code></td>
+    <td><code>channels/create/v2</code><br /><br />Creates a new channel with that name that is either a public or private channel</td>
+    <td style="font-weight: bold; color: blue;">POST</td>
+    <td><b>Parameters:</b><br /><code>(token, name, is_public)</code><br /><br /><b>Return Type:</b><br /><code>{ channel_id }</code></td>
     <td>
       <b>InputError</b> when any of:
       <ul>
@@ -501,8 +488,9 @@ These interface specifications come from Andrea and Andrew, who are building the
     </td>
   </tr>
   <tr>
-    <td><code>message_send_v1</code><br /><br />Send a message from authorised_user to the channel specified by channel_id. Note: Each message should have it's own unique ID. I.E. No messages should share an ID with another message, even if that other message is in a different channel.</td>
-    <td><b>Parameters:</b><br /><code>(auth_user_id, channel_id, message)</code><br /><br /><b>Return Type:</b><br /><code>{ message_id }</code></td>
+    <td><code>message/send/v2</code><br /><br />Send a message from authorised_user to the channel specified by channel_id. Note: Each message should have it's own unique ID. I.E. No messages should share an ID with another message, even if that other message is in a different channel.</td>
+    <td style="font-weight: bold; color: blue;">POST</td>
+    <td><b>Parameters:</b><br /><code>(token, channel_id, message)</code><br /><br /><b>Return Type:</b><br /><code>{ message_id }</code></td>
     <td>
       <b>InputError</b> when any of:
       <ul>
@@ -513,8 +501,9 @@ These interface specifications come from Andrea and Andrew, who are building the
     </td>
   </tr>
   <tr>
-    <td><code>message_edit_v1</code><br /><br />Given a message, update its text with new text. If the new message is an empty string, the message is deleted.</td>
-    <td><b>Parameters:</b><br /><code>(auth_user_id, message_id, message)</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
+    <td><code>message/edit/v2</code><br /><br />Given a message, update its text with new text. If the new message is an empty string, the message is deleted.</td>
+    <td style="font-weight: bold; color: brown;">PUT</td>
+    <td><b>Parameters:</b><br /><code>(token, message_id, message)</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
     <td>
       <b>InputError</b> when any of:
       <ul>
@@ -529,8 +518,133 @@ These interface specifications come from Andrea and Andrew, who are building the
     </td>
   </tr>
   <tr>
-    <td><code>user_profile_v1</code><br /><br />For a valid user, returns information about their user_id, email, first name, last name, and handle</td>
-    <td><b>Parameters:</b><br /><code>(auth_user_id, u_id)</code><br /><br /><b>Return Type:</b><br /><code>{ user }</code></td>
+    <td><code>message/remove/v1</code><br /><br />Given a message_id for a message, this message is removed from the channel</td>
+    <td style="color: red; font-weight: bold;">DELETE</td>
+    <td><b>Parameters:</b><br /><code>(token, message_id)</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
+    <td>
+      <b>InputError</b> when any of:
+      <ul>
+        <li>Message (based on ID) no longer exists</li>
+      </ul>
+      <b>AccessError</b> when none of the following are true:
+      <ul>
+        <li>Message with message_id was sent by the authorised user making this request</li>
+        <li>The authorised user is an owner of this channel or the **Dreams**</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td><code>message/share/v1</code><br /><br /><code>og_message_id</code> is the original message. <code>channel_id</code> is the channel that the message is being shared to, and is <code>-1</code> if it is being sent to a DM. <code>dm_id</code> is the DM that the message is being shared to, and is <code>-1</code> if it is being sent to a channel.
+    <code>message</code> is the optional message in addition to the shared message</td>
+    <td style="font-weight: bold; color: blue;">POST</td>
+    <td><b>Parameters:</b><br /><code>(token, og_message_id, message, channel_id, dm_id)</code><br /><br /><b>Return Type:</b><br /><code>{shared_message_id}</code></td>
+    <td>AccessError when: <ul><li>the authorised user has not joined the channel or DM they are trying to share the message to</li>
+    </ul> </td>
+  </tr>
+  <tr>
+    <td><code>dm/details/v1</code><br /><br />Users that are part of this direct message can view basic information about the DM</td>
+    <td style="font-weight: bold; color: green;">GET</td>
+    <td><b>Parameters:</b><br /><code>(token, dm_id)</code><br /><br /><b>Return Type:</b><br /><code>{ name, members }</code></td>
+    <td>
+      <b>InputError</b> when any of:
+      <ul>
+        <li>DM ID is not a valid DM</li>
+      </ul>
+      <b>AccessError</b> when
+      <ul>
+        <li>Authorised user is not a member of this DM with dm_id</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td><code>dm/list/v1</code><br /><br />Returns the list of DMs that the user is a member of</td>
+    <td style="font-weight: bold; color: green;">GET</td>
+    <td><b>Parameters:</b><br /><code>(token)</code><br /><br /><b>Return Type:</b><br /><code>{ dms }</code></td>
+    <td> N/A </td>
+  </tr>
+  <tr>
+    <td><code>dm/create/v1</code><br /><br /><code>[u_id]</code> is the user(s) that this DM is directed to. <code>name</code> should be automatically generated based on the user(s) that is in this dm</td>
+    <td style="font-weight: bold; color: blue;">POST</td>
+    <td><b>Parameters:</b><br /><code>(token, [u_id])</code><br /><br /><b>Return Type:</b><br /><code>{ dm_id, dm_name }</code></td>
+    <td>
+      <b>InputError</b> when any of:
+      <ul>
+        <li> u_id does not refer to a valid user</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td><code>dm/remove/v1</code><br /><br />Remove an existing DM. This can only be done by the original creator of the DM.</td>
+    <td style="color: red; font-weight: bold;">DELETE</td>
+    <td><b>Parameters:</b><br /><code>(token, dm_id)</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
+    <td> InputError when: <ul> <li> dm_id does not refer to a valid DM </li>
+    </ul>
+    <b>AccessError</b> when: <ul> <li>the user is not the original DM creator</li>
+    </ul>
+
+  </td>
+  </tr>
+  <tr>
+    <td><code>dm/invite/v1</code><br /><br />Inviting a user to an existing dm</td>
+    <td style="font-weight: bold; color: blue;">POST</td>
+    <td><b>Parameters:</b><br /><code>(token, dm_id, u_id)</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
+    <td> <b>InputError</b> when any of: <ul>
+         <li> dm_id does not refer to an existing dm.</li>
+         <li> u_id does not refer to a valid user. </li>
+       </ul>
+        <b>AccessError</b> when: <ul>
+        <li>the authorised user is not already a member of the DM</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td><code>dm/leave/v1</code><br /><br />Given a DM ID, the user is removed as a member of this DM</td>
+    <td style="font-weight: bold; color: blue;">POST</td>
+    <td><b>Parameters:</b><br /><code>(token, dm_id)</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
+    <td>
+      <b>InputError</b> when any of:
+      <ul>
+        <li>dm_id is not a valid DM</li>
+      </ul>
+      <b>AccessError</b> when
+      <ul>
+        <li>Authorised user is not a member of DM with dm_id</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+     <td><code>dm/messages/v1</code><br /><br />Given a DM with ID dm_id that the authorised user is part of, return up to 50 messages between index "start" and "start + 50". Message with index 0 is the most recent message in the channel. This function returns a new index "end" which is the value of "start + 50", or, if this function has returned the least recent messages in the channel, returns -1 in "end" to indicate there are no more messages to load after this return.</td>
+    <td style="font-weight: bold; color: green;">GET</td>
+    <td><b>Parameters:</b><br /><code>(token, dm_id, start)</code><br /><br /><b>Return Type:</b><br /><code>{ messages, start, end }</code></td>
+    <td>
+      <b>InputError</b> when any of:
+      <ul>
+        <li>DM ID is not a valid channel</li>
+        <li>start is greater than the total number of messages in the channel</li>
+      </ul>
+      <b>AccessError</b> when any of:
+      <ul>
+        <li>Authorised user is not a member of DM with dm_id</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td><code>message/senddm/v1</code><br /><br />Send a message from authorised_user to the DM specified by dm_id. Note: Each message should have it's own unique ID. I.E. No messages should share an ID with another message, even if that other message is in a different channel or DM.</td>
+    <td style="font-weight: bold; color: blue;">POST</td>
+    <td><b>Parameters:</b><br /><code>(token, dm_id, message)</code><br /><br /><b>Return Type:</b><br /><code>{ message_id }</code></td>
+    <td>
+      <b>InputError</b> when any of:
+      <ul>
+        <li>Message is more than 1000 characters</li>
+      </ul>
+        <b>AccessError</b> when: <li> the authorised user is not a member of the DM they are trying to post to</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td><code>user/profile/v2</code><br /><br />For a valid user, returns information about their user_id, email, first name, last name, and handle</td>
+    <td style="font-weight: bold; color: green;">GET</td>
+    <td><b>Parameters:</b><br /><code>(token, u_id)</code><br /><br /><b>Return Type:</b><br /><code>{ user }</code></td>
     <td>
       <b>InputError</b> when any of:
       <ul>
@@ -539,8 +653,9 @@ These interface specifications come from Andrea and Andrew, who are building the
     </td>
   </tr>
   <tr>
-    <td><code>user_profile_setname_v1</code><br /><br />Update the authorised user's first and last name</td>
-    <td><b>Parameters:</b><br /><code>(auth_user_id, name_first, name_last)</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
+    <td><code>user/profile/setname/v2</code><br /><br />Update the authorised user's first and last name</td>
+    <td style="font-weight: bold; color: brown;">PUT</td>
+    <td><b>Parameters:</b><br /><code>(token, name_first, name_last)</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
     <td>
       <b>InputError</b> when any of:
       <ul>
@@ -548,18 +663,38 @@ These interface specifications come from Andrea and Andrew, who are building the
         <li>name_last is not between 1 and 50 characters inclusively in length</ul></ul></li>
   </tr>
   <tr>
-    <td><code>user_profile_setemail_v1</code><br /><br />Update the authorised user's email address</td>
-    <td><b>Parameters:</b><br /><code>(auth_user_id, email)</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
+    <td><code>user/profile/setemail/v2</code><br /><br />Update the authorised user's email address</td>
+    <td style="font-weight: bold; color: brown;">PUT</td>
+    <td><b>Parameters:</b><br /><code>(token, email)</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
     <td>
       <b>InputError</b> when any of:
       <ul>
         <li>Email entered is not a valid email using the method provided [here](https://www.geeksforgeeks.org/check-if-email-address-valid-or-not-in-python/) (unless you feel you have a better method).</li>
         <li>Email address is already being used by another user</li>
       </ul>
+  </tr>  
+  <tr>
+    <td><code>user/profile/sethandle/v1</code><br /><br />Update the authorised user's handle (i.e. display name)</td>
+    <td style="font-weight: bold; color: brown;">PUT</td>
+    <td><b>Parameters:</b><br /><code>(token, handle_str)</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
+    <td>
+      <b>InputError</b> when any of:
+      <ul>
+        <li>handle_str must be between 3 and 20 characters</li>
+        <li>handle is already used by another user</li>
+      </ul>
+    </td>
   </tr>
   <tr>
-    <td><code>search_v1</code><br /><br />Given a query string, return a collection of messages in all of the channels that the user has joined that match the query</td>
-    <td><b>Parameters:</b><br /><code>(auth_user_id, query_str)</code><br /><br /><b>Return Type:</b><br /><code>{ messages }</code></td>
+    <td><code>users/all/v1</code><br /><br />Returns a list of all users and their associated details</td>
+    <td style="font-weight: bold; color: green;">GET</td>
+    <td><b>Parameters:</b><br /><code>(token)</code><br /><br /><b>Return Type:</b><br /><code>{ users }</code></td>
+    <td>N/A</td>
+  </tr>
+  <tr>
+    <td><code>search/v2</code><br /><br />Given a query string, return a collection of messages in all of the channels that the user has joined that match the query</td>
+    <td style="font-weight: bold; color: green;">GET</td>
+    <td><b>Parameters:</b><br /><code>(token, query_str)</code><br /><br /><b>Return Type:</b><br /><code>{ messages }</code></td>
     <td>
       <b>InputError</b> when any of:
       <ul>
@@ -568,28 +703,66 @@ These interface specifications come from Andrea and Andrew, who are building the
     </td>
   </tr>
   <tr>
-    <td><code>clear_v1</code><br /><br />Resets the internal data of the application to it's initial state</td>
-    <td><b>Parameters:</b><br /><code>()</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
+    <td><code>admin/user/remove/v1</code><br /><br />Given a User by their user ID, remove the user from the Dreams. Dreams owners can remove other **Dreams** owners (including the original first owner). Once users are removed from **Dreams**, the messages they sent will be replaced by ‘Removed user’</td>
+    <td style="color: red; font-weight: bold;">DELETE</td>
+    <td><b>Parameters:</b><br /><code>(token, u_id)</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
+    <td>
+      <b>InputError</b> when
+      <ul>
+        <li>u_id does not refer to a valid user</li>
+        <li>The user is currently the only owner</li>
+      </ul>
+      <b>AccessError</b> when
+      <ul>
+        <li>The authorised user is not an owner</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td><code>admin/userpermission/change/v1</code><br /><br />Given a User by their user ID, set their permissions to new permissions described by permission_id</td>
+    <td style="font-weight: bold; color: blue;">POST</td>
+    <td><b>Parameters:</b><br /><code>(token, u_id, permission_id)</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
+    <td>
+      <b>InputError</b> when any of:
+      <ul>
+        <li>u_id does not refer to a valid user<li>permission_id does not refer to a value permission</li>
+      </ul>
+      <b>AccessError</b> when
+      <ul>
+        <li>The authorised user is not an owner</li>
+      </ul></li>
+  </tr>
+  <tr>
+    <td><code>notifications/get/v1</code><br /><br />Return the user's most recent 20 notifications</td>
+    <td style="font-weight: bold; color: green;">GET</td>
+    <td><b>Parameters:</b><br /><code>(token)</code><br /><br /><b>Return Type:</b><br /><code>{ notifications }</code></td>
     <td>N/A</td>
   </tr>
+  <tr>
+    <td><code>clear/v1</code><br /><br />Resets the internal data of the application to it's initial state</td>
+    <td style="color: red; font-weight: bold;">DELETE</td>
+    <td><b>Parameters:</b><br /><code>()</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
+    <td>N/A</td>
+  </tr> 
 </table>
 
 ### 6.3. Errors for all functions
 
 Either an `InputError` or `AccessError` is thrown when something goes wrong. All of these cases are listed in the **Interface** table.
 
-One exception is that, even though it's not listed in the table, for all functions except `auth/register`, `auth/login`, `auth/passwordreset/request` (iteration 3) and `auth/passwordreset/reset` (iteration 3), an `AccessError` is thrown when the auth_user_id passed in is not a valid id.
+One exception is that, even though it's not listed in the table, for all functions except `auth/register`, `auth/login`, `auth/passwordreset/request` (iteration 3) and `auth/passwordreset/reset` (iteration 3), an `AccessError` is thrown when the token passed in is not a valid id.
 
 ### 6.4. Pagination
 
 The behaviour in which channel_messages returns data is called **pagination**. It's a commonly used method when it comes to getting theoretially unbounded amounts of data from a server to display on a page in chunks. Most of the timelines you know and love - Facebook, Instagram, LinkedIn - do this.
 
-For example, in iteration 1, if we imagine a user with `auth_user_id` "12345" is trying to read messages from channel with ID 6, and this channel has 124 messages in it, 3 calls from the client to the server would be made. These calls, and their corresponding return values would be:
- * channel_messages(12345, 6, 0) => { [messages], 0, 50 }
- * channel_messages(12345, 6, 50) => { [messages], 50, 100 }
- * channel_messages(12345, 6, 100) => { [messages], 100, -1 }
+For example, in iteration 1, if we imagine a user with `token` "12345" is trying to read messages from channel with ID 6, and this channel has 124 messages in it, 3 calls from the client to the server would be made. These calls, and their corresponding return values would be:
+ * channel_messages("12345", 6, 0) => { [messages], 0, 50 }
+ * channel_messages("12345", 6, 50) => { [messages], 50, 100 }
+ * channel_messages("12345", 6, 100) => { [messages], 100, -1 }
 
-### 6.5. Permissions
+### 6.5. Permissions:
+
  * Members in a channel have one of two channel permissions.
    1) Owner of the channel (the person who created it, and whoever else that creator adds)
    2) Members of the channel
@@ -602,6 +775,56 @@ A user's primary permissions are their global permissions. Then the channel perm
 * An owner of **Dreams** has owner permissions in every channel they've joined
 * A member of **Dreams** is a member in channels they are not owners of
 * A member of **Dreams** is an owner in channels they are owners of
+
+### 6.6. Token
+
+Many of these functions (nearly all of them) need to be called from the perspective of a user who is logged in already. When calling these "authorised" functions, we need to know:
+1) Which user is calling it
+2) That the person who claims they are that user, is actually that user
+
+We could solve this trivially by storing the user ID of the logged in user on the front end, and every time the front end (from Andrea and Andrew) calls your background, they just sent a user ID. This solves our first problem (1), but doesn't solve our second problem! Because someone could just "hack" the front end and change their user id and then log themselves in as someone else.
+
+To solve this when a user logs in or registers the backend should return a "token" (an authorisation hash) that the front end will store and pass into most of your functions in future. When these "authorised" functions are called, those tokens returned from register/login will be passed into those functions, and from there you can check if a token or token is valid, and determine the user ID.
+
+Passwords must be stored in an encrypted form, and tokens must use JWTs (or similar).
+
+### 6.7. Working with the frontend
+
+There is a SINGLE repository available for all students at https://gitlab.cse.unsw.edu.au/COMP1531/21T1/project-frontend. You can clone this frontend locally. The course notice said you will receive your own copy of this, however, that isn't necessary anymore since most groups will not modify the frontend repo. If you'd like to modify the frontend repo (i.e. teach yourself some frontend), please FORK the repository.
+
+If you run the frontend at the same time as your flask server is running on the backend, then you can power the frontend via your backend.
+
+#### 6.7.1.
+
+A working example of the frontend can be used at http://**Dreams**-unsw.herokuapp.com/
+
+The data is reset daily, but you can use this link to play around and get a feel for how the application should behave.
+
+#### 6.7.2. Error raising for the frontend
+
+For errors to be appropriately raised on the frontend, they must be raised by the following:
+
+```python
+if True: # condition here
+    raise InputError(description='Description of problem')
+```
+
+The descriptions will not be assessed, they are just there for the frontend to help users.
+
+The types in error.py have been modified appropriately for you.
+
+
+### 6.8. Tagging users
+
+A user is tagged when a message contains the @ symbol, followed immediately by the user’s handle. If the handle is invalid, or the user is not a member of the channel, no one is tagged.
+
+### 6.9. User Sessions
+
+Iteration 2 introduces the concept of `sessions`. With sessions, when a user logs in or registers, they receive a "token" (think of it like a ticket to a concert). These tokens are stored on the web browser, and nearly every time that user wants to make a request to the server, they will pass this "token" as part of this request. In this way, the server is able to take this token, look at it (like checking a ticket), and determine whether it's really you or not.
+
+This notion of a session is explored in the authentication (Hashing) & authorisation (JWT), and is an expectation that it is implemented in iteration 2 and beyond.
+
+For iteration 2 and beyond, we also expect you to handle multiple concurrent sessions. I.E. One user can log in on two different browser tabs, click logout on tab 1, but still functionally use the website on tab 2.
 
 ## 7. Due Dates and Weightings
 
