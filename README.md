@@ -15,6 +15,10 @@
   9. Other Expectations
   10. Plagiarism
 
+## 0. Change Log
+
+* 12/03: Extended Iteration due date by 1 day, fixed up marking criteria to add to 100%
+
 ## 1. Aims:
 
 * To provide students with hands on experience testing, developing, and maintaining a backend server in python.
@@ -210,7 +214,7 @@ Hint: Yes, your `v2` routes can use the `X_Y_v1` functions you had in iteration 
   </ul>
   <tr>
     <td>Git & Project Management</td>
-    <td>15%</td>
+    <td>20%</td>
     <td><ul>
       <li>Meaningful and informative git commit names being used</li>
       <li>At least 12 merge requests into master made</li>
@@ -831,7 +835,7 @@ For iteration 2 and beyond, we also expect you to handle multiple concurrent ses
 |Iteration|Due date                             |Demonstration to tutor(s)      |Assessment weighting of project (%)|
 |---------|-------------------------------------|-------------------------------|-----------------------------------|
 |   1     |10am Monday 8th March (**week 4**)   |In YOUR **week 4** laboratory  |30%                                |
-|   2     |10am Monday 5th April (**week 8**)   |In YOUR **week 8** laboratory  |40%                                |
+|   2     |10am Tuesday 5th April (**week 8**)   |In YOUR **week 8** laboratory  |40%                                |
 |   3     |10am Monday 19th April (**week 10**)   |In YOUR **week 10** laboratory |30%                                |
 
 ### 7.1. Late Penalties
