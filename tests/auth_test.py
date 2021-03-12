@@ -60,7 +60,7 @@ def test_auth_login_valid_single_user():
 
 def test_auth_login_valid_multiple_users():
     clear_v1()
-    id_1 = auth_register_v1('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    auth_register_v1('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     id_2 = auth_register_v1('another@gmail.com', 'anoth432$%^', 'Random', 'Stranger')
     id_3 = auth_register_v1('randomguy@gmail.com', 'abcEZ!123', 'Haydena', 'Friend')
     assert auth_login_v1('another@gmail.com', 'anoth432$%^') == id_2
