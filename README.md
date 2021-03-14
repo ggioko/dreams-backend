@@ -18,6 +18,7 @@
 ## 0. Change Log
 
 * 12/03: Extended Iteration due date by 1 day, fixed up marking criteria to add to 100%
+* 14/03: Correct `error.py` file pushed to repository
 
 ## 1. Aims:
 
