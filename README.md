@@ -18,7 +18,16 @@
 ## 0. Change Log
 
 * 12/03: Extended Iteration due date by 1 day, fixed up marking criteria to add to 100%
-* 14/03: Correct `error.py` file pushed to repository
+* 14/03: See commit for more info, non-trivial clarifications include:
+  * Correct `error.py` file pushed to repository
+  * Clarity on `handle_str` length when updating str
+  * Adding some missing locations that show when behaviour on channels is the same as behaviour on DMs
+  * Clarity on behaviour on how contents of message are changed when an admin removes a user
+  * Valid email format re-added to spec (accidentally removed)
+  * Clarified the data type of `notifications`
+  * `dm/create/v1` behaviour clarified
+  * `message/share/v1` behaviour clarified in cases where no message is given
+  * <b>Behaviour of `handle` generation on `auth/register` clarified. The handle is truncated to 20 characters during concatenation, but the process of adding the number at the end can extend the 20 characters.</b> For groups that have implemented this behaviour differently (as per some forum posts), you are allowed to keep that implementation and you will not lose marks.
 
 ## 1. Aims:
 
@@ -313,7 +322,7 @@ These interface specifications come from Andrea and Andrew, who are building the
   </tr>
   <tr>
     <td>(outputs only) named exactly <b>notifications</b></td>
-    <td>List of dictionaries, where each dictionary contains types { channel_id, dm_id, notification_message } where channel_id is the id of the channel that the event happened in, and is <code>-1</code> if it is being sent to a DM. dm_id is the DM that the event happened in, and is <code>-1</code> if it is being sent to a channel. Notification_message is a string of the following format for each trigger action:<ul><li>tagged: "{User’s handle} tagged you in {channel name}: {first 20 characters of the message}"</li>  <li>reacted message: "{User’s handle} reacted to your message in {channel name}"</li><li>added to a channel: "{User’s handle} added you to {channel name}"</li></ul>
+    <td>List of dictionaries, where each dictionary contains types { channel_id, dm_id, notification_message } where channel_id is the id of the channel that the event happened in, and is <code>-1</code> if it is being sent to a DM. dm_id is the DM that the event happened in, and is <code>-1</code> if it is being sent to a channel. The list should be ordered from most to least recent. Notification_message is a string of the following format for each trigger action:<ul><li>tagged: "{User’s handle} tagged you in {channel/DM name}: {first 20 characters of the message}"</li>  <li>reacted message: "{User’s handle} reacted to your message in {channel/DM name}"</li><li>added to a channel/DM: "{User’s handle} added you to {channel/DM name}"</li></ul>
     </td>
   </tr>
 </table>
@@ -341,7 +350,7 @@ These interface specifications come from Andrea and Andrew, who are building the
     </td>
   </tr>
   <tr>
-    <td><code>auth/register/v2</code><br /><br />Given a user's first and last name, email address, and password, create a new account for them and return a new `token` for that session. A handle is generated that is the concatenation of a lowercase-only first name and last name. If the concatenation is longer than 20 characters, it is cutoff at 20 characters. The handle will not include any whitespace or the '@' character. If the handle is already taken, append the concatenated names with the smallest number (starting from 0) that forms a new handle that isn't already taken. The addition of this final number may result in the handle exceeding the 20 character limit.</td>
+    <td><code>auth/register/v2</code><br /><br />Given a user's first and last name, email address, and password, create a new account for them and return a new `token` for that session. A handle is generated that is the concatenation of a lowercase-only first name and last name. If the concatenation is longer than 20 characters, it is cutoff at 20 characters. The handle will not include any whitespace or the '@' character. Once you've concatenated it, if the handle is once again taken, append the concatenated names with the smallest number (starting from 0) that forms a new handle that isn't already taken. The addition of this final number may result in the handle exceeding the 20 character limit.</td>
     <td style="font-weight: bold; color: blue;">POST</td>
     <td><b>Parameters:</b><br /><code>(email, password, name_first, name_last)</code><br /><br /><b>Return Type:</b><br /><code>{ token, auth_user_id }</code></td>
     <td>
@@ -518,12 +527,12 @@ These interface specifications come from Andrea and Andrew, who are building the
       <b>AccessError</b> when none of the following are true:
       <ul>
         <li>Message with message_id was sent by the authorised user making this request</li>
-        <li>The authorised user is an owner of this channel or the **Dreams**</li>
+        <li>The authorised user is an owner of this channel (if it was sent to a channel) or the **Dreams**</li>
       </ul>
     </td>
   </tr>
   <tr>
-    <td><code>message/remove/v1</code><br /><br />Given a message_id for a message, this message is removed from the channel</td>
+    <td><code>message/remove/v1</code><br /><br />Given a message_id for a message, this message is removed from the channel/DM</td>
     <td style="color: red; font-weight: bold;">DELETE</td>
     <td><b>Parameters:</b><br /><code>(token, message_id)</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
     <td>
@@ -534,13 +543,13 @@ These interface specifications come from Andrea and Andrew, who are building the
       <b>AccessError</b> when none of the following are true:
       <ul>
         <li>Message with message_id was sent by the authorised user making this request</li>
-        <li>The authorised user is an owner of this channel or the **Dreams**</li>
+        <li>The authorised user is an owner of this channel (if it was sent to a channel) or the **Dreams**</li>
       </ul>
     </td>
   </tr>
   <tr>
     <td><code>message/share/v1</code><br /><br /><code>og_message_id</code> is the original message. <code>channel_id</code> is the channel that the message is being shared to, and is <code>-1</code> if it is being sent to a DM. <code>dm_id</code> is the DM that the message is being shared to, and is <code>-1</code> if it is being sent to a channel.
-    <code>message</code> is the optional message in addition to the shared message</td>
+    <code>message</code> is the optional message in addition to the shared message, and will be an empty string <code>''</code> if no message is given</td>
     <td style="font-weight: bold; color: blue;">POST</td>
     <td><b>Parameters:</b><br /><code>(token, og_message_id, message, channel_id, dm_id)</code><br /><br /><b>Return Type:</b><br /><code>{shared_message_id}</code></td>
     <td>AccessError when: <ul><li>the authorised user has not joined the channel or DM they are trying to share the message to</li>
@@ -568,7 +577,7 @@ These interface specifications come from Andrea and Andrew, who are building the
     <td> N/A </td>
   </tr>
   <tr>
-    <td><code>dm/create/v1</code><br /><br /><code>[u_id]</code> is the user(s) that this DM is directed to. <code>name</code> should be automatically generated based on the user(s) that is in this dm</td>
+    <td><code>dm/create/v1</code><br /><br /><code>[u_id]</code> is the user(s) that this DM is directed to. <code>name</code> should be automatically generated based on the user(s) that is in this dm. The name should be an alphabetically-sorted, comma-separated list of user handles, e.g. 'handle1, handle2, handle3'.</td>
     <td style="font-weight: bold; color: blue;">POST</td>
     <td><b>Parameters:</b><br /><code>(token, [u_id])</code><br /><br /><b>Return Type:</b><br /><code>{ dm_id, dm_name }</code></td>
     <td>
@@ -624,7 +633,7 @@ These interface specifications come from Andrea and Andrew, who are building the
     <td>
       <b>InputError</b> when any of:
       <ul>
-        <li>DM ID is not a valid channel</li>
+        <li>DM ID is not a valid DM</li>
         <li>start is greater than the total number of messages in the channel</li>
       </ul>
       <b>AccessError</b> when any of:
@@ -685,7 +694,7 @@ These interface specifications come from Andrea and Andrew, who are building the
     <td>
       <b>InputError</b> when any of:
       <ul>
-        <li>handle_str must be between 3 and 20 characters</li>
+        <li>handle_str is not between 3 and 20 characters inclusive</li>
         <li>handle is already used by another user</li>
       </ul>
     </td>
@@ -697,7 +706,7 @@ These interface specifications come from Andrea and Andrew, who are building the
     <td>N/A</td>
   </tr>
   <tr>
-    <td><code>search/v2</code><br /><br />Given a query string, return a collection of messages in all of the channels that the user has joined that match the query</td>
+    <td><code>search/v2</code><br /><br />Given a query string, return a collection of messages in all of the channels/DMs that the user has joined that match the query</td>
     <td style="font-weight: bold; color: green;">GET</td>
     <td><b>Parameters:</b><br /><code>(token, query_str)</code><br /><br /><b>Return Type:</b><br /><code>{ messages }</code></td>
     <td>
@@ -708,7 +717,7 @@ These interface specifications come from Andrea and Andrew, who are building the
     </td>
   </tr>
   <tr>
-    <td><code>admin/user/remove/v1</code><br /><br />Given a User by their user ID, remove the user from the Dreams. Dreams owners can remove other **Dreams** owners (including the original first owner). Once users are removed from **Dreams**, the messages they sent will be replaced by ‘Removed user’</td>
+    <td><code>admin/user/remove/v1</code><br /><br />Given a User by their user ID, remove the user from the Dreams. Dreams owners can remove other **Dreams** owners (including the original first owner). Once users are removed from **Dreams**, the contents of the messages they sent will be replaced by 'Removed user'. Their profile must still be retrievable with user/profile/v2, with their name replaced by 'Removed user'. </td>
     <td style="color: red; font-weight: bold;">DELETE</td>
     <td><b>Parameters:</b><br /><code>(token, u_id)</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
     <td>
@@ -766,6 +775,8 @@ For example, in iteration 1, if we imagine a user with `token` "12345" is trying
  * channel_messages("12345", 6, 50) => { [messages], 50, 100 }
  * channel_messages("12345", 6, 100) => { [messages], 100, -1 }
 
+Pagination should also apply to DMs.
+
 ### 6.5. Permissions:
 
  * Members in a channel have one of two channel permissions.
@@ -821,7 +832,7 @@ The types in error.py have been modified appropriately for you.
 
 ### 6.8. Tagging users
 
-A user is tagged when a message contains the @ symbol, followed immediately by the user’s handle. If the handle is invalid, or the user is not a member of the channel, no one is tagged.
+A user is tagged when a message contains the @ symbol, followed immediately by the user’s handle. If the handle is invalid, or the user is not a member of the channel or DM, no one is tagged.
 
 ### 6.9. User Sessions
 
@@ -830,6 +841,17 @@ Iteration 2 introduces the concept of `sessions`. With sessions, when a user log
 This notion of a session is explored in the authentication (Hashing) & authorisation (JWT), and is an expectation that it is implemented in iteration 2 and beyond.
 
 For iteration 2 and beyond, we also expect you to handle multiple concurrent sessions. I.E. One user can log in on two different browser tabs, click logout on tab 1, but still functionally use the website on tab 2.
+
+### 6.10. Valid email format
+
+A valid email should match the following regular expression:
+
+```
+'^[a-zA-Z0-9]+[\\._]?[a-zA-Z0-9]+[@]\\w+[.]\\w{2,3}$'
+```
+
+The python `re` (regular expression) module allows you to determine whether a string matches a regular expression. You do not need to understand regular expressions to effectively utilise the `re` module to check if the email is correct.
+
 
 ## 7. Due Dates and Weightings
 
