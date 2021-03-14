@@ -858,7 +858,7 @@ The python `re` (regular expression) module allows you to determine whether a st
 |Iteration|Due date                             |Demonstration to tutor(s)      |Assessment weighting of project (%)|
 |---------|-------------------------------------|-------------------------------|-----------------------------------|
 |   1     |10am Monday 8th March (**week 4**)   |In YOUR **week 4** laboratory  |30%                                |
-|   2     |10am Tuesday 5th April (**week 8**)   |In YOUR **week 8** laboratory  |40%                                |
+|   2     |10am Tuesday 6th April (**week 8**)   |In YOUR **week 8** laboratory  |40%                                |
 |   3     |10am Monday 19th April (**week 10**)   |In YOUR **week 10** laboratory |30%                                |
 
 ### 7.1. Late Penalties
