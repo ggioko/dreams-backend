@@ -28,6 +28,10 @@
   * `dm/create/v1` behaviour clarified
   * `message/share/v1` behaviour clarified in cases where no message is given
   * <b>Behaviour of `handle` generation on `auth/register` clarified. The handle is truncated to 20 characters during concatenation, but the process of adding the number at the end can extend the 20 characters.</b> For groups that have implemented this behaviour differently (as per some forum posts), you are allowed to keep that implementation and you will not lose marks.
+* 16/03:
+  * Clarified that messages from users in a channel should remain after they leave the channel
+  * Clarified the parameters of dm/create
+  * Specified that the creator of a DM is also the owner
 
 ## 1. Aims:
 
