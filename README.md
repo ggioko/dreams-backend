@@ -22,12 +22,16 @@
   * Correct `error.py` file pushed to repository
   * Clarity on `handle_str` length when updating str
   * Adding some missing locations that show when behaviour on channels is the same as behaviour on DMs
-  * Clarity on behaviour on how contents of message are changed when an admin removes a user
+  * Clarity on behaviour on how contents of messages are changed when an admin removes a user
   * Valid email format re-added to spec (accidentally removed)
   * Clarified the data type of `notifications`
   * `dm/create/v1` behaviour clarified
   * `message/share/v1` behaviour clarified in cases where no message is given
   * <b>Behaviour of `handle` generation on `auth/register` clarified. The handle is truncated to 20 characters during concatenation, but the process of adding the number at the end can extend the 20 characters.</b> For groups that have implemented this behaviour differently (as per some forum posts), you are allowed to keep that implementation and you will not lose marks.
+* 16/03:
+  * Clarified that messages from users in a channel should remain after they leave the channel
+  * Clarified the parameters of dm/create
+  * Specified that the creator of a DM is also the owner
 
 ## 1. Aims:
 
@@ -464,7 +468,7 @@ These interface specifications come from Andrea and Andrew, who are building the
     </td>
   </tr>
   <tr>
-    <td><code>channel/leave/v1</code><br /><br />Given a channel ID, the user removed as a member of this channel</td>
+    <td><code>channel/leave/v1</code><br /><br />Given a channel ID, the user removed as a member of this channel. Their messages should remain in the channel</td>
     <td style="font-weight: bold; color: blue;">POST</td>
     <td><b>Parameters:</b><br /><code>(token, channel_id)</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
     <td>
@@ -577,7 +581,7 @@ These interface specifications come from Andrea and Andrew, who are building the
     <td> N/A </td>
   </tr>
   <tr>
-    <td><code>dm/create/v1</code><br /><br /><code>[u_id]</code> is the user(s) that this DM is directed to. <code>name</code> should be automatically generated based on the user(s) that is in this dm. The name should be an alphabetically-sorted, comma-separated list of user handles, e.g. 'handle1, handle2, handle3'.</td>
+    <td><code>dm/create/v1</code><br /><br /><code>[u_id]</code> is the user(s) that this DM is directed to, and will not include the creator. The creator is the owner of the DM. <code>name</code> should be automatically generated based on the user(s) that is in this dm. The name should be an alphabetically-sorted, comma-separated list of user handles, e.g. 'handle1, handle2, handle3'.</td>
     <td style="font-weight: bold; color: blue;">POST</td>
     <td><b>Parameters:</b><br /><code>(token, [u_id])</code><br /><br /><b>Return Type:</b><br /><code>{ dm_id, dm_name }</code></td>
     <td>
