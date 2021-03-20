@@ -32,6 +32,7 @@
   * Clarified that messages from users in a channel should remain after they leave the channel
   * Clarified the parameters of dm/create
   * Specified that the creator of a DM is also the owner
+* 20/03: Fixed parameters of dm/create
 
 ## 1. Aims:
 
@@ -329,6 +330,10 @@ These interface specifications come from Andrea and Andrew, who are building the
     <td>List of dictionaries, where each dictionary contains types { channel_id, dm_id, notification_message } where channel_id is the id of the channel that the event happened in, and is <code>-1</code> if it is being sent to a DM. dm_id is the DM that the event happened in, and is <code>-1</code> if it is being sent to a channel. The list should be ordered from most to least recent. Notification_message is a string of the following format for each trigger action:<ul><li>tagged: "{User’s handle} tagged you in {channel/DM name}: {first 20 characters of the message}"</li>  <li>reacted message: "{User’s handle} reacted to your message in {channel/DM name}"</li><li>added to a channel/DM: "{User’s handle} added you to {channel/DM name}"</li></ul>
     </td>
   </tr>
+  <tr>
+    <td>named exactly <b>u_ids</b></td>
+    <td>List of user ids</td>
+  </tr>
 </table>
 
 ### 6.2. Interface
@@ -581,9 +586,9 @@ These interface specifications come from Andrea and Andrew, who are building the
     <td> N/A </td>
   </tr>
   <tr>
-    <td><code>dm/create/v1</code><br /><br /><code>[u_id]</code> is the user(s) that this DM is directed to, and will not include the creator. The creator is the owner of the DM. <code>name</code> should be automatically generated based on the user(s) that is in this dm. The name should be an alphabetically-sorted, comma-separated list of user handles, e.g. 'handle1, handle2, handle3'.</td>
+    <td><code>dm/create/v1</code><br /><br /><code>u_ids</code> contains the user(s) that this DM is directed to, and will not include the creator. The creator is the owner of the DM. <code>name</code> should be automatically generated based on the user(s) that is in this dm. The name should be an alphabetically-sorted, comma-separated list of user handles, e.g. 'handle1, handle2, handle3'.</td>
     <td style="font-weight: bold; color: blue;">POST</td>
-    <td><b>Parameters:</b><br /><code>(token, [u_id])</code><br /><br /><b>Return Type:</b><br /><code>{ dm_id, dm_name }</code></td>
+    <td><b>Parameters:</b><br /><code>(token, u_ids)</code><br /><br /><b>Return Type:</b><br /><code>{ dm_id, dm_name }</code></td>
     <td>
       <b>InputError</b> when any of:
       <ul>
