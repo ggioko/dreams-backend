@@ -33,6 +33,7 @@
   * Clarified the parameters of dm/create
   * Specified that the creator of a DM is also the owner
 * 20/03: Fixed parameters of dm/create
+* 26/03: Removed "React" from the notification data type, as that isn't until iteration 3
 
 ## 1. Aims:
 
@@ -327,7 +328,7 @@ These interface specifications come from Andrea and Andrew, who are building the
   </tr>
   <tr>
     <td>(outputs only) named exactly <b>notifications</b></td>
-    <td>List of dictionaries, where each dictionary contains types { channel_id, dm_id, notification_message } where channel_id is the id of the channel that the event happened in, and is <code>-1</code> if it is being sent to a DM. dm_id is the DM that the event happened in, and is <code>-1</code> if it is being sent to a channel. The list should be ordered from most to least recent. Notification_message is a string of the following format for each trigger action:<ul><li>tagged: "{User’s handle} tagged you in {channel/DM name}: {first 20 characters of the message}"</li>  <li>reacted message: "{User’s handle} reacted to your message in {channel/DM name}"</li><li>added to a channel/DM: "{User’s handle} added you to {channel/DM name}"</li></ul>
+    <td>List of dictionaries, where each dictionary contains types { channel_id, dm_id, notification_message } where channel_id is the id of the channel that the event happened in, and is <code>-1</code> if it is being sent to a DM. dm_id is the DM that the event happened in, and is <code>-1</code> if it is being sent to a channel. The list should be ordered from most to least recent. Notification_message is a string of the following format for each trigger action:<ul><li>tagged: "{User’s handle} tagged you in {channel/DM name}: {first 20 characters of the message}"</li><li>added to a channel/DM: "{User’s handle} added you to {channel/DM name}"</li></ul>
     </td>
   </tr>
   <tr>
