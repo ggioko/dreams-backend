@@ -4,6 +4,7 @@ from flask import Flask, request
 from flask_cors import CORS
 from src.error import InputError
 from src import config
+from src.auth import auth_register_v2
 
 def defaultHandler(err):
     response = err.get_response()
@@ -30,6 +31,22 @@ def echo():
    	    raise InputError(description='Cannot echo "echo"')
     return dumps({
         'data': data
+    })
+
+# Auth register function
+@APP.route("/auth/register/v2", methods=['POST'])
+def register():
+    data = request.get_json()
+    email = data['email']
+    password = data['password']
+    name_first = data['name_first']
+    name_last = data['name_last']
+
+    data = auth_register_v2(email,password,name_first,name_last)
+
+    return dumps({
+        'token' : data['token'],
+        'auth_user_id' : data['auth_user_id']
     })
 
 if __name__ == "__main__":

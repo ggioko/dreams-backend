@@ -159,7 +159,7 @@ def auth_register_v2(email, password, name_first, name_last):
                     email format
 
     Return Value:
-        Returns {'auth_user_id': id, 'token' : token} on success
+        Returns {'token' : token, 'auth_user_id': id} on success
 
     """
     # Check if users data is empty
