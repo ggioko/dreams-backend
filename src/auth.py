@@ -6,10 +6,12 @@ import jwt
 KEY = 'dorito'
 
 def get_token(user_data):
-    return 1
+    token = str(jwt.encode({'u_id' : user_data['u_id']}, KEY, algorithm='HS256'))
+    data['active_tokens'].append(token)
+    return token
 
 def get_user_data(data_type):
-    pass
+    return [data['users'][c][data_type] for c in range(len(data['users']))]
 
 """
 Given a registered users' email and password and returns their `auth_user_id` value
