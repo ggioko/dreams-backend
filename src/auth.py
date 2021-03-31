@@ -80,7 +80,7 @@ def auth_register_v1(email, password, name_first, name_last):
                     email format
 
     Return Value:
-        Returns {'auth_user_id': id, on success
+        Returns {'auth_user_id': id,} on success
 
     """
     # Check if users data is empty
@@ -167,7 +167,7 @@ def auth_register_v2(email, password, name_first, name_last):
         
         # Email in use check
         if email_in_use(email) == True:
-            raise InputError('Email already in use')
+            raise InputError(description='Email already in use')
 
         # Gets a new id
         ids = get_user_data('u_id')
@@ -199,7 +199,7 @@ def auth_register_v2(email, password, name_first, name_last):
 
     # Name size check
     if len(name_first) < 1 or len(name_first) > 50:
-        raise InputError('First name needs to be between 1 and 50 characters')
+        raise InputError(description='First name needs to be between 1 and 50 characters')
     if len(name_last) < 1 or len(name_last) > 50:
         raise InputError(description='Last name needs to be between 1 and 50 characters')
 
