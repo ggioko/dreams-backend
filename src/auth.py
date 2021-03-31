@@ -1,6 +1,15 @@
 from src.error import InputError
 from src.data import data
 import re
+import jwt
+
+KEY = 'dorito'
+
+def get_token(user_data):
+    return 1
+
+def get_user_data(data_type):
+    pass
 
 """
 Given a registered users' email and password and returns their `auth_user_id` value
@@ -47,35 +56,35 @@ def auth_login_v1(email, password):
     else:
         raise InputError('No registered users detected')
 
-"""
-Registers the user and puts their information into a database
-
-Arguments:
-    email (string)    - Users email
-    password (string)    - Users set password
-    name_first (string)    - Users first name
-    name_last (string)    - Users last name
-
-Exceptions:
-    InputError  - Occurs when email in use, password shorter than 6 characters
-                first name or last name not within 1-50 characters, incorrect 
-                email format
-
-Return Value:
-    Returns {'auth_user_id': id,} on success
-
-"""
 
 def auth_register_v1(email, password, name_first, name_last):
+    """
+    Registers the user and puts their information into a database
+
+    Arguments:
+        email (string)    - Users email
+        password (string)    - Users set password
+        name_first (string)    - Users first name
+        name_last (string)    - Users last name
+
+    Exceptions:
+        InputError  - Occurs when email in use, password shorter than 6 characters
+                    first name or last name not within 1-50 characters, incorrect 
+                    email format
+
+    Return Value:
+        Returns {'auth_user_id': id,} on success
+
+    """
     # Check if users data is empty
     if len(data['users']) != 0:
         # Email in use check
-        emails = [data['users'][c]['email'] for c in range(len(data['users']))]
+        emails = get_user_data('email')
         if email in emails:
             raise InputError('Email already in use')
 
         # Gets a new id
-        ids = [data['users'][c]['u_id'] for c in range(len(data['users']))]
+        ids = get_user_data('u_id')
         for i in range(1,len(data['users']) + 2):
             if i not in ids:
                 id = i
@@ -84,7 +93,7 @@ def auth_register_v1(email, password, name_first, name_last):
         # Creates a new handle
         handle = name_first + name_last
         handle = handle[0:20]
-        handles = [data['users'][c]['handle_str'] for c in range(len(data['users']))]
+        handles = get_user_data('handle_str')
         duplicate = True
         count = 0
         while duplicate:
@@ -122,5 +131,9 @@ def auth_register_v1(email, password, name_first, name_last):
         'handle_str': handle,
     }
     data['users'].append(user)
+    token = get_token(user)
 
-    return {'auth_user_id':id}
+    return {
+        'token' : token,
+        'auth_user_id' : id, 
+    }

@@ -52,4 +52,5 @@ data = {
         ],
         },
     ],
+    'active_tokens' : []
 }
