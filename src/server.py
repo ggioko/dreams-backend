@@ -4,6 +4,7 @@ from flask import Flask, request
 from flask_cors import CORS
 from src.error import InputError
 from src import config
+from src.other import clear_v1
 
 def defaultHandler(err):
     response = err.get_response()
@@ -31,6 +32,15 @@ def echo():
     return dumps({
         'data': data
     })
+
+# Example
+@APP.route("/clear/v1", methods=['DELETE'])
+def clear():
+    """
+    Function to call clear_v1
+    """
+    clear_v1()
+    return dumps({})
 
 if __name__ == "__main__":
     APP.run(port=config.port) # Do not edit this port
