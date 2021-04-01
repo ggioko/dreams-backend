@@ -2,11 +2,12 @@ from src.error import InputError
 from src.data import data
 import re
 import jwt
+import hashlib
 
-KEY = 'dorito'
+SECRET = 'dorito'
 
 def get_token(user_data):
-    token = str(jwt.encode({'u_id' : user_data['u_id']}, KEY, algorithm='HS256'))
+    token = jwt.encode({'u_id' : user_data['u_id']}, SECRET, algorithm='HS256')
     data['active_tokens'].append(token)
     return token
 
@@ -211,7 +212,7 @@ def auth_register_v2(email, password, name_first, name_last):
     user = {
         'u_id': id,
         'email': email,
-        'password' : password,
+        'password' : hashlib.sha256(password.encode()).hexdigest(),
         'name_first': name_first,
         'name_last': name_last,
         'handle_str': handle,

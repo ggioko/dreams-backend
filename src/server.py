@@ -33,9 +33,15 @@ def echo():
         'data': data
     })
 
-# Auth register function
 @APP.route("/auth/register/v2", methods=['POST'])
 def register():
+    """
+    Gets user data from http json and passes it to the
+    auth_register_v2 function
+
+    Returns {'token' : token, 'auth_user_id': id} on success
+
+    """
     data = request.get_json()
     email = data['email']
     password = data['password']
