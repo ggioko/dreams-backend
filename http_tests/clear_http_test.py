@@ -7,4 +7,4 @@ def test_echo():
     '''
     A simple test for clear
     '''
-    assert requests.get(config.url + 'clear/v1')
+    assert requests.get(config.url + '/clear/v1')
