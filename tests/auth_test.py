@@ -9,7 +9,7 @@ from src.other import clear_v1
 def test_auth_register_valid():
     clear_v1()
     id1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
-    id2 = auth_register_v2('valid2email@gmail.com', '123abc!@#', 'Haydens', 'Everests')
+    id2 = auth_register_v2('valid2email@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     assert id1['auth_user_id'] != id2['auth_user_id']
     assert id1['token'] != id2['token']
 
