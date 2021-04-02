@@ -1,8 +1,7 @@
 import pytest
-from src.auth import auth_login_v1, auth_login_v2, auth_register_v1, auth_register_v2
+from src.auth import auth_login_v1, auth_login_v2, auth_register_v1, auth_register_v2, auth_logout_v1
 from src.other import clear_v1
 from src.error import InputError
-from src.other import clear_v1
 
 def test_auth_register_valid():
     '''
@@ -133,3 +132,20 @@ def test_auth_login_invalid_password():
     with pytest.raises(InputError):
         assert auth_login_v2('validemail@gmail.com', 'abc')
         assert auth_login_v2('validemail@gmail.com', '123abc#@!')
+
+def test_auth_logout_valid_token():
+    '''
+    Registers a user then logouts them out returning true
+    '''
+    clear_v1()
+    id1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    assert auth_logout_v1(id1['token'])
+
+def test_auth_logout_invalid_token():
+    '''
+    Registers a user and provides an invalid token to logout returning false
+    '''
+    clear_v1()
+    id1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    assert auth_logout_v1(id1['token'])
+    assert auth_logout_v1(id1['token'])
