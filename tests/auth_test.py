@@ -139,13 +139,14 @@ def test_auth_logout_valid_token():
     '''
     clear_v1()
     id1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
-    assert auth_logout_v1(id1['token'])
+    assert auth_logout_v1(id1['token']) == True
 
 def test_auth_logout_invalid_token():
     '''
     Registers a user and provides an invalid token to logout returning false
     '''
     clear_v1()
-    id1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
-    assert auth_logout_v1(id1['token'])
-    assert auth_logout_v1(id1['token'])
+    auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    # token taken from the above register but altered to make it invalid
+    invalid_token = 'eyJ0eXAiOiJKV1qiLCJhbGciOiJIUzI1NiJ9.eyJ1X2lkIjoxLCJzZXNzaW9uX2lkIjo4fQ.zuWGXW_71FTclZIZunBhSqwjQ3ICYe0VN3oGoXB9ctQ'
+    assert auth_logout_v1(invalid_token) == False
