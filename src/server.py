@@ -4,7 +4,7 @@ from flask import Flask, request
 from flask_cors import CORS
 from src.error import InputError
 from src import config
-from src.auth import auth_register_v2
+from src.auth import auth_register_v2, auth_logout_v1
 
 def defaultHandler(err):
     response = err.get_response()
@@ -53,6 +53,22 @@ def register():
     return dumps({
         'token' : data['token'],
         'auth_user_id' : data['auth_user_id']
+    })
+
+@APP.route("/auth/logout/v1", methods=["POST"])
+def logout_user():
+    """
+    Gets user data from http json and passes it to the
+    auth_logout_v1 function
+
+    Returns {'is_success': True} on successful logout
+    """
+    data = request.get_json()
+    token = data['token']
+    result = auth_logout_v1(token)
+
+    return dumps({
+        'is_success': result
     })
 
 if __name__ == "__main__":
