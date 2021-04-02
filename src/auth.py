@@ -36,24 +36,22 @@ def email_in_use(email):
         return True
     return False
 
-"""
-Given a registered users' email and password and returns their `auth_user_id` value
-
-Arguments:
-    email (string)    - Users email
-    password (string)    - Users password
-
-Exceptions:
-    InputError  - Occurs when email has an incorrect format, email is not
-                registered or when the password does not match the given
-                email
-
-Return Value:
-    Returns {'auth_user_id': id,} on success
-
-"""
-
 def auth_login_v1(email, password):
+    """
+    Given a registered users' email and password and returns their `auth_user_id` value
+
+    Arguments:
+        email (string)    - Users email
+        password (string)    - Users password
+
+    Exceptions:
+        InputError  - Occurs when email has an incorrect format, email is not
+                    registered or when the password does not match the given
+                    email
+
+    Return Value:
+        Returns {'auth_user_id': id,} on success
+    """
     # Check email syntax
     if not re.match('^[a-zA-Z0-9]+[\\._]?[a-zA-Z0-9]+[@]\\w+[.]\\w{2,3}$',email):
         raise InputError('Email entered is not a valid email')
@@ -80,6 +78,56 @@ def auth_login_v1(email, password):
     else:
         raise InputError('No registered users detected')
 
+def auth_login_v2(email, password):
+    """
+    Given a registered users' email and password and returns their `auth_user_id` value and 'token'
+
+    Arguments:
+        email (string)    - Users email
+        password (string)    - Users password
+
+    Exceptions:
+        InputError  - Occurs when email has an incorrect format, email is not
+                    registered or when the password does not match the given
+                    email
+
+    Return Value:
+        Returns {'auth_user_id': id,} on success
+        Returns {'token': token,} on success
+    """
+    # Check email syntax
+    if not re.match('^[a-zA-Z0-9]+[\\._]?[a-zA-Z0-9]+[@]\\w+[.]\\w{2,3}$',email):
+        raise InputError('Email entered is not a valid email')
+    
+    # Loop checking if email is not in list of registered users
+    if email_in_use(email) == False:
+        raise InputError('Email entered does not belong to a user')
+    
+    # Hashs the given password to check with list of hashed passwords in 'users' later
+    password_hash = hashlib.sha256(password.encode()).hexdigest()
+    
+    if len(data['users']) != 0:
+        # Loop until an email match
+        for user in data['users']:
+            if email == user['email']:
+                # Copy the password and user_id for the email match
+                reuser = {
+                    'u_id' : user['u_id'],
+                    'password' : user['password']
+                }
+                # Check if the passwords match
+                if password_hash == reuser.get('password'):
+                    auth_user_id = reuser.get('u_id')
+                    # gets a token from help function
+                    token = get_token(reuser)
+                    return {
+                        'token': token,
+                        'auth_user_id':auth_user_id,
+                    }
+                else:
+                    raise InputError('Password is not correct')
+    else:
+        raise InputError('No registered users detected')
 
 def auth_register_v1(email, password, name_first, name_last):
     """
@@ -98,7 +146,6 @@ def auth_register_v1(email, password, name_first, name_last):
 
     Return Value:
         Returns {'auth_user_id': id,} on success
-
     """
     # Check if users data is empty
     if len(data['users']) != 0:
@@ -177,7 +224,6 @@ def auth_register_v2(email, password, name_first, name_last):
 
     Return Value:
         Returns {'token' : token, 'auth_user_id': id} on success
-
     """
     # Check if users data is empty
     if len(data['users']) != 0:
@@ -240,3 +286,27 @@ def auth_register_v2(email, password, name_first, name_last):
         'token' : token,
         'auth_user_id' : id, 
     }
+
+def auth_logout_v1(token):
+    """
+    Given an active token, invalidates the token to log the user out
+
+    Arguments:
+        token (string)    - Token to invalidate
+
+    Exceptions:
+        N/A
+
+    Return Value:
+        Returns {'is_success': True} on success
+    """
+
+    active_tokens = data['active_tokens']
+    # Search through active tokens
+    for x in active_tokens:
+        # Once the given token matches an active token it invalidates it,
+        # by popping it from the list of active tokens
+        if x == token:
+            active_tokens.remove(x)
+            return True
+    return False
