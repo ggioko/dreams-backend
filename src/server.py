@@ -4,6 +4,7 @@ from flask import Flask, request
 from flask_cors import CORS
 from src.error import InputError
 from src import config
+from src.other import clear_v1
 from src.auth import auth_register_v2
 
 def defaultHandler(err):
@@ -32,6 +33,16 @@ def echo():
     return dumps({
         'data': data
     })
+
+
+@APP.route("/clear/v1", methods=['DELETE'])
+def clear():
+    """
+    Function to call clear_v1
+    """
+    clear_v1()
+    return dumps({})
+
 
 @APP.route("/auth/register/v2", methods=['POST'])
 def register():
