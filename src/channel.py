@@ -54,23 +54,23 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
 
 
 def channel_details_v1(auth_user_id, channel_id):
-'''
-channel_details_v1()
-
-Given a Channel with ID channel_id that the authorised user is part of, 
-    provide basic details about the channel.
-
-Arguments: 
-    auth_user_id (int), channel_id (int)
+    '''
+    channel_details_v1()
     
-Exception: 
-    AccessError - Occurs when auth_user_id passed in is not a valid id.
-    AccessError - Occurs when authorised user is not a member of channel with channel_id.
-    InputError - Channel ID is not a valid channel.
+    Given a Channel with ID channel_id that the authorised user is part of, 
+        provide basic details about the channel.
     
-Return value: 
-    {name, owner_members, all_members} on success
-'''    
+    Arguments: 
+        auth_user_id (int), channel_id (int)
+        
+    Exception: 
+        AccessError - Occurs when auth_user_id passed in is not a valid id.
+        AccessError - Occurs when authorised user is not a member of channel with channel_id.
+        InputError - Channel ID is not a valid channel.
+        
+    Return value: 
+        {name, owner_members, all_members} on success
+    '''    
     # Check if auth_user_id matches a user in the database.
     user_valid = 0
     for user in data['users']:
@@ -129,23 +129,23 @@ Return value:
  
 
 def channel_details_v2(token, channel_id):
-'''
-channel_details_v2()
-
-Given a Channel with ID channel_id that the authorised user is part of, 
-    provide basic details about the channel.
-
-Arguments: 
-    token (string), channel_id (int)
+    '''
+    channel_details_v2()
     
-Exception: 
-    AccessError - Occurs when token passed in is not a valid token.
-    AccessError - Occurs when authorised user is not a member of channel with channel_id.
-    InputError - Channel ID is not a valid channel.
+    Given a Channel with ID channel_id that the authorised user is part of, 
+        provide basic details about the channel.
     
-Return value: 
-    {name, owner_members, all_members} on success
-'''   
+    Arguments: 
+        token (string), channel_id (int)
+        
+    Exception: 
+        AccessError - Occurs when token passed in is not a valid token.
+        AccessError - Occurs when authorised user is not a member of channel with channel_id.
+        InputError - Channel ID is not a valid channel.
+        
+    Return value: 
+        {name, owner_members, all_members} on success
+    '''   
     # Check if auth_user_id matches a user in the database.
     user_valid = 0
     for user in data['active_tokens']:
