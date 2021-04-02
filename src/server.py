@@ -5,6 +5,7 @@ from flask_cors import CORS
 from src.error import InputError
 from src import config
 from src.auth import auth_register_v2
+from src.channel import channel_details_v2
 
 def defaultHandler(err):
     response = err.get_response()
@@ -54,6 +55,24 @@ def register():
         'token' : data['token'],
         'auth_user_id' : data['auth_user_id']
     })
+
+@APP.route("/channel/details/v2", methods=['GET'])
+def channel_details():
+    """
+    Gets user data from http json and passes it to the
+    channel_details_v2 function
+    Passes in (token, channel_id)
+    Returns dictionary containing basic details of specified channel on success.
+    """
+    data = request.get_json()
+    token = data['token']
+    channel_id = data['channel_id']
+    
+    data = channel_details_v2(token, channel_id)
+    
+    return dumps(data)
+    
+    
 
 if __name__ == "__main__":
     APP.run(port=config.port) # Do not edit this port
