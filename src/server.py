@@ -5,6 +5,7 @@ from flask_cors import CORS
 from src.error import InputError
 from src import config
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
+from src.other import clear_v1
 
 def defaultHandler(err):
     response = err.get_response()
@@ -51,6 +52,15 @@ def login_user():
         'token' : data['token'],
         'auth_user_id' : data['auth_user_id']
     })
+
+@APP.route("/clear/v1", methods=['DELETE'])
+def clear():
+    """
+    Function to call clear_v1
+    """
+    clear_v1()
+    return dumps({})
+
 
 @APP.route("/auth/register/v2", methods=['POST'])
 def register():
