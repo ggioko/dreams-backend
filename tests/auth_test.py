@@ -5,6 +5,9 @@ from src.error import InputError
 from src.other import clear_v1
 
 def test_auth_register_valid():
+    '''
+    Registers two different users and checks that they have different user_ids and tokens given to them
+    '''
     clear_v1()
     id1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     id2 = auth_register_v2('valid2email@gmail.com', '123abc!@#', 'Hayden', 'Everest')
@@ -12,6 +15,10 @@ def test_auth_register_valid():
     assert id1['token'] != id2['token']
 
 def test_auth_register_invalid_email():
+    '''
+    Passes in emails with invalid syntax to test if InputError is raised
+    Inlad emails are not in the form of '^[a-zA-Z0-9]+[\\._]?[a-zA-Z0-9]+[@]\\w+[.]\\w{2,3}$'
+    '''
     clear_v1()
     password = "Pass123"
     firstName = "John"
@@ -30,35 +37,54 @@ def test_auth_register_invalid_email():
         assert auth_register_v2('invalidemail@gmail', '7654321', 'Haydena', 'Everesta')
 
 def test_auth_register_taken_email():
+    '''
+    Tests that an email that is already registered in the database isnt going to registered again
+    should raise an InputError if so. 
+    '''
     clear_v1()
     assert auth_register_v2('taken@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     with pytest.raises(InputError):
         assert auth_register_v2('taken@gmail.com', '123aqwe#', 'Imposter', 'Red')
 
 def test_auth_register_invalid_password():
+    '''
+    If the password entered is less than 6 characters long it raises an InputError
+    '''
     clear_v1()
     with pytest.raises(InputError):
         assert auth_register_v2('invalidpass@.com', 'abc', 'Hayden', 'Everest')
 
 def test_auth_register_invalid_firstname():
+    '''
+    Tests thatname_first is between 1 and 50 characters inclusively in length
+    '''
     clear_v1()
     with pytest.raises(InputError):
         assert auth_register_v2('invalidfirstname@gmail.com', 'abc21312', '', 'Everest')
         assert auth_register_v2('invalidfirstname2@gmail.com', 'abc123123', 'asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2', 'Everest')
 
 def test_auth_register_invalid_lastname():
+    '''
+    Tests that name_last is between 1 and 50 characters inclusively in length
+    '''
     clear_v1()
     with pytest.raises(InputError):
         assert auth_register_v2('invalidlastname@gmail.com', 'abc123123', 'Everest', '')
         assert auth_register_v2('invalidlastname2@gmail.com', 'abc123123', 'Everest', 'asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2')
 
 def test_auth_login_valid_single_user():
+    '''
+    Tests if a valid user can login and ensure user_ids match
+    '''
     clear_v1()
     id1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     id2 = auth_login_v2('validemail@gmail.com', '123abc!@#')
     assert id1['auth_user_id'] == id2['auth_user_id']
 
 def test_auth_login_valid_multiple_users():
+    '''
+    Tests that multiple users can logout with different u_ids
+    '''
     clear_v1()
     auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     id2 = auth_register_v2('another@gmail.com', 'anoth432$%^', 'Random', 'Stranger')
@@ -69,6 +95,10 @@ def test_auth_login_valid_multiple_users():
     assert id3['auth_user_id'] == id5['auth_user_id']
 
 def test_auth_login_invalid_email():
+    '''
+    Passes in emails with invalid syntax to test if InputError is raised
+    Inlad emails are not in the form of '^[a-zA-Z0-9]+[\\._]?[a-zA-Z0-9]+[@]\\w+[.]\\w{2,3}$'
+    '''
     clear_v1()
     password = "Pass123"
     with pytest.raises(InputError):
