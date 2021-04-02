@@ -6,6 +6,7 @@ from src.error import InputError
 from src import config
 from src.other import clear_v1
 from src.auth import auth_register_v2
+from src.channels import channels_list_v2
 
 def defaultHandler(err):
     response = err.get_response()
@@ -65,6 +66,21 @@ def register():
         'token' : data['token'],
         'auth_user_id' : data['auth_user_id']
     })
+    
+@APP.route("/channels/list/v2", methods = ['GET'])
+def channels_list():
+    """
+    Gets user token from http json and passes it to the
+    channels_list_v2 function
+    Returns {channels:[]} on success
+    """
+    
+    data = request.get_json()
+    token = data['token']
+    data = channels_list_v2(token)
+    
+    return dumps(data)
+
 
 if __name__ == "__main__":
     APP.run(port=config.port) # Do not edit this port
