@@ -301,12 +301,12 @@ def auth_logout_v1(token):
         Returns {'is_success': True} on success
     """
 
-    tokens = data['active_tokens']
+    active_tokens = data['active_tokens']
     # Search through active tokens
-    for x in tokens:
+    for x in active_tokens:
         # Once the given token matches an active token it invalidates it,
         # by popping it from the list of active tokens
         if x == token:
-            data.pop(x)
+            active_tokens.remove(x)
             return True
     return False
