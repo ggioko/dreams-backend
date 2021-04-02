@@ -4,7 +4,7 @@ from flask import Flask, request
 from flask_cors import CORS
 from src.error import InputError
 from src import config
-from src.auth import auth_register_v2, auth_logout_v1
+from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 
 def defaultHandler(err):
     response = err.get_response()
@@ -31,6 +31,25 @@ def echo():
    	    raise InputError(description='Cannot echo "echo"')
     return dumps({
         'data': data
+    })
+
+@APP.route("/auth/login/v2", methods=["POST"])
+def login_user():
+    """
+    Gets user data from http json and passes it to the
+    auth_login_v2 function
+
+    Returns {'token': token, 'auth_user_id': id,} on success
+    """
+    data = request.get_json()
+    email = data["email"]
+    password = data["password"]
+   
+    data = auth_login_v2(email, password)
+
+    return dumps({
+        'token' : data['token'],
+        'auth_user_id' : data['auth_user_id']
     })
 
 @APP.route("/auth/register/v2", methods=['POST'])
