@@ -1,8 +1,8 @@
 import pytest
 
-from src.channel import channel_join_v1  
-from src.channels import channels_create_v1, channels_listall_v1, channels_list_v1
-from src.auth import auth_register_v1
+from src.channel import channel_join_v2  
+from src.channels import channels_create_v1, channels_listall_v1, channels_list_v2
+from src.auth import auth_register_v2
 from src.other import clear_v1
 from src.error import InputError, AccessError
 
@@ -69,76 +69,83 @@ def test_channels_create_returns_integer():
     assert isinstance(new_channel['channel_id'], int)
 
 
-# Throw access error if auth_user_id is invalid (Section 6.3)
 def test_channels_list_access_error():
+    """
+    Pass an invalid token into channels_list_v2 - should return access error.
+    """
     clear_v1()
     with pytest.raises(AccessError):
-        # Pass a string into channels_list_v1 - should return access error.
-        assert channels_list_v1('invalid')
+        assert channels_list_v2('invalid_token')
         
 def test_channels_list_runs():
+    """
+    Test to see if channels_list_v2 runs.
+    """
     clear_v1()
-    auth_register_v1('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
-    assert channels_list_v1(1)
+    user = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    assert channels_list_v2(user['token'])
 
-# Test for user that is not in any channel.
-# Output should be an empty list.
 def test_channels_list_no_channels():
+    """
+    Test for a user that is part of no channels. Should return empty list.
+    """
     clear_v1() # Reset internal data to its initial state
     # Add new id to data set
-    auth_register_v1('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     # Loop through all channels, make sure id is not found in the channels' data.
-    assert channels_list_v1(1) == {
+    assert channels_list_v2(user['token']) == {
         'channels': [
         ],
     }
                      
-# Test for user that is in one channel only.
-# Output should be a dictionary {channels} with one set of data.
 def test_channels_list_one_channel():
+    """
+    Test for user that is in one channel only.
+    Output should be a dictionary {channels} with one set of data.
+    """
     clear_v1() # Reset internal data to its initial state
     # Add 2 new id's to data set. (1st id required to make channels, 2nd required to test.)
-    auth_register_v1('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
-    auth_register_v1('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
-    channels_create_v1(1, "Channel1", True) # User who created channel will be a member.
-    channels_create_v1(1, "Channel2", True)
-    channels_create_v1(1, "Channel3", True) 
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    channel_1 = channels_create_v2(user_1['token'], "Channel1", True) # User who created channel will be a member.
+    channel_2 = channels_create_v2(user_1['token'], "Channel2", True)
+    channel_3 = channels_create_v2(user_1['token'], "Channel3", True) 
 
-    channel_join_v1(2, 2)              
+    channel_join_v2(user_2['token'], channel_2['channel_id'])              
     
-    assert channels_list_v1(2) == {
+    assert channels_list_v2(user_2['token']) == {
         'channels': [
         {
-            'channel_id': 2,
+            'channel_id': channel_2['channel_id'],
             	'name': 'Channel2',
         }     
         ],            
     }
 
     
-# Test for user that is in multiple channels
-# Output should be a dictionary {channels} with one set of data.
 def test_channels_list_multi_channels():
+    """
+    Test for user that is in multiple channels
+    Output should be a dictionary {channels} with one set of data.
+    """
     clear_v1() # Reset internal data to its initial state
     # Add new id to data set
-    auth_register_v1('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
-    auth_register_v1('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')                
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')                
     # Create 4 channels, and join 2 of them
-    channels_create_v1(1, "Channel1", True)
-    channels_create_v1(1, "Channel2", True)
-    channels_create_v1(1, "Channel3", True)
-    channels_create_v1(1, "Channel4", True)
-    channel_join_v1(2, 1)     # WAITING ON CHANNEL_JOIN_V1
-    channel_join_v1(2, 3)
-    
+    channel_1 = channels_create_v2(1, "Channel1", True)
+    channel_2 = channels_create_v2(1, "Channel2", True)
+    channel_3 = channels_create_v2(1, "Channel3", True)
+    channel_4 = channels_create_v2(1, "Channel4", True)
+    channel_join_v2(user_2['token'], channel_1['channel_id'])     # WAITING ON CHANNEL_JOIN_V1
+    channel_join_v2(user_2['token'], channel_3['channel_id'])    
     # Number of channels the user is found to be joined to.
     channelCount = 0    
-    for k in range(len(channels_list_v1(2)['channels'])):
-        if channels_list_v1(2)['channels'][k]['name'] == "Channel1":
+    for k in range(len(channels_list_v2(user_2['token'])['channels'])):
+        if channels_list_v2(user_2['token'])['channels'][k]['name'] == "Channel1":
             channelCount = channelCount + 1
-        elif channels_list_v1(2)['channels'][k]['name'] == "Channel3":
-            channelCount = channelCount + 1
-            
+        elif channels_list_v2(user_2['token'])['channels'][k]['name'] == "Channel3":
+            channelCount = channelCount + 1         
     # User should be in 2 channels.
     assert channelCount == 2
     
