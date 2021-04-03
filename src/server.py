@@ -4,8 +4,9 @@ from flask import Flask, request
 from flask_cors import CORS
 from src.error import InputError
 from src import config
-from src.auth import auth_register_v2
+from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 from src.channel import channel_details_v2
+from src.other import clear_v1
 
 def defaultHandler(err):
     response = err.get_response()
@@ -34,6 +35,34 @@ def echo():
         'data': data
     })
 
+@APP.route("/auth/login/v2", methods=["POST"])
+def login_user():
+    """
+    Gets user data from http json and passes it to the
+    auth_login_v2 function
+
+    Returns {'token': token, 'auth_user_id': id,} on success
+    """
+    data = request.get_json()
+    email = data["email"]
+    password = data["password"]
+   
+    data = auth_login_v2(email, password)
+
+    return dumps({
+        'token' : data['token'],
+        'auth_user_id' : data['auth_user_id']
+    })
+
+@APP.route("/clear/v1", methods=['DELETE'])
+def clear():
+    """
+    Function to call clear_v1
+    """
+    clear_v1()
+    return dumps({})
+
+
 @APP.route("/auth/register/v2", methods=['POST'])
 def register():
     """
@@ -56,6 +85,22 @@ def register():
         'auth_user_id' : data['auth_user_id']
     })
 
+@APP.route("/auth/logout/v1", methods=["POST"])
+def logout_user():
+    """
+    Gets user data from http json and passes it to the
+    auth_logout_v1 function
+
+    Returns {'is_success': True} on successful logout
+    """
+    data = request.get_json()
+    token = data['token']
+    result = auth_logout_v1(token)
+
+    return dumps({
+        'is_success': result
+    })
+
 @APP.route("/channel/details/v2", methods=['GET'])
 def channel_details():
     """
@@ -71,7 +116,6 @@ def channel_details():
     data = channel_details_v2(token, channel_id)
     
     return dumps(data)
-    
     
 
 if __name__ == "__main__":
