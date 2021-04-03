@@ -13,20 +13,13 @@ def test_channel_join_errors():
     r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
     'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
     register1 = r.json()
-
-    r = requests.post(config.url + 'auth/register/v2', json = {'email':'validemail2@gmail.com',
-    'password' : '123abc!@#', 'name_first':'Fred', 'name_last':'Smith'})
-    register2 = r.json()
-
+    
     r = requests.post(config.url + 'auth/register/v2', json = {'email':'validemail3@gmail.com',
     'password' : '123abc!@#', 'name_first':'Angus', 'name_last':'Young'})
     register3 = r.json()
 
     r = requests.post(config.url + 'channels/create/v2', json = {'token': register1['token'], 'name': 'Channel1', 'is_public': True})
     public_channel1 = r.json()
-
-    r = requests.post(config.url + 'channels/create/v2', json = {'token': register2['token'], 'name': 'Channel2', 'is_public': True})
-    public_channel2 = r.json()
 
     r = requests.post(config.url + 'channels/create/v2', json = {'token': register3['token'], 'name': 'Channel1', 'is_public': False})
     private_channel1 = r.json()
