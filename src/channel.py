@@ -80,15 +80,17 @@ def channel_invite_v2(token, channel_id, u_id):
         print(channel['id'])
 
     if foundChannel == {}:
-        raise InputError('Invalid channel ID provided')
+        raise InputError(description='Invalid channel ID provided')
 
     userMatch = False
     for user in data['users']:
+        print(user)
         if user['u_id'] == u_id:
             userMatch = True
             break
+    print ("usermatch = " + str(userMatch))
     if userMatch == False:
-        raise InputError('Member to add not a valid user')
+        raise InputError(description='Member to add not a valid user')
 
     token_active = False
     active_tokens = data['active_tokens']
@@ -98,7 +100,7 @@ def channel_invite_v2(token, channel_id, u_id):
             token_active = True
             break
     if (token_active == False):
-        raise AccessError('Token invalid, user not logged in')
+        raise AccessError(description='Token invalid, user not logged in')
 
     decoded_token = jwt.decode(token, SECRET, algorithms=['HS256'])
     auth_user_id = decoded_token['u_id']
@@ -109,7 +111,7 @@ def channel_invite_v2(token, channel_id, u_id):
             userMatch = True
             break
     if userMatch == False:
-        raise AccessError('Authorised user not a channel member')
+        raise AccessError(description='Authorised user not a channel member')
 
     channel_join_v1(u_id, channel_id)
     
