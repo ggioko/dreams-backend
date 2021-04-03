@@ -24,9 +24,9 @@ def test_channels_listall_v2_check():
     token = json.loads(resp.text)
     name = "My Channel"
     name_2 = "My second Channel"
-    requests.post(config.url + 'channels/create/v2', params={'token': token['token'], 'name' : name, \
+    requests.post(config.url + 'channels/create/v2', json={'token': token['token'], 'name' : name, \
     'is_public' : True})
-    requests.post(config.url + 'channels/create/v2', params={'token': token['token'], 'name' : name_2, \
+    requests.post(config.url + 'channels/create/v2', json={'token': token['token'], 'name' : name_2, \
     'is_public' : True})
     resp = requests.get(config.url + 'channels/listall/v2', params={'token': token['token']})
     assert json.loads(resp.text) == {'channels': [
