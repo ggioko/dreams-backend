@@ -1,15 +1,9 @@
-from src.error import InputError
+from src.error import InputError, AccessError
 from src.data import data
+from src.helper import get_token_user_id
 import re
 import jwt
 import hashlib
-
-SECRET = 'dorito'
-
-def get_token_user_id(token):
-    decoded_jwt = jwt.decode(token, SECRET, algorithms=['HS256'])
-    u_id = int(decoded_jwt['u_id'])
-    return u_id
 
 '''
 channels_list_v1() - z5205069 Julius Vandeleur
