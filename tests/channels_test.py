@@ -1,7 +1,7 @@
 import pytest
 
 from src.channel import channel_join_v2  
-from src.channels import channels_create_v1, channels_listall_v1, channels_list_v2
+from src.channels import channels_create_v1, channels_listall_v1, channels_list_v2, channels_create_v2
 from src.auth import auth_register_v2
 from src.other import clear_v1
 from src.error import InputError, AccessError
@@ -98,7 +98,7 @@ def test_channels_list_no_channels():
         ],
     }
                      
-def test_channels_list_one_channel():
+def test_channels_list_one_channel(): # COMMENTED OUT CHANNEL_1 AND CHANNEL_3 names as they are unused.
     """
     Test for user that is in one channel only.
     Output should be a dictionary {channels} with one set of data.
@@ -107,9 +107,11 @@ def test_channels_list_one_channel():
     # Add 2 new id's to data set. (1st id required to make channels, 2nd required to test.)
     user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
-    channel_1 = channels_create_v2(user_1['token'], "Channel1", True) # User who created channel will be a member.
+    #channel_1 = 
+    channels_create_v2(user_1['token'], "Channel1", True) # User who created channel will be a member.
     channel_2 = channels_create_v2(user_1['token'], "Channel2", True)
-    channel_3 = channels_create_v2(user_1['token'], "Channel3", True) 
+    #channel_3 = 
+    channels_create_v2(user_1['token'], "Channel3", True) 
 
     channel_join_v2(user_2['token'], channel_2['channel_id'])              
     
@@ -123,7 +125,7 @@ def test_channels_list_one_channel():
     }
 
     
-def test_channels_list_multi_channels():
+def test_channels_list_multi_channels():   # COMMENTED OUT CHANNEL_2 AND CHANNEL_4 names as they are unused.
     """
     Test for user that is in multiple channels
     Output should be a dictionary {channels} with one set of data.
@@ -133,10 +135,12 @@ def test_channels_list_multi_channels():
     user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')                
     # Create 4 channels, and join 2 of them
-    channel_1 = channels_create_v2(1, "Channel1", True)
-    channel_2 = channels_create_v2(1, "Channel2", True)
-    channel_3 = channels_create_v2(1, "Channel3", True)
-    channel_4 = channels_create_v2(1, "Channel4", True)
+    channel_1 = channels_create_v2(user_1['token'], "Channel1", True)
+    #channel_2 = 
+    channels_create_v2(user_1['token'], "Channel2", True)
+    channel_3 = channels_create_v2(user_1['token'], "Channel3", True)
+    #channel_4 = 
+    channels_create_v2(1, "Channel4", True)
     channel_join_v2(user_2['token'], channel_1['channel_id'])     # WAITING ON CHANNEL_JOIN_V1
     channel_join_v2(user_2['token'], channel_3['channel_id'])    
     # Number of channels the user is found to be joined to.
