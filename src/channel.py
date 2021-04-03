@@ -113,6 +113,7 @@ def channel_invite_v2(token, channel_id, u_id):
     if userMatch == False:
         raise AccessError(description='Authorised user not a channel member')
 
+    # CHANGE THIS FUNCTION CALL!!!!
     channel_join_v1(u_id, channel_id)
     
     return {

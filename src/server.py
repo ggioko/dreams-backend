@@ -131,7 +131,7 @@ def invite_user_to_channel():
     token = data['token']
     channel_id = data['channel_id']
     u_id = data['u_id']
-    result = channel_invite_v2(token, channel_id, u_id)
+    channel_invite_v2(token, channel_id, u_id)
 
     return dumps({})
 
