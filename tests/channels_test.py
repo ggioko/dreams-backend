@@ -11,7 +11,6 @@ from src.data import data
 # Expected AccessError
 def test_channels_create_invalid_auth_user_id():
     clear_v1()
-    register1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     invalid_token = generate_token(4)
     with pytest.raises(AccessError):
         assert channels_create_v2(invalid_token, 'channel1', True)
