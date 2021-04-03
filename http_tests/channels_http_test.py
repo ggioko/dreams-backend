@@ -2,6 +2,7 @@ import pytest
 import requests
 import json
 from src import config
+from src.error import AccessError
 
 def test_channels_listall_v2_runs():
     '''
@@ -16,7 +17,9 @@ def test_channels_listall_v2_runs():
 
 def test_channels_listall_v2_check():
     '''
-    A check to see if listall runs correctly with two channels
+    A check to see if listall runs correctly with two channels.
+    A user is registered and their token is used to create two
+    channels which are then used to check if list all works.
     '''
     requests.delete(config.url + 'clear/v1')
     resp = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com', \
@@ -33,4 +36,11 @@ def test_channels_listall_v2_check():
         "My Channel",
         "My second Channel"
     ]}
+
+def test_channels_listall_v2_access_error():
+    """
+    Test to see if listall raises access error when passed in an invalid token
+    """
+    with pytest.raises(AccessError):
+        assert requests.get(config.url + 'channels/listall/v2', params={'token': -1})
 
