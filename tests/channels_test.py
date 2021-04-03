@@ -39,7 +39,7 @@ def test_channels_listall_runs():
     """
     clear_v1()
     auth = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
-    assert channels_listall_v1(auth['token'])
+    assert channels_listall_v2(auth['token'])
 
 def test_channels_listall_check():
     """
@@ -49,9 +49,9 @@ def test_channels_listall_check():
     auth = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     name = "My Channel"
     name2 = "My second Channel"
-    channels_create_v1(auth['token'],name,True)
-    channels_create_v1(auth['token'],name2,True)
-    channels = [channels_listall_v1(auth['token'])['channels'][c]['name'] for c in range(len(channels_listall_v1(auth['token'])['channels']))]
+    channels_create_v1(auth['auth_user_id'],name,True)
+    channels_create_v1(auth['auth_user_id'],name2,True)
+    channels = [channels_listall_v2(auth['token'])['channels'][c]['name'] for c in range(len(channels_listall_v2(auth['token'])['channels']))]
     assert name in channels
     assert name2 in channels
 
@@ -60,7 +60,7 @@ def test_channels_listall_access_error():
     Test to see if listall raises access error when passed in an invalid token
     """
     with pytest.raises(AccessError):
-        assert channels_listall_v1(-1)
+        assert channels_listall_v2(-1)
 
 # Test the case where the channel name is less than 20 characters
 # Expected autotest pass

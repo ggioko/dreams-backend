@@ -42,26 +42,26 @@ def channels_list_v1(auth_user_id):
                 })
     return userChannels
 
+
+def channels_listall_v2(token):
+    """
+    Lists all the channels present in the database
+
+    Arguments:
+        token (string)    - Users session token
+
+    Exceptions:
+        Access Error  - Occurs when users token is not active
+
+    Return Value:
+        Returns {'channels': [{channel_id: id, name: name}...} on success
+
+    """
+    # Checks is token is active
+    if token not in data['active_tokens']:
+        raise AccessError(description="Invalid Token")
     
-
-"""
-Lists all the channels present in the database
-
-Arguments:
-    auth_user_id (int)    - Users ID
-
-Exceptions:
-    InputError  - Occurs users ID is not in the database
-
-Return Value:
-    Returns {'channels': [{channel_id: id, name: name}...} on success
-
-"""
-
-def channels_listall_v1(auth_user_id):
-    ids = [data['users'][c]['u_id'] for c in range(len(data['users']))]
-    if auth_user_id not in ids:
-        raise AccessError("Invalid ID")
+    # Creates dictionary with a list of channels and populates it
     channelData = {'channels':[]}
     for channel in data['channels']:
         channelData['channels'].append({
