@@ -16,9 +16,9 @@ def test_channels_create():
     r = requests.post(config.url + 'channels/create/v2',  json={'token': register1['token'], 'name': 'channel1', 'is_public': True})
     assert r.json() == {'channel_id' : 1}
 
-def test_channels_create():
+def test_channels_create_errors():
     """
-    Testings for errors 
+    Testings for input and access errors 
     """
     # Clear data first
     r = requests.delete(config.url + 'clear/v1')
