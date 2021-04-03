@@ -27,12 +27,12 @@ def users_all_v1(token):
     if check_token_valid(token) == False:
         raise AccessError(description='Invalid token')
     
-    user_store = data['users']
+    users_all = data['users']
 
     user_dict = {'users':[]}
 
     # Loop through data['users'] adding all user data to list of users except password
-    for user in user_store['users']:
+    for user in users_all:
         user_dict['users'].append({
             'u_id': user['u_id'], 
             'email': user['email'],
