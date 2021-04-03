@@ -1,7 +1,7 @@
 import pytest
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 from src.other import clear_v1
-from src.error import InputError
+from src.error import InputError, AccessError
 
 def test_auth_register_valid():
     '''
@@ -149,4 +149,5 @@ def test_auth_logout_invalid_token():
     auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     # token taken from the above register but altered to make it invalid
     invalid_token = 'eyJ0eXAiOiJKV1qiLCJhbGciOiJIUzI1NiJ9.eyJ1X2lkIjoxLCJzZXNzaW9uX2lkIjo4fQ.zuWGXW_71FTclZIZunBhSqwjQ3ICYe0VN3oGoXB9ctQ'
-    assert auth_logout_v1(invalid_token) == False
+    with pytest.raises(AccessError):
+        assert auth_logout_v1(invalid_token)

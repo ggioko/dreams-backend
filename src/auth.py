@@ -1,4 +1,4 @@
-from src.error import InputError
+from src.error import InputError, AccessError
 from src.data import data
 import re
 import jwt
@@ -55,11 +55,11 @@ def auth_login_v2(email, password):
     """
     # Check email syntax
     if not re.match('^[a-zA-Z0-9]+[\\._]?[a-zA-Z0-9]+[@]\\w+[.]\\w{2,3}$',email):
-        raise InputError('Email entered is not a valid email')
+        raise InputError(description='Email entered is not a valid email')
     
     # Loop checking if email is not in list of registered users
     if email_in_use(email) == False:
-        raise InputError('Email entered does not belong to a user')
+        raise InputError(description='Email entered does not belong to a user')
     
     # Hashs the given password to check with list of hashed passwords in 'users' later
     password_hash = hashlib.sha256(password.encode()).hexdigest()
@@ -83,9 +83,9 @@ def auth_login_v2(email, password):
                         'auth_user_id':auth_user_id,
                     }
                 else:
-                    raise InputError('Password is not correct')
+                    raise InputError(description='Password is not correct')
     else:
-        raise InputError('No registered users detected')
+        raise InputError(description='No registered users detected')
 
 def auth_register_v1(email, password, name_first, name_last):
     """
@@ -260,6 +260,11 @@ def auth_logout_v1(token):
     """
 
     active_tokens = data['active_tokens']
+
+    # Check given token is valid
+    if token not in active_tokens:
+        raise AccessError(description='Invalid token')
+
     # Search through active tokens
     for x in active_tokens:
         # Once the given token matches an active token it invalidates it,
