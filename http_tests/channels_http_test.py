@@ -17,8 +17,8 @@ def test_channels_list_system():
     r = requests.post(config.url + 'auth/register/v2', params = {'email':'validemail@gmail.com', \
     'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
     rego_1 = r.json()
-    requests.post(config.url + 'channel/create/v2', params = {'token': rego_1['token'], 'name': 'Channel1', 'is_public': True})
-    requests.post(config.url + 'channel/create/v2', params = {'token': rego_1['token'], 'name': 'Channel2', 'is_public': True})   
+    requests.post(config.url + 'channels/create/v2', params = {'token': rego_1['token'], 'name': 'Channel1', 'is_public': True})
+    requests.post(config.url + 'channels/create/v2', params = {'token': rego_1['token'], 'name': 'Channel2', 'is_public': True})   
     # Test for valid input
     test_1 = requests.get(config.url + 'channels/list/v2', params = {'token': rego_1['token']})
     payload_1 = test_1.json()

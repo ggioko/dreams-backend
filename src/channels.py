@@ -2,12 +2,6 @@ from src.error import InputError, AccessError
 from src.data import data
 import jwt
 
-SECRET = 'dorito'
-def getUserFromToken(token):
-    global SECRET
-    decoded_jwt = jwt.decode(token.encode(), SECRET, algorithms = ['HS256'])
-    u_id = int(decoded_jwt['user_id'])
-    return u_id
 
 def channels_list_v1(auth_user_id):
     '''
@@ -69,9 +63,9 @@ def channels_list_v2(token):
         if user == token:
             valid = 1
     if valid == 0:
-        raise AccessError("Error occurred token is not valid")
-    # Call getUserFromToken helper function.    
-    auth_user_id = getUserFromToken(token)   
+        raise AccessError(description = "Error occurred token is not valid")
+    # Call get_token_user_id helper function.    
+    auth_user_id = get_token_user_id(token) 
     userChannels = {'channels':[]} 
     # Loop through each channel in data.
     for channel in data['channels']:
