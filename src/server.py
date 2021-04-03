@@ -137,5 +137,22 @@ def channel_join():
 
     return dumps({})
 
+@APP.route("/users/all/v1", methods=["GET"])
+def users_all():
+    """ 
+    Gets user data from http json and passes it to the
+    users_all_v1 function
+
+    Returns {users} - an list of dictionaries of individual user details
+    """
+    data = request.get_json()
+    token = data['token']
+    
+    user_list = users_all_v1(token)
+
+    return dumps({
+        'users': user_list['users']
+    })
+
 if __name__ == "__main__":
     APP.run(port=config.port) # Do not edit this port
