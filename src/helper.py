@@ -1,6 +1,7 @@
 import re
 import jwt
 import hashlib
+from src.data import data
 
 SECRET = 'dorito'
 
@@ -19,8 +20,6 @@ def generate_token(u_id):
     """
     token = jwt.encode({'u_id': u_id}, SECRET, algorithm='HS256')
     return token
-
-SECRET = 'dorito'
 
 def get_token(user_data):
     """
