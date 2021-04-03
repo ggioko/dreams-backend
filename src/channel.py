@@ -1,5 +1,8 @@
+import jwt
+# jwt may be unneccessary
 from src.error import InputError, AccessError
 from src.data import data
+from src.auth import SECRET
 
 '''
 channel_invite adds a user to a channel when an existing channel
@@ -50,6 +53,70 @@ def channel_invite_v1(auth_user_id, channel_id, u_id):
     
     return {
     }
+
+def channel_invite_v2(token, channel_id, u_id):
+    '''
+    channel_invite adds a user to a channel when an existing channel
+    user invites them into the channel.
+
+    Arguments:
+        token (str)        - The token of the existing member of the channel
+        channel_id (int)   - The ID of the channel that the new member is to join
+        u_id (int)         - The ID of the user new to the channel
+
+    Exceptions:
+        InputError  - Occurs when channel_id does not refer to a valid channel
+        AccessError - Occurs when channel_id refers to a channel that is private,
+                      (where the authorised user is not a global owner)
+
+    Return Value:
+        Returns an empty dictionary when exceptions are not raised
+    '''
+    foundChannel = {}
+    for channel in data['channels']:
+        if channel['id'] == channel_id:
+            foundChannel = channel
+            break
+        print(channel['id'])
+
+    if foundChannel == {}:
+        raise InputError('Invalid channel ID provided')
+
+    userMatch = False
+    for user in data['users']:
+        if user['u_id'] == u_id:
+            userMatch = True
+            break
+    if userMatch == False:
+        raise InputError('Member to add not a valid user')
+
+    token_active = False
+    active_tokens = data['active_tokens']
+    # Search through active tokens
+    for x in active_tokens:
+        if x == token:
+            token_active = True
+            break
+    if (token_active == False):
+        raise AccessError('Token invalid, user not logged in')
+
+    decoded_token = jwt.decode(token, SECRET, algorithms=['HS256'])
+    auth_user_id = decoded_token['u_id']
+
+    userMatch = False
+    for user in channel['owner_members']:
+        if user['u_id'] == auth_user_id:
+            userMatch = True
+            break
+    if userMatch == False:
+        raise AccessError('Authorised user not a channel member')
+
+    channel_join_v1(u_id, channel_id)
+    
+    return {
+    }
+
+
 
 '''
 channel_details_v1()
