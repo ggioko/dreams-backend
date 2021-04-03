@@ -81,7 +81,6 @@ def clear():
     clear_v1()
     return dumps({})
 
-
 @APP.route("/auth/register/v2", methods=['POST'])
 def register():
     """

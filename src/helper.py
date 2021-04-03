@@ -50,3 +50,14 @@ def email_in_use(email):
     if email in emails:
         return True
     return False
+
+def check_token_valid(token):
+    """
+    Helper function to check if a token is valid.
+    Takes in a token and outputs True if valid, False otherwise
+    """
+    active_tokens = data['active_tokens']
+    for x in active_tokens:
+        if x == token:
+            return True
+    return False

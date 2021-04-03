@@ -1,29 +1,8 @@
 from src.error import InputError, AccessError
 from src.data import data
+from src.helper import get_token_u_id, check_token_valid
 import jwt
 import hashlib
-
-SECRET = 'dorito'
-
-def get_u_id(token):
-    """
-    Helper function to generate get user_id from token.
-    Takes in token and outputs user_id
-    """
-    decoded_token = jwt.decode(token, SECRET, algorithms=['HS256'])
-    u_id = int(decoded_token['u_id'])
-    return u_id
-
-def check_token_valid(token):
-    """
-    Helper function to check if a token is valid.
-    Takes in a token and outputs True if valid, False otherwise
-    """
-    active_tokens = data['active_tokens']
-    for x in active_tokens:
-        if x == token:
-            return True
-    return False
 
 def channel_invite_v1(auth_user_id, channel_id, u_id):
     '''
@@ -324,15 +303,15 @@ def channel_join_v2(token, channel_id):
 
     # Check if token is valid using helper
     if check_token_valid(token) == False:
-        raise AccessError('Invalid token')
+        raise AccessError(description='Invalid token')
 
     # Get u_id from valid token
-    auth_user_id = get_u_id(token)
+    auth_user_id = get_token_user_id(token)
 
     # Raise an assesserror if the auth_user_id is invalid
     ids = [data['users'][c]['u_id'] for c in range(len(data['users']))]
     if auth_user_id not in ids:
-        raise AccessError('Invalid auth_user_id')
+        raise AccessError(description='Invalid auth_user_id')
 
     reuser = {}
     # Loop until u_id match
@@ -359,7 +338,7 @@ def channel_join_v2(token, channel_id):
             }
     
     if channel_valid == 0:
-        raise InputError("Invalid channel_id")
+        raise InputError(description="Invalid channel_id")
 
     if data_copy.get('is_public') == True:
         # Added user to all members for channel
@@ -367,7 +346,7 @@ def channel_join_v2(token, channel_id):
             if channel['id'] == channel_id:
                 channel['all_members'].append(reuser)
     else:
-        raise AccessError('The channel you are trying to join is private')
+        raise AccessError(description='The channel you are trying to join is private')
     
     return {}
 
