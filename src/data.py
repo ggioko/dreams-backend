@@ -2,6 +2,7 @@
 data = {
     'users': [
         {
+
             'u_id': 1,
             'email': 'cs1531@cse.unsw.edu.au',
             'password': 'abc1234',
@@ -52,4 +53,5 @@ data = {
         ],
         },
     ],
+    'active_tokens' : []
 }

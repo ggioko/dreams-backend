@@ -1,6 +1,9 @@
 from src.data import data
 
 def clear_v1():
+    """
+    Function to clear internal data
+    """
     data['users'].clear()
     data['channels'].clear()
 
