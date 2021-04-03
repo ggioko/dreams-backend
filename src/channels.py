@@ -162,11 +162,11 @@ def channels_create_v2(token, name, is_public):
     # Input error checking
     # If length of name is more thant 20 characters raise InputError 
     if len(name) > 20:
-        raise InputError("Error the channel name is more than 20 characters")
+        raise InputError(description="Error the channel name is more than 20 characters")
     
     # Input error also raised if is_public was not of type bool
     if type(is_public) != bool:
-        raise InputError("Error the is_public value is not valid can only be True or False")
+        raise InputError(description="Error the is_public value is not valid can only be True or False")
 
     auth_user_id = get_token_user_id(token)
 
@@ -189,7 +189,7 @@ def channels_create_v2(token, name, is_public):
 
     # If user id hasnt been matched, raise AccessError
     if valid == 0:
-        raise AccessError("Error occurred auth_user_id is not valid")
+        raise AccessError(description="Error occurred auth_user_id is not valid")
     
     # Find the channel number, which is channel id
     channel_num = len(data['channels']) + 1
