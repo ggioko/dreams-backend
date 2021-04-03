@@ -41,8 +41,6 @@ def users_all_v1(token):
 
     return user_dict
 
-
-
 def search_v1(auth_user_id, query_str):
     return {
         'messages': [
