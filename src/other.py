@@ -1,4 +1,5 @@
 from src.data import data
+from src.error import AccessError
 from src.helper import check_token_valid
 
 def clear_v1():
@@ -30,6 +31,7 @@ def users_all_v1(token):
 
     user_dict = {'users':[]}
 
+    # Loop through data['users'] adding all user data to list of users except password
     for user in user_store['users']:
         user_dict['users'].append({
             'u_id': user['u_id'], 
