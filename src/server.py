@@ -100,5 +100,22 @@ def logout_user():
         'is_success': result
     })
 
+@APP.route("/channel/join/v2", methods=["POST"])
+def channel_join():
+    """ 
+    Gets user data from http json and passes it to the
+    channel_join_v2 function
+
+    Returns {} - an empty dictionary
+    """
+    data = request.get_json()
+
+    token = data['token']
+    channel_id = data['channel_id']
+ 
+    channel_join_v2(token, channel_id)
+
+    return dumps({})
+
 if __name__ == "__main__":
     APP.run(port=config.port) # Do not edit this port
