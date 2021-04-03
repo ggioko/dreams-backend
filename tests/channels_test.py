@@ -2,11 +2,11 @@ import pytest
 
 from src.channel import channel_join_v2  
 from src.channels import channels_create_v1, channels_listall_v1, channels_list_v2, channels_create_v2
-from src.auth import auth_register_v2
+from src.auth import auth_register_v2, auth_register_v1
 from src.other import clear_v1
 from src.error import InputError, AccessError
 
-from src.data import data
+#from src.data import data
 
 # Test the case that Auth_user_id is invalid for channels create
 # Expected AccessError
