@@ -48,11 +48,11 @@ def channels_create():
 
     token = data['token']
     name = data['name']
-    is_public = bool(data['is_public'])
+    is_public = data['is_public']
 
-    channel_id = channels_create_v2(token, name, is_public)
+    response = channels_create_v2(token, name, is_public)
 
-    return dumps (channel_id)
+    return dumps (response)
 
 @APP.route("/auth/login/v2", methods=["POST"])
 def login_user():
