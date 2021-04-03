@@ -1,8 +1,8 @@
 import pytest
 
 from src.auth import auth_register_v1, auth_register_v2, auth_logout_v1
-from src.channel import channel_invite_v1, channel_details_v1, channel_join_v1, channel_messages_v1
-from src.channels import channels_create_v1 channels_create_v2
+from src.channel import channel_invite_v1, channel_details_v1, channel_join_v1, channel_messages_v1, channel_invite_v2
+from src.channels import channels_create_v1, channels_create_v2
 from src.error import InputError, AccessError
 from src.other import clear_v1
 
@@ -166,7 +166,6 @@ def test_channel_messages_unauthorised_user():
     channel_1 = channels_create_v1(1, 'channel_1', True)
     with pytest.raises(AccessError):
         assert channel_messages_v1("invalid", channel_1['channel_id'], 0)
-    pass
 
 def test_channel_join_invalid_user_id():
     clear_v1()
