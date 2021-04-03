@@ -1,40 +1,9 @@
 from src.error import InputError, AccessError
 from src.data import data
+from src.helper import get_token, get_user_data, email_in_use
 import re
 import jwt
 import hashlib
-
-SECRET = 'dorito'
-
-def get_token(user_data):
-    """
-    Helper function to generate new token for a new session.
-    Takes in user data and outputs token
-    """
-    i = 0
-    while True:
-        token = jwt.encode({'u_id' : user_data['u_id'], 'session_id' : i}, SECRET, algorithm='HS256')
-        i += 1
-        if token not in data['active_tokens']:
-            break
-    data['active_tokens'].append(token)
-    return token
-
-def get_user_data(data_type):
-    """
-    Helper function that returns a list of user data for a specific 
-    parameter. E.g. argument 'email' returns a list of user emails
-    """
-    return [data['users'][c][data_type] for c in range(len(data['users']))]
-
-def email_in_use(email):
-    """
-    Helper function that check if email is in use
-    """
-    emails = get_user_data('email')
-    if email in emails:
-        return True
-    return False
 
 def auth_login_v2(email, password):
     """
