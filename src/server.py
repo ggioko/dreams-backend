@@ -5,7 +5,7 @@ from flask_cors import CORS
 from src.error import InputError
 from src import config
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
-from src.channels import channels_listall_v2
+from src.channels import channels_create_v2, channels_listall_v2
 from src.other import clear_v1
 
 def defaultHandler(err):
@@ -35,6 +35,25 @@ def echo():
         'data': data
     })
 
+@APP.route("/channels/create/v2", methods=['POST'])
+def channels_create():
+    """
+    Gets user data from http json and passes it to the
+    channels_register_v2 function
+
+    Returns { 'channel_id': channel_id,} on success
+
+    """
+    data = request.get_json()
+
+    token = data['token']
+    name = data['name']
+    is_public = data['is_public']
+
+    response = channels_create_v2(token, name, is_public)
+
+    return dumps (response)
+
 @APP.route("/auth/login/v2", methods=["POST"])
 def login_user():
     """
@@ -58,6 +77,8 @@ def login_user():
 def clear():
     """
     Function to call clear_v1
+
+    Returns {} on success
     """
     clear_v1()
     return dumps({})
@@ -90,6 +111,8 @@ def listall():
     """
     Gets users data from http args and passes it to
     channels_listall_v2 function
+
+    Returns { 'channels': [...]} on success
     """
     token = request.args.get('token')
     data = channels_listall_v2(token)

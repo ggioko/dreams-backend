@@ -2,7 +2,8 @@ import pytest
 import requests
 import json
 from src import config
-from src.error import AccessError
+from src.error import AccessError, InputError
+from src.helper import generate_token
 
 def test_channels_listall_v2_runs():
     '''
@@ -32,15 +33,53 @@ def test_channels_listall_v2_check():
     requests.post(config.url + 'channels/create/v2', json={'token': token['token'], 'name' : name_2, \
     'is_public' : True})
     resp = requests.get(config.url + 'channels/listall/v2', params={'token': token['token']})
-    assert json.loads(resp.text) == {'channels': [
-        "My Channel",
-        "My second Channel"
-    ]}
+    channels = [json.loads(resp.text)['channels'][c]['name'] for c in range(len(json.loads(resp.text)['channels']))]
+    assert name in channels
+    assert name_2 in channels
 
 def test_channels_listall_v2_access_error():
     """
     Test to see if listall raises access error when passed in an invalid token
     """
-    with pytest.raises(AccessError):
-        assert requests.get(config.url + 'channels/listall/v2', params={'token': -1})
+    r = requests.get(config.url + 'channels/listall/v2', params={'token': -1})
+    assert r.status_code == AccessError().code
+
+def test_channels_create():
+    """
+    A simple test to check channels_create works by passing valid information
+    """
+    # Clear data first
+    r = requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    register1 = r.json()
+    r = requests.post(config.url + 'channels/create/v2',  json={'token': register1['token'], 'name': 'channel1', 'is_public': True})
+    assert r.json() == {'channel_id' : 1}
+
+def test_channels_create_errors():
+    """
+    Testings for input and access errors 
+    """
+    # Clear data first
+    r = requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    register1 = r.json()
+
+    # Test the case where the channel name is more than 20 characters
+    # Expected bad request InputError
+    r = requests.post(config.url + 'channels/create/v2',  json={'token': register1['token'], 'name': 'nameislonger20characters', 'is_public': True})
+    assert r.status_code == InputError().code
+
+    # Test the case where is_public is not of type bool
+    # Expected bad request InputError
+    r = requests.post(config.url + 'channels/create/v2',  json={'token': register1['token'], 'name': 'channel1', 'is_public': 20})
+    assert r.status_code == InputError().code
+
+
+    # Test the case where the token is invalid
+    # Expected forbidden AccessError
+    invalid_token = generate_token(4)
+    r = requests.post(config.url + 'channels/create/v2',  json={'token': invalid_token, 'name': 'channel1', 'is_public': True})
+    assert r.status_code == AccessError().code
 
