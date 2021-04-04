@@ -154,7 +154,9 @@ def channel_details():
     
     data = channel_details_v2(token, channel_id)
     
-    return dumps(data)
+    return dumps(
+        data
+    )
     
 @APP.route("/channel/invite/v2", methods=['POST'])
 def invite_user_to_channel():
