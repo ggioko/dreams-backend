@@ -7,7 +7,8 @@ from src import config
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 from src.channels import channels_create_v2
 from src.channel import channel_join_v2
-from src.other import clear_v1, users_all_v1
+from src.other import clear_v1
+from src.user import users_all_v1
 
 def defaultHandler(err):
     response = err.get_response()

@@ -1,7 +1,8 @@
 import pytest
 from src.data import data
 from src.auth import auth_register_v2
-from src.other import clear_v1, users_all_v1
+from src.other import clear_v1
+from src.user import users_all_v1
 from src.error import InputError, AccessError
 from src.helper import generate_token
 
