@@ -151,13 +151,9 @@ def channel_messages():
     channel_id = data['channel_id']
     start = data['start']
 
-    data = channel_messages_v2(token, channel_id, start)
+    response = channel_messages_v2(token, channel_id, start)
 
-    return dumps({
-        'messages': data['messages'],
-        'start': data['start'],
-        'end': data['end']
-    })
+    return dumps(response)
     
 if __name__ == "__main__":
     APP.run(port=config.port) # Do not edit this port
