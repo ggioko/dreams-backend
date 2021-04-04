@@ -83,7 +83,7 @@ def test_channel_details_invalid_channel_id():
     clear_v1()
     user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest') 
     with pytest.raises(InputError):
-        assert channel_details_v2(user_1['token', 'Invalid Channel']) #Pass in string as channel_id 
+        assert channel_details_v2(user_1['token'], 'Invalid Channel') #Pass in string as channel_id 
 
 def test_channel_details_unauthorised_user():
     """
