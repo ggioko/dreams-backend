@@ -59,7 +59,7 @@ def channel_invite_v2(token, channel_id, u_id):
 
     # Checks that inviter is authorised to invite new member
     userMatch = False
-    for user in channel['owner_members']:
+    for user in channel['all_members']:
         if user['u_id'] == auth_user_id:
             userMatch = True
             break
