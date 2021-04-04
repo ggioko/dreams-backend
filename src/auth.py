@@ -1,82 +1,9 @@
-from src.error import InputError
+from src.error import InputError, AccessError
 from src.data import data
+from src.helper import get_token, get_user_data, email_in_use
 import re
 import jwt
 import hashlib
-
-SECRET = 'dorito'
-
-def get_token(user_data):
-    """
-    Helper function to generate new token for a new session.
-    Takes in user data and outputs token
-    """
-    i = 0
-    while True:
-        token = jwt.encode({'u_id' : user_data['u_id'], 'session_id' : i}, SECRET, algorithm='HS256')
-        i += 1
-        if token not in data['active_tokens']:
-            break
-    data['active_tokens'].append(token)
-    return token
-
-def get_user_data(data_type):
-    """
-    Helper function that returns a list of user data for a specific 
-    parameter. E.g. argument 'email' returns a list of user emails
-    """
-    return [data['users'][c][data_type] for c in range(len(data['users']))]
-
-def email_in_use(email):
-    """
-    Helper function that check if email is in use
-    """
-    emails = get_user_data('email')
-    if email in emails:
-        return True
-    return False
-
-def auth_login_v1(email, password):
-    """
-    Given a registered users' email and password and returns their `auth_user_id` value
-
-    Arguments:
-        email (string)    - Users email
-        password (string)    - Users password
-
-    Exceptions:
-        InputError  - Occurs when email has an incorrect format, email is not
-                    registered or when the password does not match the given
-                    email
-
-    Return Value:
-        Returns {'auth_user_id': id,} on success
-    """
-    # Check email syntax
-    if not re.match('^[a-zA-Z0-9]+[\\._]?[a-zA-Z0-9]+[@]\\w+[.]\\w{2,3}$',email):
-        raise InputError('Email entered is not a valid email')
-    
-    # Loop checking if email is not in list of registered users
-    if email_in_use(email) == False:
-        raise InputError('Email entered does not belong to a user')
-    
-    if len(data['users']) != 0:
-        # Loop until an email match
-        for user in data['users']:
-            if email == user['email']:
-                # Copy the password and user_id for the email match
-                reuser = {
-                    'u_id' : user['u_id'],
-                    'password' : user['password']
-                }
-                # Check if the passwords match
-                if password == reuser.get('password'):
-                    auth_user_id = reuser.get('u_id')
-                    return {'auth_user_id':auth_user_id}
-                else:
-                    raise InputError('Password is not correct')
-    else:
-        raise InputError('No registered users detected')
 
 def auth_login_v2(email, password):
     """
@@ -97,11 +24,11 @@ def auth_login_v2(email, password):
     """
     # Check email syntax
     if not re.match('^[a-zA-Z0-9]+[\\._]?[a-zA-Z0-9]+[@]\\w+[.]\\w{2,3}$',email):
-        raise InputError('Email entered is not a valid email')
+        raise InputError(description='Email entered is not a valid email')
     
     # Loop checking if email is not in list of registered users
     if email_in_use(email) == False:
-        raise InputError('Email entered does not belong to a user')
+        raise InputError(description='Email entered does not belong to a user')
     
     # Hashs the given password to check with list of hashed passwords in 'users' later
     password_hash = hashlib.sha256(password.encode()).hexdigest()
@@ -125,9 +52,9 @@ def auth_login_v2(email, password):
                         'auth_user_id':auth_user_id,
                     }
                 else:
-                    raise InputError('Password is not correct')
+                    raise InputError(description='Password is not correct')
     else:
-        raise InputError('No registered users detected')
+        raise InputError(description='No registered users detected')
 
 def auth_register_v1(email, password, name_first, name_last):
     """
@@ -302,6 +229,11 @@ def auth_logout_v1(token):
     """
 
     active_tokens = data['active_tokens']
+
+    # Check given token is valid
+    if token not in active_tokens:
+        raise AccessError(description='Invalid token')
+
     # Search through active tokens
     for x in active_tokens:
         # Once the given token matches an active token it invalidates it,
