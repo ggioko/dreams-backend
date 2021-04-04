@@ -34,15 +34,14 @@ data = {
                     'handle_str': 'haydenjacobs',
                 },
             ],
+            'messages' : [],
         },
         {
             'id': 2,
             'name' : 'channel2',
             'is_public': True,
-            'owner_members': [
-            ],
-            'all_members': [
-            ],
+            'owner_members': [],
+            'all_members': [],
             'messages' : [
                 {
                     'message_id': 1,
@@ -53,5 +52,6 @@ data = {
         ],
         },
     ],
-    'active_tokens' : []
+    'active_tokens' : [],
+    'message_count' : 0,
 }
