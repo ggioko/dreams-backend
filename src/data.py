@@ -33,21 +33,13 @@ data = {
                     #'handle_str': 'haydenjacobs',
                 },
             ],
-            'messages' : [],
-        },
-        {
-            #'id': 2,
-            #'name' : 'channel2',
-            #'is_public': True,
-            #'owner_members': [],
-            #'all_members': [],
             'messages' : [
                 {
                     #'message_id': 1,
                     #'u_id': 1,
                     #'message': 'Hello world',
                     #'time_created': 1582426789,
-                }
+                },
             ],
         },
     ],
