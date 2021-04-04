@@ -9,7 +9,7 @@ from src.other import clear_v1
 
 def test_channel_invite_valid():
     '''
-    Tests channel_invite_v2 with all valid information except for an invalid channel
+    Tests channel_invite_v2 with all valid information
     '''
     clear_v1()
 
