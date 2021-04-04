@@ -28,14 +28,12 @@ def channel_invite_v2(token, channel_id, u_id):
         if channel['id'] == channel_id:
             foundChannel = channel
             break
-        print(channel['id'])
     if foundChannel == {}:
         raise InputError(description='Invalid channel ID provided')
 
     # Checks to see if invited user is a valid user of dreams
     userMatch = False
     for user in data['users']:
-        print(user)
         if user['u_id'] == u_id:
             userMatch = True
             break
@@ -70,7 +68,7 @@ def channel_invite_v2(token, channel_id, u_id):
     reuser = {}
     # Loop until u_id match
     for user in data['users']:
-        if auth_user_id == user['u_id']:
+        if u_id == user['u_id']:
             # Copy all the user data for easier access
             reuser = {
                 'u_id': user['u_id'],
@@ -109,14 +107,12 @@ def channel_addowner_v1(token, channel_id, u_id):
         if channel['id'] == channel_id:
             foundChannel = channel
             break
-        print(channel['id'])
     if foundChannel == {}:
         raise InputError(description='Invalid channel ID provided')
 
     # Checks to see if invited owner is a valid user of dreams
     userMatch = False
     for user in data['users']:
-        print(user)
         if user['u_id'] == u_id:
             userMatch = True
             break
@@ -138,20 +134,29 @@ def channel_addowner_v1(token, channel_id, u_id):
     decoded_token = jwt.decode(token, SECRET, algorithms=['HS256'])
     auth_user_id = decoded_token['u_id']
 
+
     # Checks that inviter is an owner member
+    authUserMatch = False
+    for user in channel['owner_members']:
+        if str(user['u_id']) == str(auth_user_id):
+            authUserMatch = True
+            break
+    if authUserMatch == False:
+        raise AccessError(description='Authorised user not a channel owner')
     userMatch = False
     for user in channel['owner_members']:
-        if user['u_id'] == auth_user_id:
+        if user['u_id'] == u_id:
             userMatch = True
             break
-    if userMatch == False:
-        raise AccessError(description='Authorised user not a channel owner')
+    if userMatch == True:
+        raise AccessError(description='New owner already an owner of channel')
+    
 
     # Add user to channel
     reuser = {}
     # Loop until u_id match
     for user in data['users']:
-        if auth_user_id == user['u_id']:
+        if u_id == user['u_id']:
             # Copy all the user data for easier access
             reuser = {
                 'u_id': user['u_id'],
