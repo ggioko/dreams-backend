@@ -81,7 +81,7 @@ def test_channel_invite():
     Tests to see if channel_invite_v2 is working as intended
     """
     # Clear register:
-    r = requests.post(config.url + 'clear/v1')
+    r = requests.delete(config.url + 'clear/v1')
     r = requests.post(config.url + 'auth/register/v2', json={'email':'madladadmin@gmail.com',\
     'password':'123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
     rego_1 = r.json()
