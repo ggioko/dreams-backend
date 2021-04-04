@@ -1,28 +1,26 @@
 from src.error import InputError, AccessError
 from src.data import data
-from src.helper import get_token_user_id
+from src.helper import get_token_user_id, check_token_valid
 import re
 import jwt
 import hashlib
 
-'''
-channels_list_v1() - z5205069 Julius Vandeleur
-
-Provide a list of all channels (and their associated details) that the authorised user is part of.
-
-Arguments: 
-    auth_user_id (int)
-    
-Exception: 
-    AccessError - Occurs when auth_user_id passed in is not a valid id.
-    
-Return value: 
-    {'channels': [{channel_id: id, name: name}...} on success
-'''
-
 def channels_list_v1(auth_user_id):
-    # Output will be a dictionary containing a list of dictionaries
+    '''
+    channels_list_v1() - z5205069 Julius Vandeleur
     
+    Provide a list of all channels (and their associated details) that the authorised user is part of.
+    
+    Arguments: 
+        auth_user_id (int)
+        
+    Exception: 
+        AccessError - Occurs when auth_user_id passed in is not a valid id.
+        
+    Return value: 
+        {'channels': [{channel_id: id, name: name}...} on success
+    '''
+    # Output will be a dictionary containing a list of dictionaries    
     # Check if auth_user_id matches an id in the database.
     valid = 0
     for user in data['users']:
@@ -45,26 +43,50 @@ def channels_list_v1(auth_user_id):
                 })
     return userChannels
 
-    
-
-"""
-Lists all the channels present in the database
-
-Arguments:
-    auth_user_id (int)    - Users ID
-
-Exceptions:
-    InputError  - Occurs users ID is not in the database
-
-Return Value:
-    Returns {'channels': [{channel_id: id, name: name}...} on success
-
-"""
 
 def channels_listall_v1(auth_user_id):
+    """
+    Lists all the channels present in the database
+    
+    Arguments:
+        auth_user_id (int)    - Users ID
+    
+    Exceptions:
+        InputError  - Occurs users ID is not in the database
+    
+    Return Value:
+        Returns {'channels': [{channel_id: id, name: name}...} on success
+    
+    """
     ids = [data['users'][c]['u_id'] for c in range(len(data['users']))]
     if auth_user_id not in ids:
         raise AccessError("Invalid ID")
+
+
+def channels_listall_v2(token):
+    """
+    Lists all the channels present in the database
+
+    Arguments:
+        token (string)    - Users session token
+
+    Exceptions:
+        Access Error  - Occurs when users token is not active
+
+    Return Value:
+        Returns {'channels': [{channel_id: id, name: name}...} on success
+
+    """
+    # Checks is token is active
+    """
+    if len(data['active_tokens']) == 0 or token not in data['active_tokens']:
+        raise AccessError(description="Invalid Token")
+    """
+    if check_token_valid(token) == False:
+        raise AccessError(description="Invalid Token")
+    
+    # Creates dictionary with a list of channels and populates it
+
     channelData = {'channels':[]}
     for channel in data['channels']:
         channelData['channels'].append({
