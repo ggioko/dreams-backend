@@ -199,32 +199,31 @@ def channel_details_v2(token, channel_id):
                     'name_first': member['name_first'],
                     'name_last': member['name_last'],
                     'handle_str': member['handle_str'],            
-                })
-                
+                })             
     return channelDetails
 
-"""
-
-Given a Channel with ID channel_id that the authorised user is part of, 
-return up to 50 messages between index "start" and "start + 50". 
-Message with index 0 is the most recent message in the channel. 
-
-Arguments:
-    auth_user_id (int)    - Users id
-    channel_id (int)    - Channel id
-    start (int)    - Start of the messages
-
-Exceptions:
-    InputError - Occurs when the channel ID is not a valid channel or start is 
-                greater than the total number of messages in the channel
-    AccessError - Occurs when id is not in data or authorised user is not a 
-                member of channel with channel_id
-
-Return Value:
-    Returns { messages, start, end } on success
-
-"""
 def channel_messages_v1(auth_user_id, channel_id, start):
+    """
+    
+    Given a Channel with ID channel_id that the authorised user is part of, 
+    return up to 50 messages between index "start" and "start + 50". 
+    Message with index 0 is the most recent message in the channel. 
+    
+    Arguments:
+        auth_user_id (int)    - Users id
+        channel_id (int)    - Channel id
+        start (int)    - Start of the messages
+    
+    Exceptions:
+        InputError - Occurs when the channel ID is not a valid channel or start is 
+                    greater than the total number of messages in the channel
+        AccessError - Occurs when id is not in data or authorised user is not a 
+                    member of channel with channel_id
+    
+    Return Value:
+        Returns { messages, start, end } on success
+    
+    """
     # Check if auth_user_id matches a user in the database.
     user_valid = 0
     for user in data['users']:
@@ -305,22 +304,22 @@ def channel_leave_v1(auth_user_id, channel_id):
     return {
     }
 
-"""
-Given a channel_id of a channel that the authorised user can join, adds them to that channel
-
-Arguments:
-    auth_user_id (integer)    - Users email
-    channel_id (integer)    - Users set password
-
-Exceptions:
-    InputError  - Occurs when channel_id is not a valid channel
-    AccessError  - Occurs when channel_id refers to a channel that is private (when
-                    the authorised user is not a global owner)
-
-Return Value:
-    Returns {}
-
-"""
+    """
+    Given a channel_id of a channel that the authorised user can join, adds them to that channel
+    
+    Arguments:
+        auth_user_id (integer)    - Users email
+        channel_id (integer)    - Users set password
+    
+    Exceptions:
+        InputError  - Occurs when channel_id is not a valid channel
+        AccessError  - Occurs when channel_id refers to a channel that is private (when
+                        the authorised user is not a global owner)
+    
+    Return Value:
+        Returns {}
+    
+    """
 
 def channel_join_v1(auth_user_id, channel_id):
 
