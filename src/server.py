@@ -167,7 +167,9 @@ def user_profile():
     u_id = data['u_id']
     data = user_profile_v2(token, u_id)
     
-    return dumps(data)
+    return dumps(
+        data
+    )
 
 if __name__ == "__main__":
     APP.run(port=config.port) # Do not edit this port

@@ -11,18 +11,19 @@ def test_user_profile():
     """
     # Clear data first.
     requests.delete(config.url + 'clear/v1')
-    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com', \
     'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
-    user = json.loads(r.text)
-    r = requests.get(config.url + 'user/profile/v2', json={'token': user['token'], 'u_id': user['auth_user_id']})
-    assert r.json() == {'user': {
+    user = r.json()
+    r2 = requests.get(config.url + 'user/profile/v2', json={'token': user['token'], 'u_id': user['auth_user_id']})
+    assert r2.json() == {'user': {
                              'u_id': user['auth_user_id'],
                              'email': 'validemail@gmail.com',
                              'name_first': 'Hayden',
                              'name_last': 'Everest',
                              'handle_str': 'haydeneverest',          
           }}
-
+    
+    
 def test_user_profile_errors():
     """
     Checks the InputError (400) and AccessError cases (403).
@@ -31,11 +32,11 @@ def test_user_profile_errors():
     requests.delete(config.url + 'clear/v1')
     
     # Test for input error - invalid u_id
-    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com', \
     'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
-    user = json.loads(r.text)
+    user = r.json()
     r = requests.get(config.url + 'user/profile/v2', json={'token': user['token'], 'u_id': 'invalid_u_id'})
     assert r.status_code == InputError().code
-    r = requests.get(config.url + 'user/profile/v2', json={'token': 'invalid_token', 'u_id': user['auth_user_id']})
+    r = requests.get(config.url + 'user/profile/v2', json={'token': -1, 'u_id': user['auth_user_id']})
     assert r.status_code == AccessError().code
  
