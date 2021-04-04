@@ -88,7 +88,87 @@ def channel_invite_v2(token, channel_id, u_id):
     return {
     }
 
+def channel_addowner_v1(token, channel_id, u_id):
+    '''
+    channel_addowner_v1() sets a dreams user to become an owner of an
+    input channel when a user with an authorised token calls this.
 
+        Arguments:
+            token (str)        - The token of the existing member of the channel
+            channel_id (int)   - The ID of the channel that the user is to become an owner of
+            u_id (int)         - The ID of the new channel owner
+
+        Exceptions:
+            InputError  - Occurs when channel_id does not refer to a valid channel
+                        - Occurs when u_id already refers to an owner of the channel
+            AccessError - When token's user is not an owner of Dreams or the channel
+    '''
+    # Checks if the channel provided is a channel in the list
+    foundChannel = {}
+    for channel in data['channels']:
+        if channel['id'] == channel_id:
+            foundChannel = channel
+            break
+        print(channel['id'])
+    if foundChannel == {}:
+        raise InputError(description='Invalid channel ID provided')
+
+    # Checks to see if invited owner is a valid user of dreams
+    userMatch = False
+    for user in data['users']:
+        print(user)
+        if user['u_id'] == u_id:
+            userMatch = True
+            break
+    if userMatch == False:
+        raise InputError(description='Member to add not a valid user')
+
+    # Checks to see if inviter is logged in
+    token_active = False
+    active_tokens = data['active_tokens']
+    # Search through active tokens
+    for x in active_tokens:
+        if x == token:
+            token_active = True
+            break
+    if (token_active == False):
+        raise AccessError(description='Token invalid, user not logged in')
+    
+    # Gets ID of inviter
+    decoded_token = jwt.decode(token, SECRET, algorithms=['HS256'])
+    auth_user_id = decoded_token['u_id']
+
+    # Checks that inviter is an owner member
+    userMatch = False
+    for user in channel['owner_members']:
+        if user['u_id'] == auth_user_id:
+            userMatch = True
+            break
+    if userMatch == False:
+        raise AccessError(description='Authorised user not a channel owner')
+
+    # Add user to channel
+    reuser = {}
+    # Loop until u_id match
+    for user in data['users']:
+        if auth_user_id == user['u_id']:
+            # Copy all the user data for easier access
+            reuser = {
+                'u_id': user['u_id'],
+                'email': user['email'],
+                'name_first': user['name_first'],
+                'name_last': user['name_last'],
+                'handle_str': user['handle_str'],
+            }
+
+    # Added user to channel 
+    for channel in data['channels']:
+        if channel['id'] == channel_id:
+            channel['owner_members'].append(reuser)
+            channel['all_members'].append(reuser)
+    
+    return {
+    }
 
 def channel_details_v1(auth_user_id, channel_id):    
     '''
@@ -388,11 +468,11 @@ def channel_join_v2(token, channel_id):
     return {}
 
 # Not required for iteration 1
-def channel_addowner_v1(auth_user_id, channel_id, u_id):
-    return {
-    }
+# def channel_addowner_v1(auth_user_id, channel_id, u_id):
+#     return {
+#     }
 
 # Not required for iteration 1
-def channel_removeowner_v1(auth_user_id, channel_id, u_id):
-    return {
-    }
+# def channel_removeowner_v1(auth_user_id, channel_id, u_id):
+#     return {
+#     }
