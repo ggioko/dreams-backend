@@ -1,12 +1,9 @@
-<<<<<<< HEAD
-def message_send_v2(token, channel_id, message):
-=======
 from src.error import InputError, AccessError
 from src.data import data
 from src.helper import get_user_data, email_in_use, get_token_user_id
 from time import time
 
-def message_send_v1(token, channel_id, message):
+def message_send_v2(token, channel_id, message):
     global data
     if token not in data['active_tokens']:
         raise AccessError(description="Not a valid token")
@@ -22,7 +19,7 @@ def message_send_v1(token, channel_id, message):
         if channel_id == channel['id']:
             user_ids = [channel['all_members'][c]['u_id'] for c in range(len(channel['all_members']))]
             if u_id not in user_ids:
-                raise AccessError(description="the authorised user has not joined the channel \
+                raise AccessError(description="The authorised user has not joined the channel \
                     they are trying to post to")
             channel['messages'].append({
                 'message_id': data['message_count'],
@@ -31,7 +28,6 @@ def message_send_v1(token, channel_id, message):
                 'time_created': int(time()),
             })
 
->>>>>>> master
     return {
         'message_id': data['message_count'],
     }

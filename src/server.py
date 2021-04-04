@@ -10,7 +10,7 @@ from src.channel import channel_join_v2, channel_invite_v2, channel_messages_v2,
 from src.channel import channel_addowner_v1
 from src.other import clear_v1
 from src.user import users_all_v1, user_profile_v2
-from src.message import message_send_v1
+from src.message import message_send_v2
 
 
 def defaultHandler(err):
@@ -114,7 +114,7 @@ def register():
 def message_send():
     """
     Gets user data from http json and passes it to the
-    message_send_v1 function
+    message_send_v2 function
 
     Returns {'message_id' : id} on success
 
@@ -124,7 +124,7 @@ def message_send():
     channel_id = data['channel_id']
     message = data['message']
 
-    data = message_send_v1(token, channel_id, message)
+    data = message_send_v2(token, channel_id, message)
 
     return dumps(data)
     

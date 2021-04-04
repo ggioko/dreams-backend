@@ -2,7 +2,7 @@ import pytest
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 from src.channels import channels_create_v2
 from src.channel import channel_messages_v2
-from src.message import message_send_v1
+from src.message import message_send_v2
 from src.other import clear_v1
 from src.error import InputError, AccessError
 from src.helper import generate_token
@@ -16,7 +16,7 @@ def test_message_send_valid():
     id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     channel_1 = channels_create_v2(id_1['token'], "MyChannel", True)
     message = "hello this is my new channel"
-    message_1 = message_send_v1(id_1['token'], channel_1['channel_id'], message)
+    message_1 = message_send_v2(id_1['token'], channel_1['channel_id'], message)
     result = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
     assert result['messages'][0]['message_id'] == message_1['message_id']
     assert result['messages'][0]['u_id'] == id_1['auth_user_id']
@@ -32,8 +32,8 @@ def test_message_send_differnt_ids():
     channel_2 = channels_create_v2(id_1['token'], "MyChannel2", True)
     message = "hello this is my new channel"
     message_2 = 'hi this is my second channel'
-    message_1 = message_send_v1(id_1['token'], channel_1['channel_id'], message)
-    message_2 = message_send_v1(id_1['token'], channel_2['channel_id'], message_2)
+    message_1 = message_send_v2(id_1['token'], channel_1['channel_id'], message)
+    message_2 = message_send_v2(id_1['token'], channel_2['channel_id'], message_2)
     assert message_1['message_id'] != message_2['message_id']
 
 def test_message_send_too_long():
@@ -48,7 +48,7 @@ def test_message_send_too_long():
         message += f" {i}"
 
     with pytest.raises(InputError):
-        assert message_send_v1(id_1['token'], channel_1['channel_id'], message)
+        assert message_send_v2(id_1['token'], channel_1['channel_id'], message)
 
 def test_message_send_user_not_a_member():
     '''
@@ -62,4 +62,4 @@ def test_message_send_user_not_a_member():
     message = "Not my channel"
 
     with pytest.raises(AccessError):
-        assert message_send_v1(id_2['token'], channel_1['channel_id'], message)
+        assert message_send_v2(id_2['token'], channel_1['channel_id'], message)
