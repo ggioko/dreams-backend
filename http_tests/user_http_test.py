@@ -20,7 +20,7 @@ def test_user_profile():
                              'email': 'validemail@gmail.com',
                              'name_first': 'Hayden',
                              'name_last': 'Everest',
-                             'handle_str': 'haydeneverest',          
+                             'handle_str': 'haydeneverest'          
           }}
     
     

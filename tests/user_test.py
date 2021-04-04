@@ -38,6 +38,6 @@ def test_user_profile():
                              'email': 'validemail0@gmail.com',
                              'name_first': 'Hayden',
                              'name_last': 'Everest',
-                             'handle_str': 'HaydenEverest',          
+                             'handle_str': 'HaydenEverest'          
           }}
     
