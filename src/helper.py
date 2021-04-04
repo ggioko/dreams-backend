@@ -1,9 +1,18 @@
-import re
-import jwt
-import hashlib
+import re, jwt, hashlib, pickle
 from src.data import data
 
 SECRET = 'dorito'
+
+def save_data():
+    with open('src/data.p', 'wb') as FILE:
+        pickle.dump(data, FILE)
+
+
+def load_data():
+    global data
+    with open('src/data.p', 'rb') as FILE:
+        data = pickle.load(FILE)
+
 
 def get_token_user_id(token):
     """
