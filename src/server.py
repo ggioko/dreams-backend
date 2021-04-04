@@ -6,7 +6,7 @@ from src.error import InputError
 from src import config
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 from src.channels import channels_create_v2, channels_listall_v2
-from src.channel import channel_join_v2, channel_invite_v2
+from src.channel import channel_join_v2, channel_invite_v2, channel_messages_v2
 from src.other import clear_v1
 from src.user import users_all_v1
 
@@ -167,6 +167,24 @@ def channel_join():
 
     return dumps({})
 
+@APP.route("/channel/messages/v2", methods=["GET"])
+def channel_messages():
+    """ 
+    Gets user data from http json and passes it to the
+    channel_messages_v2 function
+
+    Returns { 'messages': messages, 'start': start, 'end': end }
+    """
+    data = request.get_json()
+    
+    token = data['token']
+    channel_id = data['channel_id']
+    start = data['start']
+
+    response = channel_messages_v2(token, channel_id, start)
+
+    return dumps(response)
+    
 @APP.route("/users/all/v1", methods=["GET"])
 def users_all():
     """ 
