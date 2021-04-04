@@ -81,7 +81,6 @@ def channel_addowner_everything_correct():
     clear_v1()
 
     auth_user_token = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')['token']
-    user1token = auth_register_v2('validemail2@gmail.com', '1234abc!@#', 'Haydenn', 'Everestt')['token']
     user2ID = auth_register_v2('validemail3@gmail.com', '123abcd!@#', 'Haydeen', 'Everesst')
     channelID = channels_create_v2(auth_user_token, 'dankmemechannel', False)
     
@@ -94,13 +93,12 @@ def channel_addowner_invalid_channel():
     clear_v1()
 
     auth_user_token = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')['token']
-    user1token = auth_register_v2('validemail2@gmail.com', '1234abc!@#', 'Haydenn', 'Everestt')['token']
     user2ID = auth_register_v2('validemail3@gmail.com', '123abcd!@#', 'Haydeen', 'Everesst')
     channelID = channels_create_v2(auth_user_token, 'dankmemechannel', False)
     with pytest.raises(InputError):
         channel_addowner_v1(auth_user_token, channelID['channel_id'] + 1, user2ID['auth_user_id'])
         
-def channel_addowner_invalid_channel():
+def channel_addowner_already_owner():
     '''
     Tests channel_addowner_v1 with u_id already an owner of the channel
     '''
@@ -113,7 +111,7 @@ def channel_addowner_invalid_channel():
     with pytest.raises(InputError):
         channel_addowner_v1(auth_user_token, channelID, user2ID['auth_user_id'])
         
-def channel_addowner_invalid_channel():
+def channel_addowner_invalid_authoriser():
     '''
     Tests channel_addowner_v1 with the authorised user being invalid
     '''
