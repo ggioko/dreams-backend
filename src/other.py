@@ -4,6 +4,7 @@ def clear_v1():
     """
     Function to clear internal data
     """
+    global data
     data['users'].clear()
     data['channels'].clear()
     data['message_count'] = 0

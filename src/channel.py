@@ -194,6 +194,7 @@ def channel_messages_v1(auth_user_id, channel_id, start):
     # Check to see if channel_id matches a channel in the database.
     channel_valid = 0
     for channel in data['channels']:
+        print(channel)
         if channel['id'] == channel_id:
             channel_valid = 1
     if channel_valid == 0:

@@ -3,7 +3,6 @@ import json
 from src import config
 from src.error import AccessError, InputError
 from src.helper import generate_token
-from src.channels import channels_create_v2
     
 def test_message_send_runs():
     '''
@@ -17,12 +16,14 @@ def test_message_send_runs():
     token = json.loads(resp.text)
     message = "Hello this is a new message"
     name = "MyChannel"
-    channel_id = channels_create_v2(token['token'], name, True)
+    resp = requests.post(config.url + 'channels/create/v2', json={'token': token['token'], \
+        'name' : name, 'is_public' : True})
+    channel = json.loads(resp.text)
     requests.post(config.url + 'message/send/v2', json={'token': token['token'], \
-        'channel_id' : channel_id['channel_id'], 'message' : message})
+        'channel_id' : channel['channel_id'], 'message' : message})
     resp = requests.get(config.url + 'channel/messages/v2', params={'token': token['token'], \
-        'channel_id' : channel_id['channel_id'], 'start' : 0})
-    assert json.loads(resp.text) == message
+        'channel_id' : channel['channel_id'], 'start' : 0})
+    assert json.loads(resp.text)['message'] == message
 
     
 
@@ -41,9 +42,11 @@ def test_message_send_http_too_long():
     for i in range(1001):
         message += f" {i}"
 
-    channel_id = channels_create_v2(token['token'], name, True)
+    resp = requests.post(config.url + 'channels/create/v2', json={'token': token['token'], \
+        'name' : name, 'is_public' : True})
+    channel = json.loads(resp.text)
     r = requests.post(config.url + 'message/send/v2', json={'token': token['token'], \
-        'channel_id' : channel_id['channel_id'], 'message' : message})
+        'channel_id' : channel['channel_id'], 'message' : message})
     
     assert r.status_code == InputError().code
 
@@ -61,11 +64,15 @@ def test_message_send_http_differnt_ids():
     name_2 = "My Second Channel"
     message = "my first message"
     message_2 = "my second message"
-    channel_id = channels_create_v2(token['token'], name, True)
-    channel_id_2 = channels_create_v2(token['token'], name_2, True)
+    resp = requests.post(config.url + 'channels/create/v2', json={'token': token['token'], \
+        'name' : name, 'is_public' : True})
+    channel = json.loads(resp.text)
+    resp = requests.post(config.url + 'channels/create/v2', json={'token': token['token'], \
+        'name' : name_2, 'is_public' : True})
+    channel_2 = json.loads(resp.text)
     resp = requests.post(config.url + 'message/send/v2', json={'token': token['token'], \
-        'channel_id' : channel_id['channel_id'], 'message' : message})
+        'channel_id' : channel['channel_id'], 'message' : message})
     resp_2 = requests.post(config.url + 'message/send/v2', json={'token': token['token'], \
-        'channel_id' : channel_id_2['channel_id'], 'message' : message_2})
+        'channel_id' : channel_2['channel_id'], 'message' : message_2})
     
     assert json.loads(resp.text) != json.loads(resp_2.text)
