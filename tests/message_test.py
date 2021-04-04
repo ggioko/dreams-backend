@@ -49,3 +49,17 @@ def test_message_send_too_long():
 
     with pytest.raises(InputError):
         assert message_send_v1(id_1['token'], channel_1['channel_id'], message)
+
+def test_message_send_user_not_a_member():
+    '''
+    Checks if message_send raises an error if the user is not a member
+    of the channel
+    '''
+    clear_v1()
+    id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    channel_1 = channels_create_v2(id_1['token'], "MyChannel", True)
+    id_2 = auth_register_v2('validemail2@gmail.com', '123abc!@#', 'Haydenn', 'Everestt')
+    message = "Not my channel"
+
+    with pytest.raises(AccessError):
+        assert message_send_v1(id_2['token'], channel_1['channel_id'], message)
