@@ -5,7 +5,7 @@ from flask_cors import CORS
 from src.error import InputError
 from src import config
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
-from src.channels import channels_create_v2, channels_listall_v2
+from src.channels import channels_create_v2, channels_listall_v2, channels_list_v2
 from src.channel import channel_join_v2, channel_invite_v2, channel_messages_v2
 from src.other import clear_v1
 from src.user import users_all_v1, user_profile_v2
@@ -239,5 +239,19 @@ def users_all():
         'users': user_list['users']
     })
 
+@APP.route("/channels/list/v2", methods = ['GET'])
+def channels_list():
+    """
+    Gets user token from http json and passes it to the
+    channels_list_v2 function
+    Returns {channels:[]} on success
+    """
+    
+    data = request.get_json()
+    token = data['token']
+    data = channels_list_v2(token)
+    
+    return dumps(data)
+    
 if __name__ == "__main__":
     APP.run(port=config.port) # Do not edit this port

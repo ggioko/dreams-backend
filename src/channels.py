@@ -44,6 +44,45 @@ def channels_list_v1(auth_user_id):
     return userChannels
 
 
+def channels_list_v2(token):
+    '''
+    channels_list_v2() - z5205069 Julius Vandeleur
+    
+    Provide a list of all channels (and their associated details) that the authorised user is part of.
+    
+    Arguments: 
+        token (string)
+        
+    Exception: 
+        AccessError - Occurs when token passed in is not a valid token.
+        
+    Return value: 
+        {'channels': [{channel_id: id, name: name}...} on success
+    '''
+    # Output will be a dictionary containing a list of dictionaries    
+    # Check if auth_user_id matches an id in the database.
+    valid = 0
+    for user in data['active_tokens']:
+        if user == token:
+            valid = 1
+    if valid == 0:
+        raise AccessError(description = "Error occurred token is not valid")
+    # Call get_token_user_id helper function.    
+    auth_user_id = get_token_user_id(token) 
+    userChannels = {'channels':[]} 
+    # Loop through each channel in data.
+    for channel in data['channels']:
+        # Check the all_members section of each channel.
+        for member in channel['all_members']:
+            if member['u_id'] == auth_user_id: 
+                # Append the channel to the userChannels dictionary
+                userChannels['channels'].append({
+                    'channel_id' : channel['id'],
+                    'name' : channel['name'],    
+                })
+    return userChannels
+
+
 def channels_listall_v1(auth_user_id):
     """
     Lists all the channels present in the database
