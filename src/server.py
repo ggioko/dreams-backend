@@ -155,7 +155,7 @@ def channel_messages():
 
     return dumps({
         'messages': data['messages'],
-        'start': data['start']
+        'start': data['start'],
         'end': data['end']
     })
     
