@@ -1,6 +1,6 @@
 from src.error import InputError, AccessError
 from src.data import data
-from src.helper import get_token_user_id
+from src.helper import get_token_user_id, check_token_valid
 import re
 import jwt
 import hashlib
@@ -61,7 +61,11 @@ def channels_listall_v2(token):
 
     """
     # Checks is token is active
+    """
     if len(data['active_tokens']) == 0 or token not in data['active_tokens']:
+        raise AccessError(description="Invalid Token")
+    """
+    if check_token_valid(token) == False:
         raise AccessError(description="Invalid Token")
     
     # Creates dictionary with a list of channels and populates it
