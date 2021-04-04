@@ -23,7 +23,7 @@ def test_message_send_runs():
         'channel_id' : channel['channel_id'], 'message' : message})
     resp = requests.get(config.url + 'channel/messages/v2', params={'token': token['token'], \
         'channel_id' : channel['channel_id'], 'start' : 0})
-    assert json.loads(resp.text)['message'] == message
+    assert json.loads(resp.text)['messages'][0]['message'] == message
 
     
 
