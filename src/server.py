@@ -149,7 +149,7 @@ def channel_details():
     Returns dictionary containing basic details of specified channel on success.
     """
     token = request.args.get('token')
-    channel_id = request.args.get('channel_id')
+    channel_id = int(request.args.get('channel_id'))
 
     data = channel_details_v2(token, channel_id)
     

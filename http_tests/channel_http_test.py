@@ -21,17 +21,22 @@ def test_channel_details():
     r = requests.post(config.url + 'auth/register/v2', json = {'email':'validemail3@gmail.com', \
     'password' : '123abc!@#', 'name_first':'Angus', 'name_last':'Young'})
     rego_3 = r.json()
-#    r = requests.post(config.url + 'auth/register/v2', json = {'email':'validemail4@gmail.com', \
-#    'password' : '123abc!@#', 'name_first':'James', 'name_last':'Taylor'})
-#    rego_4 = r.json()
+
+
     r = requests.post(config.url + 'channels/create/v2', json = {'token': rego_1['token'], 'name': 'Channel1', 'is_public': True})
     new_channel = r.json()
+    
+
+    
     requests.post(config.url + 'channel/join/v2', json = {'token': rego_2['token'], 'channel_id': new_channel['channel_id']})
     requests.post(config.url + 'channel/join/v2', json = {'token': rego_3['token'], 'channel_id': new_channel['channel_id']})
     
     # system test
-    test_4 = requests.get(config.url + 'channel/details/v2', params = {'token': rego_1['token'], 'channel_id': new_channel['channel_id']})
+    test_4 = requests.get(config.url + 'channel/details/v2', params = {'token': rego_1['token'], 'channel_id': 1})
     payload_4 = test_4.json()
+    
+
+    
     correct = 0
     if payload_4['name'] == 'Channel1':
         if len(payload_4['owner_members']) == 1:
@@ -66,7 +71,7 @@ def test_channel_details_errors():
     requests.post(config.url + 'channel/join/v2', json = {'token': rego_3['token'], 'channel_id': new_channel['channel_id']})
     
     # invalid channel id - Input Error
-    test_1 = requests.get(config.url + 'channel/details/v2', params = {'token': rego_1['token'], 'channel_id': 'invalid_id'})
+    test_1 = requests.get(config.url + 'channel/details/v2', params = {'token': rego_1['token'], 'channel_id': -1})
     assert test_1.status_code == InputError().code
     # unauthorised user - Access Error
     test_2 = requests.get(config.url + 'channel/details/v2', params = {'token': rego_4['token'], 'channel_id': new_channel['channel_id']})
