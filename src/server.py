@@ -10,6 +10,7 @@ from src.channel import channel_join_v2, channel_invite_v2, channel_messages_v2,
 from src.other import clear_v1
 from src.user import users_all_v1, user_profile_v2
 from src.helper import save_data, load_data
+from src.message import message_send_v1
 
 
 def defaultHandler(err):
@@ -116,6 +117,24 @@ def register():
         'token' : data['token'],
         'auth_user_id' : data['auth_user_id']
     })
+
+@APP.route("/message/send/v2", methods=['POST'])
+def message_send():
+    """
+    Gets user data from http json and passes it to the
+    message_send_v1 function
+
+    Returns {'message_id' : id} on success
+
+    """
+    data = request.get_json()
+    token = data['token']
+    channel_id = data['channel_id']
+    message = data['message']
+
+    data = message_send_v1(token, channel_id, message)
+
+    return dumps(data)
     
 
 @APP.route("/channels/listall/v2", methods=['GET'])
@@ -232,11 +251,9 @@ def channel_messages():
 
     Returns { 'messages': messages, 'start': start, 'end': end }
     """
-    data = request.get_json()
-    
-    token = data['token']
-    channel_id = data['channel_id']
-    start = data['start']
+    token = request.args.get('token')
+    channel_id = int(request.args.get('channel_id'))
+    start = int(request.args.get('start'))
 
     response = channel_messages_v2(token, channel_id, start)
 

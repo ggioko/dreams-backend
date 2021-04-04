@@ -388,9 +388,9 @@ def channel_messages_v2(token, channel_id, start):
     # No messages
     if num_messages == 0 and start == 0:
         return {
-                'messages': [], 
-                'start': start, 
-                'end': -1
+            'messages': [], 
+            'start': start, 
+            'end': -1
         }
 
     # If start is larger than number of items in messages
@@ -401,7 +401,7 @@ def channel_messages_v2(token, channel_id, start):
     # Loop through messages list, append messages to a list
     end = start + 50
     counter = 0
-    messages = []
+    output = []
     
     while counter < 50:
         index = start + counter
@@ -409,12 +409,12 @@ def channel_messages_v2(token, channel_id, start):
             break
 
         new_message = {
-                'message_id': messages[index].get('message_id'),
-                'u_id': messages[index].get('user_id'),
-                'message': messages[index].get('message_sent'),
-                'time_created': messages[index].get('time_created'),
+            'message_id': messages[index].get('message_id'),
+            'u_id': messages[index].get('u_id'),
+            'message': messages[index].get('message'),
+            'time_created': messages[index].get('time_created'),
         }
-        messages.append(new_message)
+        output.append(new_message)
         counter += 1
     
     # If this function has returned the least recent messages in the channel, 
@@ -424,9 +424,9 @@ def channel_messages_v2(token, channel_id, start):
         end = -1
 
     return {
-            'messages': messages, 
-            'start': start, 
-            'end': end
+        'messages': output,
+        'start': start,
+        'end': end,
     }
 
 # Not required for iteration 1
