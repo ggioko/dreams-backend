@@ -5,8 +5,8 @@ from flask_cors import CORS
 from src.error import InputError
 from src import config
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
-from src.channels import channels_create_v2
-from src.channel import channel_join_v2, channel_messages_v2
+from src.channels import channels_create_v2, channels_listall_v2
+from src.channel import channel_join_v2, channel_invite_v2, channel_messages_v2
 from src.other import clear_v1
 from src.user import users_all_v1
 
@@ -79,6 +79,8 @@ def login_user():
 def clear():
     """
     Function to call clear_v1
+
+    Returns {} on success
     """
     clear_v1()
     return dumps({})
@@ -105,6 +107,21 @@ def register():
         'auth_user_id' : data['auth_user_id']
     })
 
+@APP.route("/channels/listall/v2", methods=['GET'])
+def listall():
+    """
+    Gets users data from http args and passes it to
+    channels_listall_v2 function
+
+    Returns { 'channels': [...]} on success
+    """
+    token = request.args.get('token')
+    data = channels_listall_v2(token)
+
+    return dumps(
+        data
+    )
+
 @APP.route("/auth/logout/v1", methods=["POST"])
 def logout_user():
     """
@@ -120,6 +137,18 @@ def logout_user():
     return dumps({
         'is_success': result
     })
+
+@APP.route("/channel/invite/v2", methods=['POST'])
+def invite_user_to_channel():
+    """
+    Gets input data from http json and passes it to channel_invite_v2()
+    Returns {} if no errors are raised.
+    """
+    data = request.get_json()
+    token = data['token']
+    channel_id = data['channel_id']
+    u_id = data['u_id']
+    channel_invite_v2(token, channel_id, u_id)
 
 @APP.route("/channel/join/v2", methods=["POST"])
 def channel_join():

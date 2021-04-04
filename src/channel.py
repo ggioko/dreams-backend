@@ -1,59 +1,96 @@
 from src.error import InputError, AccessError
 from src.data import data
-from src.helper import get_token_user_id, check_token_valid
+from src.helper import get_token_user_id, check_token_valid, SECRET
 import jwt
 import hashlib
 
-def channel_invite_v1(auth_user_id, channel_id, u_id):
+def channel_invite_v2(token, channel_id, u_id):
     '''
     channel_invite adds a user to a channel when an existing channel
     user invites them into the channel.
 
     Arguments:
-        auth_user_id (int) - The ID of the existing member of the channel
+        token (str)        - The token of the existing member of the channel
         channel_id (int)   - The ID of the channel that the new member is to join
         u_id (int)         - The ID of the user new to the channel
 
     Exceptions:
         InputError  - Occurs when channel_id does not refer to a valid channel
-        InputError  - Occurs when u_id is not a valid user
-        AccessError - Occurs when auth_user_id is not a member of the channel
+        AccessError - Occurs when channel_id refers to a channel that is private,
+                      (where the authorised user is not a global owner)
 
     Return Value:
         Returns an empty dictionary when exceptions are not raised
     '''
+    # Checks if the channel provided is a channel in the list
     foundChannel = {}
     for channel in data['channels']:
         if channel['id'] == channel_id:
             foundChannel = channel
             break
         print(channel['id'])
-
     if foundChannel == {}:
-        raise InputError('Invalid channel ID provided')
+        raise InputError(description='Invalid channel ID provided')
 
+    # Checks to see if invited user is a valid user of dreams
     userMatch = False
     for user in data['users']:
+        print(user)
         if user['u_id'] == u_id:
             userMatch = True
             break
     if userMatch == False:
-        raise InputError('Member to add not a valid user')
+        raise InputError(description='Member to add not a valid user')
 
+    # Checks to see if inviter is logged in
+    token_active = False
+    active_tokens = data['active_tokens']
+    # Search through active tokens
+    for x in active_tokens:
+        if x == token:
+            token_active = True
+            break
+    if (token_active == False):
+        raise AccessError(description='Token invalid, user not logged in')
+    
+    # Gets ID of inviter
+    decoded_token = jwt.decode(token, SECRET, algorithms=['HS256'])
+    auth_user_id = decoded_token['u_id']
+
+    # Checks that inviter is authorised to invite new member
     userMatch = False
-    for user in channel['owner_members']:
+    for user in channel['all_members']:
         if user['u_id'] == auth_user_id:
             userMatch = True
             break
     if userMatch == False:
-        raise AccessError('Authorised user not a channel member')
+        raise AccessError(description='Authorised user not a channel member')
 
-    channel_join_v1(u_id, channel_id)
+    # Add user to channel
+    reuser = {}
+    # Loop until u_id match
+    for user in data['users']:
+        if auth_user_id == user['u_id']:
+            # Copy all the user data for easier access
+            reuser = {
+                'u_id': user['u_id'],
+                'email': user['email'],
+                'name_first': user['name_first'],
+                'name_last': user['name_last'],
+                'handle_str': user['handle_str'],
+            }
+
+    # Added user to all members for channel
+    for channel in data['channels']:
+        if channel['id'] == channel_id:
+            channel['all_members'].append(reuser)
     
     return {
     }
 
-def channel_details_v1(auth_user_id, channel_id):
+
+
+def channel_details_v1(auth_user_id, channel_id):    
     '''
     channel_details_v1()
 

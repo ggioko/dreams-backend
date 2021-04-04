@@ -57,7 +57,6 @@ def check_token_valid(token):
     Takes in a token and outputs True if valid, False otherwise
     """
     active_tokens = data['active_tokens']
-    for x in active_tokens:
-        if x == token:
-            return True
+    if token in active_tokens:
+        return True
     return False
