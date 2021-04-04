@@ -13,7 +13,7 @@ def test_user_profile():
     r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
     'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
     user = r.json()
-    r = requests.get(config.url + 'user/profile/v2', json={'token': user['token'], 'u_id': user['auth_user_id']})
+    r = requests.get(config.url + 'user/profile/v2', params={'token': user['token'], 'u_id': user['auth_user_id']})
     assert r.json() == {'user': {
                              'u_id': user['auth_user_id'],
                              'email': 'validemail@gmail.com',
@@ -33,8 +33,8 @@ def test_user_profile_errors():
     r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
     'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
     user = r.json()
-    r = requests.get(config.url + 'user/profile/v2', json={'token': user['token'], 'u_id': 'invalid_u_id'})
+    r = requests.get(config.url + 'user/profile/v2', params={'token': user['token'], 'u_id': 'invalid_u_id'})
     assert r.status_code == 400
-    r = requests.get(config.url + 'user/profile/v2', json={'token': 'invalid_token', 'u_id': user['auth_user_id']})
+    r = requests.get(config.url + 'user/profile/v2', params={'token': 'invalid_token', 'u_id': user['auth_user_id']})
     assert r.status_code == 403
  
