@@ -66,6 +66,7 @@ def test_channel_addowner():
     # invalid channel id - Input error
     test_1 = requests.post(config.url + 'channel/addowner/v1', json={'token': rego_1['token'],\
     'channel_id': new_channel['channel_id'] + 1, 'u_id':rego_2['auth_user_id']})
+    assert test_1.status_code == 400
 
     # invalid new owner - Input error
     test_2 = requests.post(config.url + 'channel/addowner/v1', json={'token': rego_1['token'],\
