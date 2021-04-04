@@ -8,6 +8,7 @@ from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 from src.channels import channels_create_v2
 from src.channel import channel_join_v2, channel_messages_v2
 from src.other import clear_v1
+from src.user import users_all_v1
 
 def defaultHandler(err):
     response = err.get_response()
@@ -155,5 +156,22 @@ def channel_messages():
 
     return dumps(response)
     
+@APP.route("/users/all/v1", methods=["GET"])
+def users_all():
+    """ 
+    Gets user data from http json and passes it to the
+    users_all_v1 function
+
+    Returns {users} - an list of dictionaries of individual user details
+    """
+    data = request.get_json()
+    token = data['token']
+    
+    user_list = users_all_v1(token)
+
+    return dumps({
+        'users': user_list['users']
+    })
+
 if __name__ == "__main__":
     APP.run(port=config.port) # Do not edit this port
