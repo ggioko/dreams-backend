@@ -6,9 +6,8 @@ from src.error import InputError
 from src import config
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 from src.channels import channels_create_v2
-from src.channel import channel_join_v2
+from src.channel import channel_join_v2, channel_invite_v2
 from src.other import clear_v1
-from src.channel import channel_invite_v2
 
 def defaultHandler(err):
     response = err.get_response()
@@ -132,7 +131,7 @@ def invite_user_to_channel():
     channel_id = data['channel_id']
     u_id = data['u_id']
     channel_invite_v2(token, channel_id, u_id)
-    
+
 @APP.route("/channel/join/v2", methods=["POST"])
 def channel_join():
     """ 

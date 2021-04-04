@@ -7,6 +7,17 @@ from src.helper import generate_token, get_token_user_id, SECRET
 from src.error import InputError, AccessError
 from src.other import clear_v1
 
+def test_channel_invite_valid():
+    '''
+    Tests channel_invite_v2 with all valid information except for an invalid channel
+    '''
+    clear_v1()
+
+    auth_user_token = auth_register_v2('madladadmin@gmail.com', '123abc!@#', 'Hayden', 'Everest')['token']
+    userID = auth_register_v2('peasantuser@gmail.com', 'diffpassword!', 'Everest', 'Hayden')    
+    channelID = channels_create_v2(auth_user_token, 'dankmemechannel', False)
+    assert channel_invite_v2(auth_user_token, channelID['channel_id'], userID['auth_user_id']) == {}
+
 def test_channel_invite_invalid_channel():
     '''
     Tests channel_invite_v2 with all valid information except for an invalid channel
