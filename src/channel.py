@@ -228,7 +228,7 @@ def channel_messages_v2(token, channel_id, start):
     Message with index 0 is the most recent message in the channel. 
 
     Arguments:
-        auth_user_id (int)    - Users id
+        token (str)    - token
         channel_id (int)    - Channel id
         start (int)    - Start of the messages
 
@@ -251,7 +251,6 @@ def channel_messages_v2(token, channel_id, start):
     for channel in data['channels']:
         if channel['id'] == channel_id:
             channel_valid = 1
-            break
     if channel_valid == 0:
         raise InputError(description="Error occurred channel_id is not valid")
     
@@ -264,7 +263,6 @@ def channel_messages_v2(token, channel_id, start):
         for member in channel['all_members']:
             if member['u_id'] == auth_user_id:
                 authorisation = 1
-                break
     if authorisation == 0:
         raise AccessError(description="Error occurred authorised user is not a member of channel with channel_id")
 
@@ -285,7 +283,7 @@ def channel_messages_v2(token, channel_id, start):
     # If start is larger than number of items in messages
     # Raise inputError
     if start >= num_messages:
-        raise InputError("Error Start value is larger than number of items in messages")
+        raise InputError(description="Error Start value is larger than number of items in messages")
     
     # Loop through messages list, append messages to a list
     end = start + 50
