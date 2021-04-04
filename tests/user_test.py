@@ -12,7 +12,7 @@ def test_users_all_v1_successful():
     '''
     clear_v1()
     user1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
-    user2 = auth_register_v2('validemail22@gmail.com', '1234abc!@#', 'Haydennn', 'Everesttt')
+    auth_register_v2('validemail22@gmail.com', '1234abc!@#', 'Haydennn', 'Everesttt')
     # uses the generate token helper that creates fake tokens for testing
     user_list = users_all_v1(user1['token'])
     assert user_list['users'] == [
