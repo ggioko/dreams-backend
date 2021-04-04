@@ -26,6 +26,7 @@ def test_channel_details():
 #    rego_4 = r.json()
     r = requests.post(config.url + 'channel/create/v2', json = {'token': rego_1['token'], 'name': 'Channel1', 'is_public': True})
     new_channel = r.json()
+    assert new_channel == {'hello'}
     requests.post(config.url + 'channel/join/v2', json = {'token': rego_2['token'], 'channel_id': new_channel['channel_id']})
     requests.post(config.url + 'channel/join/v2', json = {'token': rego_3['token'], 'channel_id': new_channel['channel_id']})
     
