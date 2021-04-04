@@ -137,5 +137,23 @@ def channel_join():
 
     return dumps({})
 
+@APP.route("/channel/messages/v2", methods=["GET"])
+def channel_messages():
+    """ 
+    Gets user data from http json and passes it to the
+    channel_messages_v2 function
+
+    Returns { 'messages': messages, 'start': start, 'end': end }
+    """
+    data = request.get_json
+    
+    token = data['token']
+    channel_id = data['channel_id']
+    start = data['start']
+
+    reponse = channel_messages_v2(token, channel_id, start)
+
+    return dumps(response)
+    
 if __name__ == "__main__":
     APP.run(port=config.port) # Do not edit this port
