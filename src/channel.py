@@ -1,5 +1,6 @@
 from src.error import InputError, AccessError
 from src.data import data
+from src.channels import channels_list_v2
 from src.helper import get_token_user_id, check_token_valid, SECRET
 import jwt
 import hashlib
@@ -89,11 +90,10 @@ def channel_invite_v2(token, channel_id, u_id):
     }
 
 
-
-def channel_details_v1(auth_user_id, channel_id):    
+def channel_details_v1(auth_user_id, channel_id):
     '''
     channel_details_v1()
-
+    
     Given a Channel with ID channel_id that the authorised user is part of, 
         provide basic details about the channel.
 
@@ -163,8 +163,83 @@ def channel_details_v1(auth_user_id, channel_id):
                 
     return channelDetails
  
+
+def channel_details_v2(token, channel_id):
+    '''
+    channel_details_v2()
+    
+    Given a Channel with ID channel_id that the authorised user is part of, 
+        provide basic details about the channel.
+    
+    Arguments: 
+        token (string), channel_id (int)
+        
+    Exception: 
+        AccessError - Occurs when token passed in is not a valid token.
+        AccessError - Occurs when authorised user is not a member of channel with channel_id.
+        InputError - Channel ID is not a valid channel.
+        
+    Return value: 
+        {name, owner_members, all_members} on success
+    '''   
+    # Check if auth_user_id matches a user in the database.
+    user_valid = 0
+    for user in data['active_tokens']:
+        if user == token:
+            user_valid = 1
+    if user_valid == 0:
+        raise AccessError("Error occurred token is not valid")
+        
+    # Check to see if channel_id matches a channel in the database.
+    channel_valid = 0
+    for channel in data['channels']:
+        if channel['id'] == channel_id:
+            channel_valid = 1
+    if channel_valid == 0:
+        raise InputError("Error occurred channel_id is not valid")
+        
+    # Check to see if authorised user is a member of specified channel.
+    authorisation = 0
+    # Call channels_list_v2 to get list of channels that this token is part of.
+    channels = channels_list_v2(token) 
+    for channel in channels['channels']:
+        if channel['channel_id'] == channel_id:
+                authorisation = 1
+    if authorisation == 0:
+        raise AccessError("Error occurred authorised user is not a member of channel with channel_id")
+    
+    # Main functionality of channel_details_v2
+    # Must append current member to channelDetails as well as all listed members.
+    channelDetails = {} 
+    
+    
+    # Loop through each channel in data.
+    for channel in data['channels']:
+        if channel['id'] == channel_id: # Make sure we're on the right channel.
+            channelDetails['name'] = channel['name']    
+        # Check the all_members section of each channel.
+            channelDetails['owner_members'] = []
+            channelDetails['all_members'] = []
+            for member in channel['owner_members']:
+                channelDetails['owner_members'].append({
+                    'u_id': member['u_id'],
+                    'email': member['email'],
+                    'name_first': member['name_first'],
+                    'name_last': member['name_last'],
+                    'handle_str': member['handle_str'],            
+                })
+            for member in channel['all_members']:
+                channelDetails['all_members'].append({
+                    'u_id': member['u_id'],
+                    'email': member['email'],
+                    'name_first': member['name_first'],
+                    'name_last': member['name_last'],
+                    'handle_str': member['handle_str'],            
+                })             
+    return channelDetails
+
 def channel_messages_v1(auth_user_id, channel_id, start):
-    """
+    """    
     Given a Channel with ID channel_id that the authorised user is part of, 
     return up to 50 messages between index "start" and "start + 50". 
     Message with index 0 is the most recent message in the channel. 
@@ -179,9 +254,10 @@ def channel_messages_v1(auth_user_id, channel_id, start):
                     greater than the total number of messages in the channel
         AccessError - Occurs when id is not in data or authorised user is not a 
                     member of channel with channel_id
-
+    
     Return Value:
         Returns { messages, start, end } on success
+    
     """
     # Check if auth_user_id matches a user in the database.
     user_valid = 0
@@ -357,6 +433,7 @@ def channel_messages_v2(token, channel_id, start):
 def channel_leave_v1(auth_user_id, channel_id):
     return {
     }
+
 
 def channel_join_v1(auth_user_id, channel_id):
     """

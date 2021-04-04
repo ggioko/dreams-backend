@@ -1,9 +1,11 @@
 import pytest
+
 from src.auth import auth_register_v1, auth_register_v2, auth_logout_v1
 from src.channel import channel_details_v1, channel_messages_v1, channel_messages_v2
-from src.channel import channel_join_v1, channel_join_v2, channel_invite_v2
+from src.channel import channel_join_v1, channel_join_v2, channel_invite_v2, channel_details_v2
 from src.channels import channels_create_v1, channels_create_v2
 from src.helper import generate_token, get_token_user_id, SECRET
+
 from src.error import InputError, AccessError
 from src.other import clear_v1
 
@@ -75,32 +77,44 @@ def test_channel_invite_token_missing():
         channel_invite_v2(auth_user_token, channelID['channel_id'], userID['auth_user_id'])
 
 def test_channel_details_invalid_channel_id():
+    """
+    Test for an invalid channel_id - should return InputError
+    """
     clear_v1()
-    auth_register_v1('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest') 
     with pytest.raises(InputError):
-        assert channel_details_v1(1, 'Invalid Channel') # Pass in string as channel_id 
+        assert channel_details_v2(user_1['token'], 'Invalid Channel') #Pass in string as channel_id 
 
 def test_channel_details_unauthorised_user():
+    """
+    Test for an unauthorised user - should return AccessError
+    """
     clear_v1() # Clear data and register 2 new users.
-    auth_register_v1('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
-    auth_register_v1('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
-    channels_create_v1(1, 'Channel1', True) # User 1 is a member because they created Channel1.
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    channel_1 = channels_create_v2(user_1['token'], 'Channel1', True) # User 1 is a member because they created Channel1.
     with pytest.raises(AccessError):
-        assert channel_details_v1(2, 1)  # User 2 is not a member.      
+        assert channel_details_v2(user_2['token'], channel_1['channel_id']) # User 2 is not a member.
 
 def test_channel_details_invalid_user():
+    """
+    Test for an invalid token - should return AccessError
+    """
     clear_v1()
-    auth_register_v1('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
-    channels_create_v1(1, 'Channel1', True) # Create a channel to make sure the error is arising from user id.               
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    channel_1 = channels_create_v2(user_1['token'], 'Channel1', True)
     with pytest.raises(AccessError):
-        # Pass a string into channels_list_v1 - should return access error.
-        assert channel_details_v1('invalid', 1) # Invalid user id entered.
-
+        # Pass a non-existent token into channel_details_v2 - should return access error.
+        assert channel_details_v2('invalid_token', channel_1['channel_id']) # Invalid token entered.
+        
 def test_channel_details_runs():
+    """
+    Test to see if channel_details carries out basic functionality.
+    """
     clear_v1()
-    auth_register_v1('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
-    channels_create_v1(1, 'Channel1', True)
-    assert channel_details_v1(1,1) == {
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    channel_1 = channels_create_v2(user_1['token'], 'Channel1', True)
+    assert channel_details_v2(user_1['token'],channel_1['channel_id']) == {
         'name': 'Channel1',
         'owner_members': [
             {
@@ -120,28 +134,30 @@ def test_channel_details_runs():
                 'handle_str': 'HaydenEverest',
             }
         ],
-    }  
+    }
 
 def test_channel_details_multiple_members():
+    """
+    Test to see if channel_details will list a channel with multiple members.
+    """
     clear_v1()
-    auth_register_v1('validemail0@gmail.com', '123abc!@#', 'Hayden', 'Everest')
-    auth_register_v1('validemail1@gmail.com', '123abc!@#', 'Fred', 'Smith')
-    auth_register_v1('validemail2@gmail.com', '123abc!@#', 'Jimmy', 'Barnes')
-    auth_register_v1('validemail3@gmail.com', '123abc!@#', 'Angus', 'Young')
+    user_1 = auth_register_v2('validemail0@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('validemail1@gmail.com', '123abc!@#', 'Fred', 'Smith')
+    user_3 = auth_register_v2('validemail2@gmail.com', '123abc!@#', 'Jimmy', 'Barnes')
+    user_4 = auth_register_v2('validemail3@gmail.com', '123abc!@#', 'Angus', 'Young')
     
-    channels_create_v1(1, 'Channel1', True)
-    channel_join_v1(2, 1)       
-    channel_join_v1(3, 1)
-    channel_join_v1(4, 1)
+    channel_1 = channels_create_v2(user_1['token'], 'Channel1', True)
+    channel_join_v2(user_2['token'], channel_1['channel_id'])       
+    channel_join_v2(user_3['token'], channel_1['channel_id'])
+    channel_join_v2(user_4['token'], channel_1['channel_id'])
     
     correct = 0
-    if channel_details_v1(1,1)['name'] == 'Channel1':
-        if len(channel_details_v1(1,1)['owner_members']) == 1:
-            if len(channel_details_v1(1,1)['all_members']) == 4:
+    if channel_details_v2(user_1['token'],channel_1['channel_id'])['name'] == 'Channel1':
+        if len(channel_details_v2(user_1['token'],channel_1['channel_id'])['owner_members']) == 1:
+            if len(channel_details_v2(user_1['token'],channel_1['channel_id'])['all_members']) == 4:
                 correct = 1
            
-    assert correct == 1
-          
+    assert correct == 1     
 
 # Test the case where token is invalid for channel_messages
 # Expected AccessError
