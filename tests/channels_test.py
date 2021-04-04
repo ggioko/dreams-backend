@@ -122,7 +122,7 @@ def test_channels_list_multi_channels():   # COMMENTED OUT CHANNEL_2 AND CHANNEL
     channels_create_v2(user_1['token'], "Channel2", True)
     channel_3 = channels_create_v2(user_1['token'], "Channel3", True)
     #channel_4 = 
-    channels_create_v2(1, "Channel4", True)
+    channels_create_v2(user_1['token'], "Channel4", True)
     channel_join_v2(user_2['token'], channel_1['channel_id'])     # WAITING ON CHANNEL_JOIN_V1
     channel_join_v2(user_2['token'], channel_3['channel_id'])    
     # Number of channels the user is found to be joined to.
