@@ -70,7 +70,7 @@ def test_channels_create_errors():
     assert r.status_code == 400
 
     # Test the case where the token is invalid
-    # Ezpected fobidden 403
+    # Expected fobidden 403
     invalid_token = generate_token(4)
     r = requests.post(config.url + 'channels/create/v2',  json={'token': invalid_token, 'name': 'channel1', 'is_public': True})
     assert r.status_code == 403
