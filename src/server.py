@@ -5,11 +5,11 @@ from flask_cors import CORS
 from src.error import InputError
 from src import config
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
-from src.channels import channels_create_v2
-from src.channel import channel_join_v2
+from src.channels import channels_create_v2, channels_listall_v2, channels_list_v2
+from src.channel import channel_join_v2, channel_invite_v2, channel_messages_v2
 from src.other import clear_v1
-from src.channels import channels_list_v2
-from src.user import user_profile_v2
+from src.user import users_all_v1, user_profile_v2
+
 
 def defaultHandler(err):
     response = err.get_response()
@@ -80,6 +80,8 @@ def login_user():
 def clear():
     """
     Function to call clear_v1
+
+    Returns {} on success
     """
     clear_v1()
     return dumps({})
@@ -107,6 +109,21 @@ def register():
     })
     
 
+@APP.route("/channels/listall/v2", methods=['GET'])
+def listall():
+    """
+    Gets users data from http args and passes it to
+    channels_listall_v2 function
+
+    Returns { 'channels': [...]} on success
+    """
+    token = request.args.get('token')
+    data = channels_listall_v2(token)
+
+    return dumps(
+        data
+    )
+
 @APP.route("/auth/logout/v1", methods=["POST"])
 def logout_user():
     """
@@ -123,20 +140,18 @@ def logout_user():
         'is_success': result
     })
 
-@APP.route("/channels/list/v2", methods = ['GET'])
-def channels_list():
-    """
-    Gets user token from http json and passes it to the
-    channels_list_v2 function
-    Returns {channels:[]} on success
-    """
     
+@APP.route("/channel/invite/v2", methods=['POST'])
+def invite_user_to_channel():
+    """
+    Gets input data from http json and passes it to channel_invite_v2()
+    Returns {} if no errors are raised.
+    """
     data = request.get_json()
     token = data['token']
-    data = channels_list_v2(token)
-    
-    return dumps(data)
-
+    channel_id = data['channel_id']
+    u_id = data['u_id']
+    channel_invite_v2(token, channel_id, u_id)
 
 @APP.route("/channel/join/v2", methods=["POST"])
 def channel_join():
@@ -155,6 +170,7 @@ def channel_join():
 
     return dumps({})
 
+
 @APP.route("/user/profile/v2", methods = ['GET'])
 def user_profile():
     """
@@ -170,6 +186,41 @@ def user_profile():
     return dumps(
         data
     )
+
+@APP.route("/channel/messages/v2", methods=["GET"])
+def channel_messages():
+    """ 
+    Gets user data from http json and passes it to the
+    channel_messages_v2 function
+
+    Returns { 'messages': messages, 'start': start, 'end': end }
+    """
+    data = request.get_json()
+    
+    token = data['token']
+    channel_id = data['channel_id']
+    start = data['start']
+
+    response = channel_messages_v2(token, channel_id, start)
+
+    return dumps(response)
+    
+@APP.route("/users/all/v1", methods=["GET"])
+def users_all():
+    """ 
+    Gets user data from http json and passes it to the
+    users_all_v1 function
+
+    Returns {users} - an list of dictionaries of individual user details
+    """
+    data = request.get_json()
+    token = data['token']
+    
+    user_list = users_all_v1(token)
+
+    return dumps({
+        'users': user_list['users']
+    })
 
 if __name__ == "__main__":
     APP.run(port=config.port) # Do not edit this port
