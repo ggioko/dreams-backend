@@ -25,8 +25,6 @@ def test_message_send_runs():
         'channel_id' : channel['channel_id'], 'start' : 0})
     assert json.loads(resp.text)['messages'][0]['message'] == message
 
-    
-
 def test_message_send_http_too_long():
     '''
     A check to see if message_send runs correctly by creating a user
