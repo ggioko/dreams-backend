@@ -6,6 +6,7 @@ from src.error import InputError
 from src import config
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 from src.channels import channels_create_v2
+from src.channel import channel_join_v2
 from src.other import clear_v1
 from src.channels import channels_list_v2
 from src.user import user_profile_v2
@@ -83,7 +84,6 @@ def clear():
     clear_v1()
     return dumps({})
 
-
 @APP.route("/auth/register/v2", methods=['POST'])
 def register():
     """
@@ -137,6 +137,24 @@ def channels_list():
     
     return dumps(data)
 
+
+@APP.route("/channel/join/v2", methods=["POST"])
+def channel_join():
+    """ 
+    Gets user data from http json and passes it to the
+    channel_join_v2 function
+
+    Returns {} - an empty dictionary
+    """
+    data = request.get_json()
+
+    token = data['token']
+    channel_id = data['channel_id']
+ 
+    channel_join_v2(token, channel_id)
+
+    return dumps({})
+
 @APP.route("/user/profile/v2", methods = ['GET'])
 def user_profile():
     """
@@ -150,7 +168,6 @@ def user_profile():
     data = user_profile_v2(token, u_id)
     
     return dumps(data)
-    
 
 if __name__ == "__main__":
     APP.run(port=config.port) # Do not edit this port
