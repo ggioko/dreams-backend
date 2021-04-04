@@ -1,10 +1,10 @@
-import pytest
+#import pytest
 import requests
 import json
 from src import config
 from src.error import AccessError, InputError
 from src.helper import generate_token
-
+    
 def test_channels_listall_v2_runs():
     '''
     A check to see if listall runs correctly with no channels
@@ -75,7 +75,6 @@ def test_channels_create_errors():
     # Expected bad request InputError
     r = requests.post(config.url + 'channels/create/v2',  json={'token': register1['token'], 'name': 'channel1', 'is_public': 20})
     assert r.status_code == InputError().code
-
 
     # Test the case where the token is invalid
     # Expected forbidden AccessError

@@ -1,14 +1,14 @@
 import pytest
 
-from src.auth import auth_register_v1, auth_register_v2
-from src.channels import channels_create_v2, channels_listall_v2, channels_list_v1
-from src.channel import channel_join_v1 
+from src.channel import channel_join_v2  
+from src.channels import channels_create_v2, channels_listall_v2
 from src.auth import auth_register_v2, get_token
+
 from src.other import clear_v1
 from src.error import InputError, AccessError
 from src.helper import generate_token
 
-from src.data import data
+#from src.data import data
 
 # Test the case that Auth_user_id is invalid for channels create
 # Expected AccessError
@@ -79,3 +79,5 @@ def test_channels_create_returns_integer():
     new_channel = channels_create_v2(register1['token'], 'channel', True)
     # Check if return type is an int
     assert isinstance(new_channel['channel_id'], int)
+
+
