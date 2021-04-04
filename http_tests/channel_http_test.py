@@ -143,17 +143,17 @@ def test_channel_addowner():
     # invalid channel id - Input error
     test_1 = requests.post(config.url + 'channel/addowner/v1', json={'token': rego_1['token'],\
     'channel_id': new_channel['channel_id'] + 1, 'u_id':rego_2['auth_user_id']})
-    assert test_1.status_code == 400
+    assert test_1.status_code == InputError().code
 
     # invalid new owner - Input error
     test_2 = requests.post(config.url + 'channel/addowner/v1', json={'token': rego_1['token'],\
     'channel_id': new_channel['channel_id'], 'u_id':rego_2['auth_user_id'] + 100})
-    assert test_2.status_code == 400
+    assert test_2.status_code == InputError().code
 
     # invalid current owner - Access error
     test_3 = requests.post(config.url + 'channel/addowner/v1', json={'token': rego_2['token'],\
     'channel_id': new_channel['channel_id'], 'u_id':rego_3['auth_user_id']})
-    assert test_3.status_code == 403
+    assert test_3.status_code == AccessError().code 
 
     # Successful addition
     test_4 = requests.post(config.url + 'channel/addowner/v1', json={'token': rego_1['token'],\
@@ -162,7 +162,7 @@ def test_channel_addowner():
     # Correct repeat information - Access error
     test_5 = requests.post(config.url + 'channel/addowner/v1', json={'token': rego_1['token'],\
     'channel_id': new_channel['channel_id'], 'u_id':rego_2['auth_user_id']})
-    assert test_5.status_code == 403
+    assert test_5.status_code == AccessError().code
 
 def test_channel_join_errors():
     """
