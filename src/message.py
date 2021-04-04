@@ -8,23 +8,25 @@ def message_send_v1(token, channel_id, message):
     if token not in data['active_tokens']:
         raise AccessError(description="Not a valid token")
 
+    if len(message) > 1000:
+        raise InputError(description="Message is more than 1000 characters")
+
     u_id = get_token_user_id(token)
 
     data['message_count'] += 1
 
-    found_channel = False
     for channel in data['channels']:
         if channel_id == channel['id']:
-            found_channel = True
+            user_ids = [channel['all_members'][c]['u_id'] for c in range(len(channel['all_members']))]
+            if u_id not in user_ids:
+                raise AccessError(description="the authorised user has not joined the channel \
+                    they are trying to post to")
             channel['messages'].append({
                 'message_id': data['message_count'],
                 'u_id': u_id,
                 'message': message,
                 'time_created': int(time()),
             })
-
-    if found_channel == False:
-        raise InputError(description="Channel ID is not a valid channel")
 
     return {
         'message_id': data['message_count'],
