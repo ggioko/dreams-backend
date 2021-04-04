@@ -374,6 +374,7 @@ def channel_messages_v1(auth_user_id, channel_id, start):
     for channel in data['channels']:
         if channel['id'] == channel_id:
             messages = list(channel['messages'])
+            messages.reverse()
             num_messages = len(messages)
 
     # No messages
