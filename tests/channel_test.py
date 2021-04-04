@@ -122,7 +122,6 @@ def test_channel_messages_invalid_token():
 def test_channel_messages_invalid_id():
     clear_v1()   
     register1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
-    channel1 = channels_create_v2(register1['token'], 'channel_1', True)
     with pytest.raises(InputError):
         assert channel_messages_v2(register1['token'], 10, 0)
 
