@@ -145,7 +145,7 @@ def channel_messages():
 
     Returns { 'messages': messages, 'start': start, 'end': end }
     """
-    data = request.get_json
+    data = request.get_json()
     
     token = data['token']
     channel_id = data['channel_id']
