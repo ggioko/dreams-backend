@@ -38,7 +38,6 @@ def test_users_all_v1_invalid_token():
     # Register users
     r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
     'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
-    register1 = r.json()
 
     r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail22@gmail.com',
     'password' : '1234abc!@#', 'name_first':'Haydennn', 'name_last':'Everesttt'})
