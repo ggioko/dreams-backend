@@ -37,4 +37,4 @@ def test_user_profile_errors():
     assert r.status_code == 400
     r = requests.get(config.url + 'user/profile/v2', json={'token': 'invalid_token', 'u_id': user['auth_user_id']})
     assert r.status_code == 403
-    
+ 
