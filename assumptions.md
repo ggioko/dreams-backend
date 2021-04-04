@@ -12,6 +12,9 @@
 * User ids start at index 1
 * New user id is the lowest integer value not in use that is greater than or equal to 1
 
+### auth_logout
+* It is assumed that the false case is never returned as any invalid tokens will raise an AccessError
+
 ## channels
 * In testing Auth_register is working correctly to store user with id 1
 
