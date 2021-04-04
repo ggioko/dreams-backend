@@ -16,10 +16,10 @@ def test_user_profile():
     r = requests.get(config.url + 'user/profile/v2', json={'token': user['token'], 'u_id': user['auth_user_id']})
     assert r.json() == {'user': {
                              'u_id': user['auth_user_id'],
-                             'email': 'validemail0@gmail.com',
+                             'email': 'validemail@gmail.com',
                              'name_first': 'Hayden',
                              'name_last': 'Everest',
-                             'handle_str': 'HaydenEverest',          
+                             'handle_str': 'haydeneverest',          
           }}
 
 def test_user_profile_errors():
