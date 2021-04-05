@@ -398,11 +398,11 @@ def test_dm_messages_valid():
     m_1 = message_send_dm_v1(user_1['token'], dm_1['dm_id'], message_1)
     m_2 = message_send_dm_v1(user_2['token'], dm_1['dm_id'], message_2)
     output = dm_messages_v1(user_3['token'], dm_1['dm_id'], 0)
-    assert output['messages'][0]['message_id'] == m_1['message_id']
-    assert output['messages'][0]['u_id'] == user_1['auth_user_id']
-    assert output['messages'][0]['message'] == message_1
-    assert output['messages'][1]['message_id'] == m_2['message_id']
-    assert output['messages'][1]['u_id'] == user_2['auth_user_id']
-    assert output['messages'][1]['message'] == message_2
+    assert output['messages'][1]['message_id'] == m_1['message_id']
+    assert output['messages'][1]['u_id'] == user_1['auth_user_id']
+    assert output['messages'][1]['message'] == message_1
+    assert output['messages'][0]['message_id'] == m_2['message_id']
+    assert output['messages'][0]['u_id'] == user_2['auth_user_id']
+    assert output['messages'][0]['message'] == message_2
     assert output['start'] == 0
     assert output['end'] == -1
