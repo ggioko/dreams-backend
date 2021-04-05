@@ -192,40 +192,40 @@ def test_channel_removeowner_invalid_remover():
         channel_removeowner_v1(user1ID['token'], channelID['channel_id'], user2ID['auth_user_id'])
 
 def test_channel_leave_working():
-	'''
-	Tests channel_leave_v1() with all correct information
-	'''
-	clear_v1()
+    '''
+    Tests channel_leave_v1() with all correct information
+    '''
+    clear_v1()
 
     auth_user_token = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')['token']
     user2 = auth_register_v2('validemail3@gmail.com', '123abcd!@#', 'Haydeen', 'Everesst')
-	channelID = channels_create_v2(auth_user_token, 'dankmemechannel', False)
-	channel_join_v2(user2['token'], channelID['channel_id'])
-	channel_leave_v1(user2['token'], channelID['channel_id'])
+    channelID = channels_create_v2(auth_user_token, 'dankmemechannel', False)
+    channel_join_v2(user2['token'], channelID['channel_id'])
+    channel_leave_v1(user2['token'], channelID['channel_id'])
 	
 	
 def test_channel_leave_invalid_channel_id():
-	'''
-	Tests channel_leave_v1() with an invalid channel ID
-	'''
-	clear_v1()
+    '''
+    Tests channel_leave_v1() with an invalid channel ID
+    '''
+    clear_v1()
 
     auth_user_token = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')['token']
     user2 = auth_register_v2('validemail3@gmail.com', '123abcd!@#', 'Haydeen', 'Everesst')
-	channelID = channels_create_v2(auth_user_token, 'dankmemechannel', False)
-	channel_join_v2(user2['token'], channelID['channel_id'])
-	channel_leave_v1(user2['token'], channelID['channel_id'] + 1)
+    channelID = channels_create_v2(auth_user_token, 'dankmemechannel', False)
+    channel_join_v2(user2['token'], channelID['channel_id'])
+    channel_leave_v1(user2['token'], channelID['channel_id'] + 1)
 	
 def test_channel_leave_user_not_in_channel():
-	'''
-	Tests channel_leave_v1() with all correct information
-	'''
-	clear_v1()
+    '''
+    Tests channel_leave_v1() with all correct information
+    '''
+    clear_v1()
 
     auth_user_token = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')['token']
     user2 = auth_register_v2('validemail3@gmail.com', '123abcd!@#', 'Haydeen', 'Everesst')
-	channelID = channels_create_v2(auth_user_token, 'dankmemechannel', False)
-	channel_leave_v1(user2['token'], channelID['channel_id'])
+    channelID = channels_create_v2(auth_user_token, 'dankmemechannel', False)
+    channel_leave_v1(user2['token'], channelID['channel_id'])
 
 def test_channel_details_invalid_channel_id():
     """

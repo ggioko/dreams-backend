@@ -37,4 +37,4 @@
 * In testing, channels_create and channel_join are working correctly
 
 ### channel_leave
-* If a channel owner leaves the channel, they are still an owner of the channel
+* If a channel owner leaves the channel, they will no longer be an owner of the channel, unless they are the only owner where they will still be an owner of the channel.
