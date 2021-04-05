@@ -342,9 +342,7 @@ def test_message_senddm():
     r = requests.post(config.url + 'message/senddm/v1', json={'token': user_1['token'],'dm_id': new_dm['dm_id'], 'message': 'test message'})
     send_dm = r.json()
     r = requests.post(config.url + 'message/senddm/v1', json={'token': user_1['token'],'dm_id': new_dm_2['dm_id'], 'message': 'test message'})
-    send_dm_2 = r.json()
     
-
     r = requests.get(config.url + 'dm/messages/v1', params={'token': user_1['token'],'dm_id': new_dm['dm_id'], 'start': 0})
     output = r.json()
 
