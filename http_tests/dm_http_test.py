@@ -189,3 +189,4 @@ def test_dm_list_error():
     # Call dm/list/v1 with an invalid token
     r = requests.get(config.url + 'dm/list/v1',  params={'token': 'invalid_token'})
     assert r.status_code == AccessError().code
+    

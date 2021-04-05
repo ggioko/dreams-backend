@@ -8,7 +8,7 @@ from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 from src.channels import channels_create_v2, channels_listall_v2, channels_list_v2
 from src.channel import channel_join_v2, channel_invite_v2, channel_messages_v2, channel_details_v2
 from src.channel import channel_addowner_v1, channel_removeowner_v1, channel_leave_v1
-from src.dm import dm_create_v1, dm_details_v1
+from src.dm import dm_create_v1, dm_details_v1, dm_list_v1
 from src.other import clear_v1
 from src.user import users_all_v1, user_profile_v2, user_profile_setemail_v2, user_profile_setname_v2, user_profile_sethandle_v1
 from src.message import message_send_v2, message_remove_v1
@@ -446,6 +446,21 @@ def set_handle():
     save_data()
     
     return dumps({})
+
+@APP.route("/dm/list/v1", methods=['GET'])
+def dm_list():
+    """
+    Gets user token from arguments and passes to the
+    dm_list_v1 function.
+    Returns {dms} on success.
+    """
+    token = request.args.get('token')
+
+    data = dm_list_v1(token)
+
+    save_data()
+    
+    return dumps(data) 
 
 load_data()  # Gets data from previous server run
 
