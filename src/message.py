@@ -295,7 +295,6 @@ def message_senddm_v1(token, dm_id, message):
     data['message_count'] += 1
     message_id = data['message_count']
     
-    
     for dm in data['dms']:
         if dm_id == dm['dm_id']:
             user_ids = [dm['all_members'][c]['u_id'] for c in range(len(dm['all_members']))]
