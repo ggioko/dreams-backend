@@ -163,3 +163,68 @@ def message_edit_v2(token, message_id, message):
         raise AccessError(description="You are not allowed to edit this message")
 
     return {}
+
+def message_share_v1(token, og_message_id, message, channel_id, dm_id):
+    """
+    Takes in token, og_message_id, message, channel_id, dm_id and shares a message 
+    (og_message_id) to either a channel or dm with a another message on top (message)
+    message is the optional message in addition to the shared message, and will be 
+    an empty string '' if no message is given
+
+    Arguments:
+        token (string)    - Token
+        og_message_id (integer)    - Messages id of message going to be shared
+        message (string)    - Optional message to add to share
+        channel_id (integer)    - id of channel to share to (-1 if share location isnt a channel)
+        dm_id (integer)     - id of dm to share to (-1 if share location isnt a dm)
+
+    Exceptions:
+        AccesError  - if the user isnt in the channel or dm they want to share to
+
+    Return Value:
+        Returns {shared_message_id} on success
+    """
+    # Checks if token is valid
+    if check_token_valid(token) == False:
+        raise AccessError(description="Not a valid token")
+
+    # If message is over 1000 characters, raise InputError
+    if len(message) > 1000:
+        raise InputError(description="Message is more than 1000 characters")
+
+    # If the new message is an empty string, the message is deleted.
+    if len(message) == 0:
+        message_remove_v1(token, message_id)
+        return {}
+    
+    edited_message = message
+
+    user_id = get_token_user_id(token)
+
+    # Checks if message_id is still valid (not been removed or has even been created yet)
+    # Checks if user is allowed to delete the message
+    message_found = False
+    auth = False
+
+    for channel in data['channels']:
+        for message in channel['messages']:
+            if message_id == message['message_id']:
+                message_found = True
+                owners = channel['owner_members']
+                # Check if the user trying to delete is a channel owner
+                for owner in owners:
+                    if user_id == owner['u_id']:
+                        auth = True
+                        message['message'] = edited_message
+                    # Check if the user trying to delete is the one who sent it
+                    elif user_id == message['u_id']:
+                        auth = True
+                        message['message'] = edited_message
+    
+    if message_found == False:
+        raise InputError(description="Message_id not found")
+    
+    if auth == False:
+        raise AccessError(description="You are not allowed to edit this message")
+
+    return {}
