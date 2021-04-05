@@ -79,18 +79,18 @@ def check_token_valid(token):
             return True
     return False
 
-def no_check_dreams_make_owner(u_id):
+def no_check_dreams_change_permission(u_id, permission_id):
     for user in data['users']:
         if user['u_id'] == u_id:
-            user['permission_id'] = 1
+            user['permission_id'] = permission_id
             break
     channels = data['channels']
     for channel in channels:
         for owner_member in channel['owner_members']:
             if owner_member['u_id'] == u_id:
-                owner_member['permission_id'] = 1
+                owner_member['permission_id'] = permission_id
                 break
         for all_member in channel['all_members']:
             if all_member['u_id'] == u_id:
-                all_member['permission_id'] = 1
+                all_member['permission_id'] = permission_id
                 break

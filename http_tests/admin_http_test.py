@@ -2,7 +2,7 @@ import pytest
 import requests
 import json
 from src import config
-from src.helper import no_check_dreams_make_owner
+from src.helper import no_check_dreams_change_permission
 from src.error import AccessError, InputError
 
 def test_userpermission_change():
@@ -22,7 +22,11 @@ def test_userpermission_change():
     'token': rego_1['token'], 'u_id':rego_2['auth_user_id'], 'permission_id': 1})
     assert test_1.status_code == AccessError().code
     
-    # Call helper function to change permissions of rego_1
+    # Call helper function to make user1 dreams owner
+    # Not a black box test, but no inbuilt functions allow for this to happen, so data
+    # must be modified directly
+    # If in a production system, the first owner would manually set thir permissions_id
+    no_check_dreams_change_permission(rego_1['u_id'], 1)
 
     # Tests a non-valid user being invited
     test_2 = requests.post(config.url + 'admin/userpermission/change/v1', json={ \
