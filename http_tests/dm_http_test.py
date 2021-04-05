@@ -133,13 +133,64 @@ def test_dm_details_errors():
     r = requests.get(config.url + 'dm/details/v1', params={'token': user_4['token'], 'dm_id': dm_1['dm_id']})
     assert r.status_code == AccessError().code
 
+
+def test_dm_list():
+
+    # Clear data first
+    requests.delete(config.url + 'clear/v1')
+    # Register members
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user_1 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'secondemail@gmail.com',
+    'password' : '321cba#@!', 'name_first':'Fred', 'name_last':'Smith'})
+    user_2 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'thirdemail@gmail.com',
+    'password' : '321bca#@!', 'name_first':'Bob', 'name_last':'Jones'})
+    user_3 = r.json()
+    
+    # Get user ids
+    u_id1 = user_1['auth_user_id']
+    u_id2 = user_2['auth_user_id']
+    u_id3 = user_3['auth_user_id']
+
+    r1 = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [u_id2, u_id3]})
+    new_dm = r1.json()
+    r2 = requests.post(config.url + 'dm/create/v1',  json={'token': user_2['token'], 'u_ids': [u_id1]})
+    new_dm_2 = r2.json()
+    r = requests.get(config.url + 'dm/list/v1',  params={'token': user_1['token']})
+    assert r.json() == {
+        'dms': [
+        {
+                'dm_id': new_dm['dm_id'], 
+                'name': new_dm['dm_name']
+        },
+        {
+                'dm_id': new_dm_2['dm_id'],
+                'name': new_dm_2['dm_name']
+        }
+        ],
+    }
+
+
+def test_dm_list_error():
+    """
+    Test for AccessError
+    """
+    # Clear data first
+    requests.delete(config.url + 'clear/v1')
+    # Call dm/list/v1 with an invalid token
+    r = requests.get(config.url + 'dm/list/v1',  params={'token': 'invalid_token'})
+    assert r.status_code == AccessError().code
+    
+
 def test_dm_leave():
     """
     A simple test to check dm_details works by passing valid information
     """
     # Clear data first
+    requests.delete(config.url + 'clear/v1')
     # Register members
-    r = requests.delete(config.url + 'clear/v1')
     r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
     'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
     user_1 = r.json()
@@ -262,6 +313,7 @@ def test_dm_remove_http_non_owner():
     r = requests.delete(config.url + 'dm/remove/v1',  json={'token': user_2['token'], 'dm_id': dm_1['dm_id']})
     assert r.status_code == AccessError().code
 
+
 def test_dm_invite_http_valid():
     """
     Test to see if dm invite works by inviting a user then
@@ -370,4 +422,3 @@ def test_dm_invite_http_non_member():
     r = requests.post(config.url + 'dm/invite/v1',  json={'token': user_3['token'],'dm_id' : dm_1['dm_id'] ,'u_id': user_1['auth_user_id']})
     assert r.status_code == AccessError().code
 
-    

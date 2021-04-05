@@ -1,7 +1,8 @@
 import pytest
 
 from src.error import InputError, AccessError
-from src.dm import dm_create_v1, dm_details_v1, dm_remove_v1, dm_invite_v1, dm_leave_v1
+from src.dm import dm_create_v1, dm_details_v1, dm_remove_v1, dm_invite_v1, dm_leave_v1, dm_list_v1
+
 from src.auth import auth_register_v2
 from src.other import clear_v1
 
@@ -131,6 +132,46 @@ def test_dm_create_success():
     assert new_dm['dm_id'] == 1
     assert new_dm['dm_name'] == "bobjones, fredsmith, haydeneverest"       
 
+
+def test_dm_list_invalid_token():
+    """
+    Pass in an invalid token
+    Should return AccessError
+    """
+    clear_v1()
+    with pytest.raises(AccessError):
+        assert dm_list_v1('invalid_token')
+        
+def test_dm_list_success():
+    """
+    Pass in a valid token from a user.
+    Should return list of DM's that the user is a member of.
+    Output: {dms} - {dm_id, name}
+    """
+    clear_v1()
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    user_3 = auth_register_v2('thirdemail@gmail.com', '321bca#@!', 'Bob', 'Jones')
+    u_id1 = user_1['auth_user_id']
+    u_id2 = user_2['auth_user_id']
+    u_id3 = user_3['auth_user_id']
+    new_dm = dm_create_v1(user_1['token'], [u_id2, u_id3])
+    new_dm_2 = dm_create_v1(user_2['token'], [u_id1])
+    dms = dm_list_v1(user_1['token'])
+    assert dms == {
+        'dms': [
+        {
+                'dm_id': new_dm['dm_id'], 
+                'name': new_dm['dm_name']
+        },
+        {
+                'dm_id': new_dm_2['dm_id'],
+                'name': new_dm_2['dm_name']
+        }
+        ],
+    }
+
+    
 def test_dm_leave_errors():
     """
     Testing dm_leave for errors
@@ -224,6 +265,7 @@ def test_dm_remove_non_creator():
     with pytest.raises(AccessError):
         assert dm_remove_v1(user_2['token'], dm['dm_id'])
 
+
 def test_dm_invite_valid():
     """
     Test to see if dm invite works by inviting a user then
@@ -293,5 +335,3 @@ def test_dm_invite_non_member():
 
     with pytest.raises(AccessError):
         assert dm_invite_v1(user_3['token'], dm['dm_id'], user_3['auth_user_id'])
-
-
