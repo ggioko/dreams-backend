@@ -11,7 +11,7 @@ from src.dm import dm_create_v1, dm_details_v1, dm_remove_v1, dm_invite_v1, dm_l
 from src.channel import channel_addowner_v1, channel_removeowner_v1, channel_leave_v1
 from src.other import clear_v1
 from src.user import users_all_v1, user_profile_v2, user_profile_setemail_v2, user_profile_setname_v2, user_profile_sethandle_v1
-from src.message import message_send_v2, message_remove_v1, message_edit_v2
+from src.message import message_send_v2, message_remove_v1, message_edit_v2, message_share_v1
 from src.helper import save_data, load_data
 
 def defaultHandler(err):
