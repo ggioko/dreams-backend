@@ -160,7 +160,7 @@ def test_user_profile_setname_errors():
     '''
     # Clear data first.
     requests.delete(config.url + 'clear/v1')
-    # Register some users
+    # Register user
     r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com', \
     'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
     user = r.json()
@@ -175,3 +175,47 @@ def test_user_profile_setname_errors():
     r = requests.put(config.url + 'user/profile/setname/v2', json ={'token': user['token'], 'name_first': 'Fred', 'name_last': 'asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2'})
     assert r.status_code == InputError().code 
     
+def test_user_profile_sethandle():
+    '''
+    Register a user and calls user/profile/sethandle/v1 to change handle successfully.
+    '''
+    # Clear data first.
+    requests.delete(config.url + 'clear/v1')
+    # Register a user
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com', \
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user = r.json()
+    requests.put(config.url + 'user/profile/sethandle/v1', json ={'token': user['token'], 'handle_str': 'newhandle'})
+    
+    r3 = requests.get(config.url + 'user/profile/v2', json={'token': user['token'], 'u_id': user['auth_user_id']})
+    assert r3.json() == {'user': {
+                             'u_id': user['auth_user_id'],
+                             'email': 'validemail@gmail.com',
+                             'name_first': 'Hayden',
+                             'name_last': 'Everest',
+                             'handle_str': 'newhandle'          
+    }}
+
+    
+def test_user_profile_sethandle_errors():
+    '''
+    Checks the InputError (400) and AccessError (403) cases.
+    '''
+    # Clear data first.
+    requests.delete(config.url + 'clear/v1')
+    # Register some users
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com', \
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user_1 = r.json()
+    requests.post(config.url + 'auth/register/v2', json={'email':'takenemail@gmail.com', \
+    'password' : '123abc!@#', 'name_first':'Fred', 'name_last':'Smith'})
+       
+    # Invalid token - Access Error
+    r = requests.put(config.url + 'user/profile/sethandle/v1', json ={'token': 'invalid_token', 'handle_str': 'newhandle'})
+    assert r.status_code == AccessError().code 
+    # Invalid email - Input Error
+    r = requests.put(config.url + 'user/profile/sethandle/v1', json ={'token': user_1['token'], 'handle_str': 'thishandleislongerthantwentycharacters'})
+    assert r.status_code == InputError().code
+    # Taken handle - Input Error
+    r = requests.put(config.url + 'user/profile/sethandle/v1', json ={'token': user_1['token'], 'handle_str': 'fredsmith'})
+    assert r.status_code == InputError().code
