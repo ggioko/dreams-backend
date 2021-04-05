@@ -10,7 +10,7 @@ from src.channel import channel_join_v2, channel_invite_v2, channel_messages_v2,
 from src.dm import dm_create_v1, dm_details_v1
 from src.channel import channel_addowner_v1, channel_removeowner_v1
 from src.other import clear_v1
-from src.user import users_all_v1, user_profile_v2, user_profile_setemail_v2
+from src.user import users_all_v1, user_profile_v2, user_profile_setemail_v2, user_profile_setname_v2
 from src.message import message_send_v1
 
 
@@ -319,7 +319,7 @@ def dm_create():
 def set_email():
     """
     Gets user token and email from http json and pass is to the
-    user_profile_v2 function
+    user_profile_setemail_v2 function
     Returns {} on success
     """
     
@@ -343,6 +343,21 @@ def dm_details():
     data = dm_details_v1(token, dm_id)
     
     return dumps(data)  
+@APP.route("/user/profile/setname/v2", methods = ['PUT'])
+def set_name():
+    """
+    Gets user token, new first name and last name from http json and passes 
+    it to the user_profile_setname_v2 function
+    Returns {} on success
+    """
+    
+    data = request.get_json()
+    token = data['token']
+    name_first = data['name_first']
+    name_last = data['name_last']
+    user_profile_setname_v2(token, name_first, name_last)
+    
+    return dumps({})
 
 if __name__ == "__main__":
     APP.run(port=config.port) # Do not edit this port
