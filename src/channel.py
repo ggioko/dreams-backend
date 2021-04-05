@@ -1,7 +1,7 @@
 from src.error import InputError, AccessError
 from src.data import data
 from src.channels import channels_list_v2
-from src.helper import get_token_user_id, check_token_valid, SECRET
+from src.helper import get_token_user_id, check_token_valid, SECRET, is_dreams_owner
 import jwt
 import hashlib
 
@@ -77,6 +77,7 @@ def channel_invite_v2(token, channel_id, u_id):
                 'name_first': user['name_first'],
                 'name_last': user['name_last'],
                 'handle_str': user['handle_str'],
+                'permission_id': user['permission_id'],
             }
 
     # Added user to all members for channel
@@ -140,7 +141,7 @@ def channel_addowner_v1(token, channel_id, u_id):
         if user['u_id'] == auth_user_id:
             authUserMatch = True
             break
-    if authUserMatch == False:
+    if authUserMatch == False and is_dreams_owner(auth_user_id) == False:
         raise AccessError(description='Authorised user not a channel owner')
     userMatch = False
     for user in channel['owner_members']:
@@ -163,6 +164,7 @@ def channel_addowner_v1(token, channel_id, u_id):
                 'name_first': user['name_first'],
                 'name_last': user['name_last'],
                 'handle_str': user['handle_str'],
+                'permission_id': user['permission_id'],
             }
 
     # Added user to channel 
@@ -226,7 +228,7 @@ def channel_removeowner_v1(token, channel_id, u_id):
         if user['u_id'] == auth_user_id:
             authUserMatch = True
             break
-    if authUserMatch == False:
+    if authUserMatch == False and is_dreams_owner(auth_user_id) == False:
         raise AccessError(description='Authorised user not a channel owner')
     # print("Got past authusermatch")
     userMatch = False
@@ -253,6 +255,7 @@ def channel_removeowner_v1(token, channel_id, u_id):
                 'name_first': user['name_first'],
                 'name_last': user['name_last'],
                 'handle_str': user['handle_str'],
+                'permission_id': user['permission_id'],
             }
     channel['owner_members'].remove(reuser)
 
@@ -322,6 +325,7 @@ def channel_leave_v1(token, channel_id):
                 'name_first': user['name_first'],
                 'name_last': user['name_last'],
                 'handle_str': user['handle_str'],
+                'permission_id': user['permission_id'],
             }
     channel['all_members'].remove(reuser)
     if reuser in channel['owner_members'] and len(channel['owner_members']) >= 2:
@@ -539,6 +543,7 @@ def channel_join_v2(token, channel_id):
                 'name_first': user['name_first'],
                 'name_last': user['name_last'],
                 'handle_str': user['handle_str'],
+                'permission_id': user['permission_id'],
             }
 
     # Check if channel_id is in the database
