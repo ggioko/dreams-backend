@@ -5,7 +5,7 @@ from src.auth import auth_register_v2
 from src.other import clear_v1
 from src.helper import get_token_user_id, generate_token
 
-# Testing when valid infomation is passes throught dm_details
+# Testing when valid infomation is passes throught dm_leave
 # expected success
 def test_dm_details():
     # clear data and register members
@@ -113,7 +113,7 @@ def test_dm_create_success():
     assert new_dm['dm_name'] == "bobjones, fredsmith, haydeneverest"       
 
 # Testing dm_remove for error handling
-def test_dm_remove_errors():
+def test_dm_leave_errors():
     # Clear data
     clear_v1()
     # Register members and setup data
@@ -137,3 +137,28 @@ def test_dm_remove_errors():
     # expected AcessError
     with pytest.raises(AccessError):
         assert dm_leave_v1(user_3['token'], new_dm['dm_id'])
+
+# Testing when valid infomation is passes through dm_leave
+# expected success
+def test_dm_leave():
+    # Clear data
+    clear_v1()
+    # Register members and setup data
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    user_3 = auth_register_v2('thirdemail@gmail.com', '321bca#@!', 'Bob', 'Jones')
+
+    # get user ids of members
+    u_id1 = user_2['auth_user_id']
+    u_id2 = user_3['auth_user_id']
+
+    # create a new dm
+    new_dm = dm_create_v1(user_1['token'], [u_id1, u_id2])
+    # remove user_2
+    dm_leave_v1(user_3['token'], new_dm['dm_id'])
+    # get details of dm
+    dm_details = dm_details_v1(user_1['token'], new_dm['dm_id'])
+    assert dm_details['members'] == [{'u_id': 1, 'email': 'validemail@gmail.com', 'name_first': 'Hayden', 'name_last': 'Everest', 'handle_str': 'haydeneverest',},
+                        {'u_id': 2, 'email': 'secondemail@gmail.com', 'name_first': 'Fred', 'name_last': 'Smith', 'handle_str': 'fredsmith', },]
+
+
