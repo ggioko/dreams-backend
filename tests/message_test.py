@@ -396,7 +396,7 @@ def test_message_share_dm_invalid_token():
     # Create users
     user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
-    u_id1 = user_1['auth_user_id']
+    user_1['auth_user_id']
     u_id2 = user_2['auth_user_id']
     # Create a dm, which will return {dm_id, dm_name}
     new_dm = dm_create_v1(user_1['token'], [u_id2])
@@ -416,7 +416,7 @@ def test_message_share_unauthorised_user():
     user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
     user_3 = auth_register_v2('thirdemail@gmail.com', '321cba#@!', 'John', 'Jones')
-    u_id1 = user_1['auth_user_id']
+    user_1['auth_user_id']
     u_id2 = user_2['auth_user_id']
     u_id3 = user_3['auth_user_id']
     # Create a dm, which will return {dm_id, dm_name}
