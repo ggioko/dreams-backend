@@ -33,7 +33,7 @@ def dm_details_v1(token, dm_id):
     for dm in data['dms']:
         if dm['dm_id'] == dm_id:
             # Check if authorised user is a member of DM
-            for member in dm['members']:
+            for member in dm['all_members']:
                 if user_id == member['u_id']:
                     authorisation = 1
             dm_valid = 1
@@ -54,7 +54,7 @@ def dm_details_v1(token, dm_id):
             # Check the all_members section of each channel.
             dmDetails['members'] = []
             for member in dm['all_members']:
-                channelDetails['all_members'].append({
+                dmDetails['members'].append({
                     'u_id': member['u_id'],
                     'email': member['email'],
                     'name_first': member['name_first'],
