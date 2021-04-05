@@ -95,8 +95,7 @@ def clear():
 
     save_data()
 
-    return dumps({
-    })
+    return dumps({})
 
 @APP.route("/auth/register/v2", methods=['POST'])
 def register():
