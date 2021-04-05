@@ -23,7 +23,7 @@ def dm_create_v1(token, u_ids):
 
     # Check if token is valid
     if check_token_valid(token) == False:
-        raise AccessError("Error invalid token")
+        raise AccessError(description="Error invalid token")
 
     # Check if u_ids refer to a valid member
     valid_count = len(u_ids)
@@ -34,7 +34,7 @@ def dm_create_v1(token, u_ids):
                 valid += 1
     
     if valid != valid_count:
-        raise InputError("Error a u_id does not refer to a valid member")
+        raise InputError(description="Error a u_id does not refer to a valid member")
 
     # Get the User id from token
     auth_user_id = get_token_user_id(token)
