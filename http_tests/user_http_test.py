@@ -148,7 +148,7 @@ def test_user_profile_setname():
     r3 = requests.get(config.url + 'user/profile/v2', json={'token': user['token'], 'u_id': user['auth_user_id']})
     assert r3.json() == {'user': {
                              'u_id': user['auth_user_id'],
-                             'email': 'newemail@gmail.com',
+                             'email': 'validemail@gmail.com',
                              'name_first': 'Fred',
                              'name_last': 'Smith',
                              'handle_str': 'HaydenEverest'          
@@ -163,15 +163,15 @@ def test_user_profile_setname_errors():
     # Register some users
     r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com', \
     'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
-    user_1 = r.json()
+    user = r.json()
 
     # Invalid token - Access Error
-    r = requests.put(config.url + 'user/profile/setemail/v2', json ={'token': 'invalid_token', 'name_first': 'Fred', 'name_last': 'Smith'})
+    r = requests.put(config.url + 'user/profile/setname/v2', json ={'token': 'invalid_token', 'name_first': 'Fred', 'name_last': 'Smith'})
     assert r.status_code == AccessError().code     
     # Invalid name_first - Input Error
-    r = requests.put(config.url + 'user/profile/setemail/v2', json ={'token': user_1['token'], 'name_first': 'asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2', 'name_last': 'Smith'})
+    r = requests.put(config.url + 'user/profile/setname/v2', json ={'token': user['token'], 'name_first': 'asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2', 'name_last': 'Smith'})
     assert r.status_code == InputError().code 
     # Invalid name_last - Input Error
-    r = requests.put(config.url + 'user/profile/setemail/v2', json ={'token': user_1['token'], 'name_first': 'Fred', 'name_last': 'asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2'})
+    r = requests.put(config.url + 'user/profile/setname/v2', json ={'token': user['token'], 'name_first': 'Fred', 'name_last': 'asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2'})
     assert r.status_code == InputError().code 
     

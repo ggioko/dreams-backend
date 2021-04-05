@@ -136,10 +136,10 @@ def user_profile_setemail_v2(token, email):
     for channel in data['channels']:
         for user in channel['owner_members']:
             if user['u_id'] == u_id:
-                user['email'] == email
+                user['email'] = email
         for user in channel['all_members']:
             if user['u_id'] == u_id:
-                user['email'] == email
+                user['email'] = email
                 
     return {
     }

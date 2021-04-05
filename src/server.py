@@ -299,7 +299,7 @@ def set_email():
     
     return dumps({})
 
-@APP.route("/user/profile/setemail/v2", methods = ['PUT'])
+@APP.route("/user/profile/setname/v2", methods = ['PUT'])
 def set_name():
     """
     Gets user token, new first name and last name from http json and passes 
