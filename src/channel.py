@@ -259,6 +259,76 @@ def channel_removeowner_v1(token, channel_id, u_id):
     return {
     }
 
+def channel_leave_v1(token, channel_id):
+    '''
+    leave removes a user as an owner of a channel
+
+    Arguments:
+        token (str)        - The token of the user that wants to leave
+        channel_id (int)   - The ID of the channel that the user wants to leave
+
+    Exceptions:
+        InputError  - Occurs when channel_id does not refer to a valid channel
+        AccessError - Occurs when the authorised user is not a member of the channel
+
+    Return Value:
+        Returns an empty dictionary when exceptions are not raised
+    '''
+    # Checks if the channel provided is a channel in the list
+    foundChannel = {}
+    for channel in data['channels']:
+        if channel['id'] == channel_id:
+            foundChannel = channel
+            break
+    if foundChannel == {}:
+        raise InputError(description='Invalid channel ID provided')
+
+    # Checks to see if user is logged in
+    token_active = False
+    active_tokens = data['active_tokens']
+    # Search through active tokens
+    for x in active_tokens:
+        # print("x = " + x)
+        # print("token = " + token)
+        if x == token:
+            token_active = True
+            break
+    if (token_active == False):
+        raise AccessError(description='Token invalid, user not logged in')
+    # print("got past is auth_user logged in check")
+    
+    # Gets ID of user
+    decoded_token = jwt.decode(token, SECRET, algorithms=['HS256'])
+    auth_user_id = decoded_token['u_id']
+
+    # Checks that user is a member of the channel
+    userMatch = False
+    for user in channel['all_members']:
+        if user['u_id'] == auth_user_id:
+            userMatch = True
+            break
+    if userMatch == False:
+        raise AccessError(description='User not in channel')
+
+    # Remove user form owner_members
+    reuser = {}
+    # Loop until u_id match
+    for user in data['users']:
+        if auth_user_id == user['u_id']:
+            # Copy all the user data for easier access
+            reuser = {
+                'u_id': user['u_id'],
+                'email': user['email'],
+                'name_first': user['name_first'],
+                'name_last': user['name_last'],
+                'handle_str': user['handle_str'],
+            }
+    channel['all_members'].remove(reuser)
+    if reuser in channel['owner_members'] and len(channel['owner_members']) >= 2:
+        channel['owner_members'].remove(reuser)
+
+    return {
+    }
 
 def channel_details_v2(token, channel_id):
     '''
@@ -526,10 +596,6 @@ def channel_messages_v2(token, channel_id, start):
         'end': end,
     }
 
-# Not required for iteration 1
-def channel_leave_v1(auth_user_id, channel_id):
-    return {
-    }
 
 
 def channel_join_v1(auth_user_id, channel_id):
