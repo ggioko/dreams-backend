@@ -312,3 +312,85 @@ def test_message_edit_http_invalid_token():
         'message_id' : message_id['message_id'], 'message' : edit})
     
     assert r.status_code == AccessError().code
+
+def test_message_senddm():
+    '''
+    Given valid token, dm_id and message, run the message_senddm_v1 function.
+    Function should return the message_id, and write the message details to data.
+    '''
+    # Clear data first
+    # Register members
+    r = requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user_1 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'secondemail@gmail.com',
+    'password' : '321cba#@!', 'name_first':'Fred', 'name_last':'Smith'})
+    user_2 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'thirdemail@gmail.com',
+    'password' : '321bca#@!', 'name_first':'Bob', 'name_last':'Jones'})
+    user_3 = r.json()
+    
+    # Get u_ids 
+    u_id2 = user_2['auth_user_id']
+    u_id3 = user_3['auth_user_id']
+    # Create two dm's
+    r = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [u_id2, u_id3]})
+    new_dm = r.json()
+    r = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [u_id2]})
+    new_dm_2 = r.json()    
+    r = requests.post(config.url + 'message/senddm/v1', json={'token': user_1['token'],'dm_id': new_dm['dm_id'], 'message': 'test message'})
+    send_dm = r.json()
+    r = requests.post(config.url + 'message/senddm/v1', json={'token': user_1['token'],'dm_id': new_dm_2['dm_id'], 'message': 'test message'})
+    send_dm_2 = r.json()
+    # Check that the message ID's are not the same.
+    assert send_dm_2['message_id'] != send_dm['message_id']
+    
+    r = requests.post(config.url + 'dm/messages/v1', json={'token': user_1['token'],'dm_id': new_dm['dm_id'], 'start': 0})
+    result = r.json()
+    
+    assert send_dm['message_id'] == result['messages'][0]['message_id']
+    assert user_1['auth_user_id'] == result['messages'][0]['u_id']
+    assert 'test message' == result['messages'][0]['message']
+    
+   
+
+def test_message_senddm_errors():
+    '''
+    Testing InputError and AccessError cases for message_senddm_v1 function.
+    '''
+    # Clear data first
+    # Register members
+    r = requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user_1 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'secondemail@gmail.com',
+    'password' : '321cba#@!', 'name_first':'Fred', 'name_last':'Smith'})
+    user_2 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'thirdemail@gmail.com',
+    'password' : '321bca#@!', 'name_first':'Bob', 'name_last':'Jones'})
+    user_3 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'fourthemail@gmail.com',
+    'password' : '321bca#@!', 'name_first':'Billy', 'name_last':'Elliot'})
+    user_4 = r.json()
+    # Get u_ids 
+    u_id2 = user_2['auth_user_id']
+    u_id3 = user_3['auth_user_id']
+    
+    # Create a dm
+    r1 = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [u_id2, u_id3]})
+    new_dm = r1.json()
+    
+    # Message more than 1000 chars - InputError
+    long_string = 1001*'x'
+    r = requests.post(config.url + 'message/senddm/v1', json={'token': user_1['token'],'dm_id': new_dm['dm_id'], 'message': long_string})
+    assert r.status_code == InputError().code
+    # Invalid token input - AccessError
+    r = requests.post(config.url + 'message/senddm/v1', json={'token': 'invalid_token','dm_id': new_dm['dm_id'], 'message': 'test message'})
+    assert r.status_code == AccessError().code
+    # Unauthorised user - not member of dm
+    r = requests.post(config.url + 'message/senddm/v1', json={'token': user_4['token'],'dm_id': new_dm['dm_id'], 'message': 'test message'})
+    assert r.status_code == AccessError().code
+    
+    
