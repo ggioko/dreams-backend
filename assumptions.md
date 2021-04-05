@@ -46,3 +46,10 @@
 ## dm
 * DM name is set when dm_invite is used and does not change when members are added
 or removed
+
+## Messages
+
+### message_share_v1
+* Assume that the optional message is also less than 1000 characters
+* Raise input error is og_message_id is invalid
+* Raise an AccessError if the user_id is not in the same channel/dm as og_message_id
