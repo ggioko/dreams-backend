@@ -227,10 +227,11 @@ def test_channel_leave():
     'password':'123abcd!@#', 'name_first':'Haydeen', 'name_last':'Everesst'})
     rego_3 = r.json()
     r = requests.post(config.url + 'channels/create/v2', json={'token':rego_1['token'],\
-    'name':'dankmemechannel', 'is_public':False})
+    'name':'dankmemechannel', 'is_public':True})
     new_channel = r.json()
-    r = requests.post(config.url + 'channels/join/v2', json={'token':rego_2['token'],\
-    'name':'dankmemechannel')
+    # 'channel_id':'dankmemechannel'})
+    requests.post(config.url + 'channel/invite/v2', json={'token': rego_1['token'],\
+    'channel_id': new_channel['channel_id'], 'u_id':rego_2['auth_user_id']})
 
     # Invalid channel - Input Error
     test_1 = requests.post(config.url + 'channel/leave/v1', json={'token': rego_1['token'],\

@@ -305,7 +305,7 @@ def channel_leave_v1(token, channel_id):
     userMatch = False
     for user in channel['all_members']:
         if user['u_id'] == auth_user_id:
-            userserMatch = True
+            userMatch = True
             break
     if userMatch == False:
         raise AccessError(description='User not in channel')
@@ -314,7 +314,7 @@ def channel_leave_v1(token, channel_id):
     reuser = {}
     # Loop until u_id match
     for user in data['users']:
-        if u_id == user['u_id']:
+        if auth_user_id == user['u_id']:
             # Copy all the user data for easier access
             reuser = {
                 'u_id': user['u_id'],
