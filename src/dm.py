@@ -4,6 +4,27 @@ from src.helper import get_token_user_id, check_token_valid, SECRET
 import jwt
 import hashlib
 
+def dm_invite_v1(token, dm_id, u_id):
+    '''    
+    Given a token, ID dm_id and u_id adds user with u_id to
+    the given DM
+    
+    Arguments: 
+        token (string) - Users session token
+        dm_id (int)    - ID of the DM
+        u_id (int)     - ID of the user
+        
+    Exception: 
+        InputError  - DM ID is not a valid DM.
+        InputError  - User ID is not refering to a valid user
+        AccessError - Occurs when token passed in is not a valid token.
+        AccessError - Occurs when authorised user is not a a member of the DM
+        
+    Return value: 
+        {} on success
+    ''' 
+    pass
+
 def dm_remove_v1(token, dm_id):
     '''    
     Given a token with ID dm_id that the authorised user is the creator of, 
