@@ -464,7 +464,7 @@ def dm_messages():
     """
     token = request.args.get('token')
     dm_id = int(request.args.get('dm_id'))
-    start = int(request.args.get('token'))
+    start = int(request.args.get('start'))
 
     response = dm_messages_v1(token, dm_id, start)
 

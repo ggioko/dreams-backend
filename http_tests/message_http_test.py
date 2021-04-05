@@ -343,17 +343,18 @@ def test_message_senddm():
     send_dm = r.json()
     r = requests.post(config.url + 'message/senddm/v1', json={'token': user_1['token'],'dm_id': new_dm_2['dm_id'], 'message': 'test message'})
     send_dm_2 = r.json()
-    # Check that the message ID's are not the same.
-    assert send_dm_2['message_id'] != send_dm['message_id']
     
-    r = requests.post(config.url + 'dm/messages/v1', json={'token': user_1['token'],'dm_id': new_dm['dm_id'], 'start': 0})
-    result = r.json()
+
+    r = requests.get(config.url + 'dm/messages/v1', params={'token': user_1['token'],'dm_id': new_dm['dm_id'], 'start': 0})
+    output = r.json()
+
+    message_list = output['messages']
+    req_info = message_list[0]
     
-    assert send_dm['message_id'] == result['messages'][0]['message_id']
-    assert user_1['auth_user_id'] == result['messages'][0]['u_id']
-    assert 'test message' == result['messages'][0]['message']
-    
-   
+    assert send_dm['message_id'] == req_info[0]['message_id']
+    assert user_1['auth_user_id'] == req_info[0]['u_id']
+    assert 'test message' == req_info[0]['message']
+       
 
 def test_message_senddm_errors():
     '''

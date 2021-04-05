@@ -518,12 +518,15 @@ def test_dm_messages_http_valid():
 
     r = requests.get(config.url + 'dm/messages/v1',  params={'token': user_3['token'], 'dm_id': dm_1['dm_id'], 'start' : 0})
     output = r.json()
-    assert output['messages'][1]['message_id'] == m_1['message_id']
-    assert output['messages'][1]['u_id'] == user_1['auth_user_id']
-    assert output['messages'][1]['message'] == message_1
-    assert output['messages'][0]['message_id'] == m_2['message_id']
-    assert output['messages'][0]['u_id'] == user_2['auth_user_id']
-    assert output['messages'][0]['message'] == message_2
+    
+    message_list = output['messages']
+    req_info = message_list[0]
+    assert req_info[1]['message_id'] == m_1['message_id']
+    assert req_info[1]['u_id'] == user_1['auth_user_id']
+    assert req_info[1]['message'] == message_1
+    assert req_info[0]['message_id'] == m_2['message_id']
+    assert req_info[0]['u_id'] == user_2['auth_user_id']
+    assert req_info[0]['message'] == message_2
     assert output['start'] == 0
     assert output['end'] == -1
 
