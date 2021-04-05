@@ -212,7 +212,7 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
                         auth = True
                         copy_of_message = messages['message']
 
-
+    #stub here to search dms to og message
 
     # If message is not found either channels or dms raises InputError
     # If message is found but user is not in chat, raises AccessError
@@ -223,16 +223,17 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
         raise AccessError(description="You are not allowed to edit this message")
 
     #Update message to format seen on frontend
-    send_message = message + copy_of_message 
+    send_message = message + '\n' + '"""' +'\n' + copy_of_message + '\n' +'"""'
     
     # Share to channel
-    if channel_id != -1
+    if channel_id != -1:
         # send new message using existing functions
-        message_send_v2(token, channel_id, send_message)
+        shared_message_id = message_send_v2(token, channel_id, send_message)
+        return {shared_message_id}
 
     # Share to dm
-    if dm_id != -1
-
+    if dm_id != -1:
+        #stub until i add real thing
         for channel in data['channels']:
             for message in channel['messages']:
                 if og_message_id == message['message_id']:
