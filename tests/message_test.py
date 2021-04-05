@@ -387,13 +387,43 @@ def test_message_send_dm_multiple_messages():
     assert req_info[2]['u_id'] == user_1['auth_user_id'] 
     assert req_info[2]['message'] == str_1 
     
+def test_message_share_dm_invalid_token():
+    '''
+    Given an invalid token.
+    AccessError is raised.
+    '''
+    clear_v1()
+    # Create users
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    u_id1 = user_1['auth_user_id']
+    u_id2 = user_2['auth_user_id']
+    # Create a dm, which will return {dm_id, dm_name}
+    new_dm = dm_create_v1(user_1['token'], [u_id2])
+    # Send a dm from user 1 to user 2
+    message_1 = message_senddm_v1(user_1['token'], new_dm['dm_id'], 'Hello this is a test')
+        
+    # Call message_share function with invalid token.
+    with pytest.raises(AccessError):
+        assert message_share_v1('invalid_token', message_1['message_id'], 'sharing message',-1, new_dm['dm_id'])
 
-
-
-
-
-
-
-
-
+def test_message_share_unauthorised_user():
+    '''
+    User is not part of the channel or DM that they are trying to share to.
+    AccessError is raised.
+    '''
+    # Create users
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    user_3 = auth_register_v2('thirdemail@gmail.com', '321cba#@!', 'John', 'Jones')
+    u_id1 = user_1['auth_user_id']
+    u_id2 = user_2['auth_user_id']
+    u_id3 = user_3['auth_user_id']
+    # Create a dm, which will return {dm_id, dm_name}
+    new_dm = dm_create_v1(user_1['token'], [u_id2])
+    new_dm_2 = dm_create_v1(user_1['token'], [u_id3])
+    # Send a dm from user 1 to user 2
+    message_1 = message_senddm_v1(user_1['token'], new_dm['dm_id'], 'Hello this is a test')
+    with pytest.raises(AccessError):
+        assert message_share_v1(user_2['token'], message_1['message_id'], 'sharing message',-1, new_dm_2['dm_id'])
     
