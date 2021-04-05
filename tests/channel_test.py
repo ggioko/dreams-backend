@@ -1,7 +1,7 @@
 import pytest
 
 from src.auth import auth_register_v1, auth_register_v2, auth_logout_v1
-from src.channel import channel_details_v1, channel_messages_v1, channel_messages_v2
+from src.channel import channel_messages_v1, channel_messages_v2
 from src.channel import channel_join_v1, channel_join_v2, channel_invite_v2, channel_details_v2
 from src.channel import channel_addowner_v1
 from src.channels import channels_create_v1, channels_create_v2
