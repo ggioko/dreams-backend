@@ -4,8 +4,10 @@ from src.error import InputError, AccessError
 #from src.data import data
 from src.auth import auth_register_v2
 from src.other import clear_v1
-from src.user import users_all_v1, user_profile_v2, user_profile_setemail_v2, user_profile_setname_v2
+from src.user import users_all_v1, user_profile_v2, user_profile_setemail_v2, user_profile_setname_v2, user_profile_sethandle_v1
 from src.helper import generate_token
+from src.channels import channels_create_v2
+from src.channel import channel_details_v2
 
 def test_users_all_v1_successful():
     '''
@@ -83,6 +85,39 @@ def test_setemail():
                              'name_last': 'Everest',
                              'handle_str': 'haydeneverest'          
     }}
+    
+def test_setemail_channel_members():
+    """
+    Pass in a user with valid token and new email.
+    If they are a member of a channel, their info in the channel should also be updated.
+    """ 
+    clear_v1()
+    user = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_profile_setemail_v2(user['token'], 'newemail@gmail.com')
+    channel_1 = channels_create_v2(user['token'], 'Channel1', True)
+    channel_info = channel_details_v2(user['token'], channel_1['channel_id'])
+    assert channel_info == {
+        'name': 'Channel1',
+        'owner_members': [
+            {
+                'u_id': 1,
+                'email': 'newemail@gmail.com',
+                'name_first': 'Hayden',
+                'name_last': 'Everest',
+                'handle_str': 'haydeneverest',
+            }
+        ],
+        'all_members': [
+            {
+                'u_id': 1,
+                'email': 'newemail@gmail.com',
+                'name_first': 'Hayden',
+                'name_last': 'Everest',
+                'handle_str': 'haydeneverest',
+            }
+        ],
+        
+    }
 
 def test_setemail_invalid_email():
     """
@@ -115,6 +150,7 @@ def test_setemail_invalid_token():
     with pytest.raises(AccessError):                        
         assert user_profile_setemail_v2('invalid_token', 'newemail@gmail.com')
 
+    
 def test_setname():
     """
     Pass in a user with valid token and new name.
@@ -131,16 +167,40 @@ def test_setname():
                              'name_last': 'Smith',
                              'handle_str': 'haydeneverest'          
     }}
-    
-def test_setname_invalid_token():
+
+def test_setname_channel_members():    
     """
-    Pass in a user with invalid token and valid new name.
-    Should return AccessError
-    """
+    Pass in a user with valid token and new name.
+    If they are a member of a channel, their info in the channel should also be updated.
+    """ 
     clear_v1()
-    auth_register_v2('validemail0@gmail.com', '123abc!@#', 'Hayden', 'Everest')
-    with pytest.raises(AccessError):                        
-        assert user_profile_setname_v2('invalid_token', 'Fred', 'Smith')
+    user = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_profile_setname_v2(user['token'], 'Fred', 'Smith')
+    channel_1 = channels_create_v2(user['token'], 'Channel1', True)
+    channel_info = channel_details_v2(user['token'], channel_1['channel_id'])
+    assert channel_info == {
+        'name': 'Channel1',
+        'owner_members': [
+            {
+                'u_id': 1,
+                'email': 'validemail@gmail.com',
+                'name_first': 'Fred',
+                'name_last': 'Smith',
+                'handle_str': 'haydeneverest',
+            }
+        ],
+        'all_members': [
+            {
+                'u_id': 1,
+                'email': 'validemail@gmail.com',
+                'name_first': 'Fred',
+                'name_last': 'Smith',
+                'handle_str': 'haydeneverest',
+            }
+        ],
+        
+    }
+    
 
 def test_setname_invalid_firstname():
     """
@@ -161,5 +221,94 @@ def test_setname_invalid_lastname():
     user = auth_register_v2('validemail0@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     with pytest.raises(InputError):                        
         assert user_profile_setname_v2(user['token'], 'Fred', 'asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2')
-        
+                
+def test_setname_invalid_token():
+    """
+    Pass in a user with invalid token and valid new name.
+    Should return AccessError
+    """
+    clear_v1()
+    auth_register_v2('validemail0@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    with pytest.raises(AccessError):                        
+        assert user_profile_setname_v2('invalid_token', 'Fred', 'Smith')
 
+def test_sethandle():
+    """
+    Pass in a user with valid token and new handle.
+    The handle in their data store is now replaced with this new handle.
+    """
+    clear_v1()
+    user = auth_register_v2('validemail0@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_profile_sethandle_v1(user['token'], 'newhandle')
+    user_info  = user_profile_v2(user['token'], user['auth_user_id'])
+    assert user_info == {'user': {
+                             'u_id': user['auth_user_id'],
+                             'email': 'validemail0@gmail.com',
+                             'name_first': 'Hayden',
+                             'name_last': 'Everest',
+                             'handle_str': 'newhandle'          
+    }}
+    
+def test_sethandle_channel_members():    
+    """
+    Pass in a user with valid token and new handle.
+    If they are a member of a channel, their info in the channel should also be updated.
+    """ 
+    clear_v1()
+    user = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_profile_sethandle_v1(user['token'], 'newhandle')
+    channel_1 = channels_create_v2(user['token'], 'Channel1', True)
+    channel_info = channel_details_v2(user['token'], channel_1['channel_id'])
+    assert channel_info == {
+        'name': 'Channel1',
+        'owner_members': [
+            {
+                'u_id': 1,
+                'email': 'validemail@gmail.com',
+                'name_first': 'Hayden',
+                'name_last': 'Everest',
+                'handle_str': 'newhandle',
+            }
+        ],
+        'all_members': [
+            {
+                'u_id': 1,
+                'email': 'validemail@gmail.com',
+                'name_first': 'Hayden',
+                'name_last': 'Everest',
+                'handle_str': 'newhandle',
+            }
+        ],
+        
+    }
+    
+def test_sethandle_invalid_token():
+    """
+    Pass in a user with invalid token and valid handle.
+    """
+    clear_v1()
+    auth_register_v2('validemail0@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    with pytest.raises(AccessError):                        
+        assert user_profile_sethandle_v1('invalid_token', 'newhandle')
+
+def test_sethandle_invalid_handle():
+    """
+    Pass in a user with valid token but invalid handle.
+    Should return InputError
+    """
+    clear_v1()
+    user = auth_register_v2('validemail0@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    with pytest.raises(InputError):
+        assert user_profile_sethandle_v1(user['token'], 'thishandleislongerthantwentycharacters')
+
+def test_sethandle_already_used():
+    """
+    Pass in a user with valid token but email already taken by someone else.
+    Should return InputError
+    """
+    clear_v1()
+    user_1 = auth_register_v2('validemail0@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    auth_register_v2('usedemail@gmail.com', '123abc!@#', 'Fred', 'Smith')
+    with pytest.raises(InputError):                        
+        assert user_profile_sethandle_v1(user_1['token'], 'fredsmith')
+    
