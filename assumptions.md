@@ -38,3 +38,7 @@
 
 ### channel_leave
 * If a channel owner leaves the channel, they will no longer be an owner of the channel, unless they are the only owner where they will still be an owner of the channel.
+
+## dm
+* DM name is set when dm_invite is used and does not change when members are added
+or removed

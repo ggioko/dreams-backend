@@ -23,7 +23,53 @@ def dm_invite_v1(token, dm_id, u_id):
     Return value: 
         {} on success
     ''' 
-    pass
+    # Check if token is valid using helper
+    if check_token_valid(token) == False:
+        raise AccessError(description='Error Invalid token')
+
+    # If user ids match, store details of user
+    uid_valid = False
+    for user in data['users']:
+        if u_id == user['u_id']:
+            uid_valid = True
+            user = {
+                'u_id' : user['u_id'],
+                'email' : user['email'],
+                'name_first' : user['name_first'],
+                'name_last' : user['name_last'],
+                'handle_str' : user['handle_str'],
+                'password' : user['password']
+            }
+    
+    # Raise error if it could not find user
+    if uid_valid == False:
+        raise InputError(description="U_id does not refer to a valid user")
+    
+    # Adds new user to DM if authorised user is a member and the dm_id is valid
+    user_id = get_token_user_id(token)
+    dm_valid = False
+    member_valid = False
+    for dm in data['dms']:
+        if dm['dm_id'] == dm_id:
+            dm_valid = True
+            # Check if authorised user is a member of DM
+            for member in dm['all_members']:
+                if user_id == member['u_id']:
+                    member_valid = True
+                    dm['all_members'].append(user)
+                    break
+            break
+
+    
+    # Raise error if it could not invite the user
+    if dm_valid == False:
+        raise InputError(description="Dm_id does not refer to a valid DM")
+    if member_valid == False:
+        raise AccessError(description="User is not the a member of the DM")
+
+    return {}
+
+    
 
 def dm_remove_v1(token, dm_id):
     '''    
@@ -47,23 +93,25 @@ def dm_remove_v1(token, dm_id):
     if check_token_valid(token) == False:
         raise AccessError(description='Error Invalid token')
     
-    # Check if dm_id is valid
+    # Removes DM if it can find it
     user_id = get_token_user_id(token)
     owner = False
     dm_valid = False
     for dm in data['dms']:
         if dm['dm_id'] == dm_id:
             dm_valid = True
-            # Check if authorised user is a member of DM
+            # Check if authorised user is an owner of DM
             for member in dm['owner_members']:
                 if user_id == member['u_id']:
                     owner = True
                     data['dms'].remove(dm)
 
+    # Raise error if it could not delete the DM
     if dm_valid == False:
         raise InputError(description="Dm_id does not refer to a valid DM")
     if owner == False:
         raise AccessError(description="User is not the original DM creator")
+        
 
     return {}
 
