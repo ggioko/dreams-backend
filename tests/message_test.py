@@ -407,12 +407,13 @@ def test_message_share_dm_invalid_token():
     with pytest.raises(AccessError):
         assert message_share_v1('invalid_token', message_1['message_id'], 'sharing message',-1, new_dm['dm_id'])
 
-def test_message_share_unauthorised_user():
+def test_message_share_unauthorised_user_dm():
     '''
-    User is not part of the channel or DM that they are trying to share to.
+    User is not part of the DM that they are trying to share to.
     AccessError is raised.
     '''
     # Create users
+    clear_v1()
     user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
     user_3 = auth_register_v2('thirdemail@gmail.com', '321cba#@!', 'John', 'Jones')
@@ -426,4 +427,68 @@ def test_message_share_unauthorised_user():
     message_1 = message_senddm_v1(user_1['token'], new_dm['dm_id'], 'Hello this is a test')
     with pytest.raises(AccessError):
         assert message_share_v1(user_2['token'], message_1['message_id'], 'sharing message',-1, new_dm_2['dm_id'])
-    
+
+def test_message_share_unauthorised_user_channel():
+    '''
+    User is not part of the channel that they are trying to share to.
+    AccessError is raised.
+    '''
+    clear_v1()
+    id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    id_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    channel_1 = channels_create_v2(id_1['token'], "MyChannel", True)
+    message = "hello this is my new channel"
+    optional = "a"
+    message_send_v2(id_1['token'], channel_1['channel_id'], message)
+    result1 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
+    assert result1['messages'][0]['message'] == message
+    with pytest.raises(AccessError):
+        message_share_v1(id_2['token'], result1['messages'][0]['message_id'], optional, channel_1['channel_id'], -1)
+
+def test_message_share_long_optional_message():
+    '''
+    Ghecks if an InputError is rasied as optional message longer than 1000 characters
+    '''
+    clear_v1()
+    id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    channel_1 = channels_create_v2(id_1['token'], "MyChannel", True)
+    message = "hello this is my new channel"
+
+    optional = "a"
+    for i in range(1001):
+        optional += f" {i}"
+
+    message_send_v2(id_1['token'], channel_1['channel_id'], message)
+    result1 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
+    assert result1['messages'][0]['message'] == message
+    with pytest.raises(InputError):
+        message_share_v1(id_1['token'], result1['messages'][0]['message_id'], optional, channel_1['channel_id'], -1)
+
+def test_message_share_authorised_user_dm():
+    '''
+    User is  part of the DM that they are trying to share to.
+    '''
+    # Create users
+    clear_v1()
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    u_id2 = user_2['auth_user_id']
+    # Create a dm, which will return {dm_id, dm_name}
+    new_dm = dm_create_v1(user_1['token'], [u_id2])
+    # Send a dm from user 1 to user 2
+    message_1 = message_senddm_v1(user_1['token'], new_dm['dm_id'], 'Hello this is a test')
+    assert message_share_v1(user_1['token'], message_1['message_id'], 'sharing message',-1, new_dm['dm_id'])
+
+def test_message_share_authorised_user_channel():
+    '''
+    User is part of the channel that they are trying to share to.
+    '''
+    clear_v1()
+    id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    channel_1 = channels_create_v2(id_1['token'], "MyChannel", True)
+    message = "hello this is my new channel"
+    optional = "a"
+    message_send_v2(id_1['token'], channel_1['channel_id'], message)
+    result1 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
+    assert result1['messages'][0]['message'] == message
+    assert message_share_v1(id_1['token'], result1['messages'][0]['message_id'], optional, channel_1['channel_id'], -1)

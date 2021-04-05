@@ -245,12 +245,12 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
     if channel_id != -1:
         # send new message using existing functions
         shared_message_id = message_send_v2(token, channel_id, send_message)
-        return {shared_message_id}
+        return shared_message_id
 
     # Share to dm
     if dm_id != -1:
         shared_message_id = message_senddm_v1(token, dm_id, send_message)
-        return {shared_message_id}
+        return shared_message_id
 
 def message_senddm_v1(token, dm_id, message):
     """
