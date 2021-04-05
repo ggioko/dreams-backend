@@ -95,7 +95,7 @@ def test_dm_details():
 
 def test_dm_details_errors():
     """
-    Testings for input and access errors 
+    Testing for input and access errors 
     """
     # Clear data first
     # Register members
@@ -136,4 +136,76 @@ def test_dm_details_errors():
     r = requests.get(config.url + 'dm/details/v1', params={'token': user_4['token'], 'dm_id': dm_1['dm_id']})
     assert r.status_code == AccessError().code
 
-    
+def test_dm_leave():
+    """
+    A simple test to check dm_details works by passing valid information
+    """
+    # Clear data first
+    # Register members
+    r = requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user_1 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'secondemail@gmail.com',
+    'password' : '321cba#@!', 'name_first':'Fred', 'name_last':'Smith'})
+    user_2 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'thirdemail@gmail.com',
+    'password' : '321bca#@!', 'name_first':'Bob', 'name_last':'Jones'})
+    user_3 = r.json()
+
+    # Get user ids from members
+    u_id1 = user_2['auth_user_id']
+    u_id2 = user_3['auth_user_id']
+    # create a DM
+    r = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [u_id1, u_id2]})
+    dm_1 = r.json()
+    # remove user_3
+    r = requests.post(config.url + 'dm/leave/v1',  json={'token': user_3['token'], 'dm_id': dm_1['dm_id']})
+    # get details of DM
+    r = requests.get(config.url + 'dm/details/v1', params={'token': user_1['token'], 'dm_id': dm_1['dm_id']})
+    dm_details_1 = r.json()
+
+    assert dm_details_1['members'] == [{'u_id': 1, 'email': 'validemail@gmail.com', 'name_first': 'Hayden', 'name_last': 'Everest', 'handle_str': 'haydeneverest',},
+                                        {'u_id': 2, 'email': 'secondemail@gmail.com', 'name_first': 'Fred', 'name_last': 'Smith', 'handle_str': 'fredsmith', },]
+
+def test_dm_leave_errors():
+    """
+    Testing for input and access errors 
+    """
+    # Clear data first
+    # Register members
+    r = requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user_1 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'secondemail@gmail.com',
+    'password' : '321cba#@!', 'name_first':'Fred', 'name_last':'Smith'})
+    user_2 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'thirdemail@gmail.com',
+    'password' : '321bca#@!', 'name_first':'Bob', 'name_last':'Jones'})
+    user_3 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'fourthemail@gmail.com',
+    'password' : '321bca#@!', 'name_first':'Jamie', 'name_last':'Oliver'})
+    user_4 = r.json()
+
+    # Get user ids from members
+    u_id1 = user_2['auth_user_id']
+    u_id2 = user_3['auth_user_id']
+    # create a DM
+    r = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [u_id1, u_id2]})
+    dm_1 = r.json()
+
+    # Testing when an invalid token is used
+    # expected AccessError
+    r = requests.post(config.url + 'dm/leave/v1',  json={'token': -1, 'dm_id': dm_1['dm_id']})
+    assert r.status_code == AccessError().code
+
+    # Testing when an invalid DM ID is used
+    # expected InputError
+    r = requests.post(config.url + 'dm/leave/v1',  json={'token': user_3['token'], 'dm_id': 6})
+    assert r.status_code == InputError().code
+
+    # Testing when an authorised id is not a member of DM
+    # expected AcessError
+    r = requests.post(config.url + 'dm/leave/v1',  json={'token': user_4['token'], 'dm_id': dm_1['dm_id']})
+    assert r.status_code == AccessError().code
