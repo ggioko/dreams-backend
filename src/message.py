@@ -212,7 +212,18 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
                         auth = True
                         copy_of_message = messages['message']
 
-    #stub here to search dms to og message
+    #Loop through dms to get a copy of the og_message
+    # and to check if user is in the channel
+    for dms in data['dms']:
+        for messages in dms['messages']:
+            if og_message_id == messages['message_id']:
+                og_message_found = True
+                members = dms['all_members']
+                # Check if the user trying to share is in the channel
+                for member in members:
+                    if user_id == member['u_id']:
+                        auth = True
+                        copy_of_message = messages['message']
 
     # If message is not found either channels or dms raises InputError
     # If message is found but user is not in chat, raises AccessError
