@@ -23,7 +23,52 @@ def dm_messages_v1(token, dm_id, start):
     Return value: 
         {messages, start, end} on success
     ''' 
-    pass
+
+    # Check if token is valid using helper
+    if check_token_valid(token) == False:
+        raise AccessError(description='Error Invalid token')
+
+    # Get DM messages if authorised user is a member and the dm_id is valid
+    user_id = get_token_user_id(token)
+    dm_valid = False
+    member_valid = False
+    for dm in data['dms']:
+        if dm['dm_id'] == dm_id:
+            dm_valid = True
+            # Check if authorised user is a member of DM
+            for member in dm['all_members']:
+                if user_id == member['u_id']:
+                    member_valid = True
+                    break
+            messages = dm['messages']
+            break
+
+    # Raise error if it could not get messages
+    if dm_valid == False:
+        raise InputError(description="Dm_id does not refer to a valid DM")
+    if member_valid == False:
+        raise AccessError(description="User is not the a member of the DM")
+
+    # Raise inputError if start is larger than number of messages
+    if start >= len(messages):
+        raise InputError(description="Start value is larger than number of messages")
+    
+    # Loop through messages list, append messages to a list
+    end = 0
+    output = []
+    while end < 50 and end < len(messages):
+        output.append(messages[::-end-1])
+        end += 1
+
+    # No more messages to read sets end as -1
+    if end < 50:
+        end = -1
+
+    return {
+        'messages': output,
+        'start': start,
+        'end': end,
+    }
 
 def dm_invite_v1(token, dm_id, u_id):
     '''    
