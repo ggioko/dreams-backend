@@ -20,7 +20,7 @@ def test_user_profile():
                              'email': 'validemail@gmail.com',
                              'name_first': 'Hayden',
                              'name_last': 'Everest',
-                             'handle_str': 'HaydenEverest'          
+                             'handle_str': 'haydeneverest'          
     }}
     
     
@@ -61,8 +61,8 @@ def test_users_all_v1_successful():
     user_list = r.json()
 
     assert user_list['users'] == [
-        {'u_id': 1, 'email': 'validemail@gmail.com', 'name_first': 'Hayden', 'name_last': 'Everest', 'handle_str': 'HaydenEverest'},
-        {'u_id': 2, 'email': 'validemail22@gmail.com', 'name_first': 'Haydennn', 'name_last': 'Everesttt', 'handle_str': 'HaydennnEveresttt'}
+        {'u_id': 1, 'email': 'validemail@gmail.com', 'name_first': 'Hayden', 'name_last': 'Everest', 'handle_str': 'haydeneverest'},
+        {'u_id': 2, 'email': 'validemail22@gmail.com', 'name_first': 'Haydennn', 'name_last': 'Everesttt', 'handle_str': 'haydennneveresttt'}
     ]
 
 def test_users_all_v1_invalid_token():
@@ -106,7 +106,7 @@ def test_user_profile_setemail():
                              'email': 'newemail@gmail.com',
                              'name_first': 'Hayden',
                              'name_last': 'Everest',
-                             'handle_str': 'HaydenEverest'          
+                             'handle_str': 'haydeneverest'          
     }}
 
 
