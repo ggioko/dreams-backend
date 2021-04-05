@@ -77,6 +77,7 @@ def channel_invite_v2(token, channel_id, u_id):
                 'name_first': user['name_first'],
                 'name_last': user['name_last'],
                 'handle_str': user['handle_str'],
+                'permission_id': user['permission_id'],
             }
 
     # Added user to all members for channel
@@ -163,6 +164,7 @@ def channel_addowner_v1(token, channel_id, u_id):
                 'name_first': user['name_first'],
                 'name_last': user['name_last'],
                 'handle_str': user['handle_str'],
+                'permission_id': user['permission_id'],
             }
 
     # Added user to channel 
@@ -253,6 +255,7 @@ def channel_removeowner_v1(token, channel_id, u_id):
                 'name_first': user['name_first'],
                 'name_last': user['name_last'],
                 'handle_str': user['handle_str'],
+                'permission_id': user['permission_id'],
             }
     channel['owner_members'].remove(reuser)
 
@@ -322,6 +325,7 @@ def channel_leave_v1(token, channel_id):
                 'name_first': user['name_first'],
                 'name_last': user['name_last'],
                 'handle_str': user['handle_str'],
+                'permission_id': user['permission_id'],
             }
     channel['all_members'].remove(reuser)
     if reuser in channel['owner_members'] and len(channel['owner_members']) >= 2:
@@ -630,6 +634,7 @@ def channel_join_v1(auth_user_id, channel_id):
                 'name_first': user['name_first'],
                 'name_last': user['name_last'],
                 'handle_str': user['handle_str'],
+                'permission_id': user['permission_id'],
             }
 
     # Check if channel_id is in the database
@@ -696,6 +701,7 @@ def channel_join_v2(token, channel_id):
                 'name_first': user['name_first'],
                 'name_last': user['name_last'],
                 'handle_str': user['handle_str'],
+                'permission_id': user['permission_id'],
             }
 
     # Check if channel_id is in the database

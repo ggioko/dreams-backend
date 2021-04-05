@@ -3,6 +3,7 @@ import pytest
 from src.auth import auth_register_v2
 from src.admin import userpermission_change_v1
 from src.data import data
+from src.helper import no_check_dreams_make_owner
 
 from src.error import InputError, AccessError
 from src.other import clear_v1

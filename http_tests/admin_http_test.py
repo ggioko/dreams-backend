@@ -2,7 +2,7 @@ import pytest
 import requests
 import json
 from src import config
-from src.helper import generate_token
+from src.helper import no_check_dreams_make_owner
 from src.error import AccessError, InputError
 
 def test_userpermission_change():
