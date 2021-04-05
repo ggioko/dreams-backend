@@ -10,7 +10,7 @@ from src.channel import channel_join_v2, channel_invite_v2, channel_messages_v2,
 from src.channel import channel_addowner_v1, channel_removeowner_v1, channel_leave_v1
 from src.dm import dm_create_v1, dm_details_v1
 from src.other import clear_v1
-from src.user import users_all_v1, user_profile_v2, user_profile_setemail_v2, user_profile_setname_v2
+from src.user import users_all_v1, user_profile_v2, user_profile_setemail_v2, user_profile_setname_v2, user_profile_sethandle_v1
 from src.message import message_send_v2, message_remove_v1
 from src.helper import save_data, load_data
 
@@ -425,6 +425,23 @@ def set_name():
     name_first = data['name_first']
     name_last = data['name_last']
     user_profile_setname_v2(token, name_first, name_last)
+
+    save_data()
+    
+    return dumps({})
+
+@APP.route("/user/profile/sethandle/v1", methods = ['PUT'])
+def set_handle():
+    """
+    Gets user token and new handle_str from http json and passes 
+    it to the user_profile_sethandle_v1 function
+    Returns {} on success
+    """
+    
+    data = request.get_json()
+    token = data['token']
+    new_handle = data['handle_str']
+    user_profile_sethandle_v1(token, new_handle)
 
     save_data()
     
