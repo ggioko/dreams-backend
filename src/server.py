@@ -7,12 +7,14 @@ from src import config
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 from src.channels import channels_create_v2, channels_listall_v2, channels_list_v2
 from src.channel import channel_join_v2, channel_invite_v2, channel_messages_v2, channel_details_v2
-from src.dm import dm_create_v1, dm_details_v1, dm_remove_v1, dm_invite_v1, dm_leave_v1, dm_list_v1
+from src.dm import dm_create_v1, dm_details_v1, dm_remove_v1, dm_invite_v1, dm_leave_v1, dm_list_v1, \
+    dm_messages_v1
 from src.channel import channel_addowner_v1, channel_removeowner_v1, channel_leave_v1
 from src.other import clear_v1
 from src.user import users_all_v1, user_profile_v2, user_profile_setemail_v2, user_profile_setname_v2, user_profile_sethandle_v1
-from src.message import message_send_v2, message_remove_v1, message_edit_v2, message_share_v1
+from src.message import message_send_v2, message_remove_v1, message_edit_v2, message_share_v1, message_senddm_v1
 from src.helper import save_data, load_data
+from src.admin import userpermission_change_v1
 
 def defaultHandler(err):
     response = err.get_response()
@@ -206,6 +208,9 @@ def invite_user_to_channel():
     channel_id = data['channel_id']
     u_id = data['u_id']
     channel_invite_v2(token, channel_id, u_id)
+
+    save_data()
+
     return dumps({})
 
 @APP.route("/channel/addowner/v1", methods=["POST"])
@@ -219,6 +224,9 @@ def channel_add_owner_to_channel():
     channel_id = data['channel_id']
     u_id = data['u_id']
     channel_addowner_v1(token, channel_id, u_id)
+
+    save_data()
+
     return dumps({})
 
 @APP.route("/channel/removeowner/v1", methods=["POST"])
@@ -447,6 +455,23 @@ def dm_invite():
     
     return dumps({})
 
+@APP.route("/dm/messages/v1", methods=['GET'])
+def dm_messages():
+    """
+    Gets user token, dm_id and start from http params and 
+    pass is to the dm_messages_v1 function
+    Returns {messages, start, end} on success
+    """
+    token = request.args.get('token')
+    dm_id = int(request.args.get('dm_id'))
+    start = int(request.args.get('start'))
+
+    response = dm_messages_v1(token, dm_id, start)
+
+    save_data()
+    
+    return dumps(response)
+
 @APP.route("/user/profile/setname/v2", methods = ['PUT'])
 def set_name():
     """
@@ -465,6 +490,18 @@ def set_name():
     
     return dumps({})
 
+@APP.route("/admin/userpermission/change/v1", methods=['POST'])
+def userpermission_change():
+    """
+    Gets input data from http json and passes it to userpermission_change_v1()
+    Returns {} if no errors are raised.
+    """
+    data = request.get_json()
+    token = data['token']
+    u_id = data['u_id']
+    permission_id = data['permission_id']
+    userpermission_change_v1(token, u_id, permission_id)
+    
 @APP.route("/message/edit/v2", methods=["PUT"])
 def edit():
     """
@@ -553,10 +590,26 @@ def message_share():
     
     return dumps(response)
 
+@APP.route("/message/senddm/v1", methods=['POST'])
+def send_dm():
+    """
+    Gets user token, dm_id and message from http json and passes 
+    it to the message_senddm_v1 function
+    Returns {message_id} on success.
+    """ 
+    data = request.get_json()
+    token = data['token']
+    dm_id = data['dm_id']
+    message = data['message']
+
+    response = message_senddm_v1(token, dm_id, message)
+
+    save_data()
+    
+    return dumps (response)
+
 
 load_data()  # Gets data from previous server run
 
 if __name__ == "__main__":
     APP.run(port=config.port) # Do not edit this port
-
-

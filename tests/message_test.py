@@ -3,9 +3,11 @@ import pytest
 from src.auth import auth_register_v2, auth_logout_v1
 from src.channels import channels_create_v2
 from src.channel import channel_messages_v2, channel_join_v2
-from src.message import message_send_v2, message_remove_v1, message_edit_v2, message_share_v1
+from src.message import message_send_v2, message_remove_v1, message_edit_v2, message_share_v1, message_senddm_v1
 from src.other import clear_v1
 from src.error import InputError, AccessError
+from src.helper import generate_token
+from src.dm import dm_create_v1, dm_messages_v1
 
 def test_message_send_valid():
     '''
@@ -22,7 +24,7 @@ def test_message_send_valid():
     assert result['messages'][0]['u_id'] == id_1['auth_user_id']
     assert result['messages'][0]['message'] == message
 
-def test_message_send_differnt_ids():
+def test_message_send_different_ids():
     '''
     Checks if message_send returns different ids
     '''
@@ -242,3 +244,156 @@ def test_message_edit_invalid_token():
     auth_logout_v1(id_1['token'])
     with pytest.raises(AccessError):
         message_edit_v2(id_1['token'], result1['messages'][0]['message_id'], edit)
+        
+def test_message_send_dm_invalid_token():
+    '''
+    Given an invalid token, but valid dm_id and message
+    AccessError is raised.
+    '''
+    clear_v1()
+    # Create users
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    user_3 = auth_register_v2('thirdemail@gmail.com', '321bca#@!', 'Bob', 'Jones')
+    u_id2 = user_2['auth_user_id']
+    u_id3 = user_3['auth_user_id']
+    # Create a dm, which will return {dm_id, dm_name}
+    new_dm = dm_create_v1(user_1['token'], [u_id2, u_id3])
+    # Call send_dm function with invalid token.
+    with pytest.raises(AccessError):
+        assert message_senddm_v1('invalid_token', new_dm['dm_id'], 'hello, this test should fail')
+    
+def test_message_send_dm_invalid_message():
+    '''
+    Given a valid token, dm_id but invalid message (more than 1000 characters)
+    AccessError is raised.
+    '''
+    clear_v1()
+    # Create users
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    user_3 = auth_register_v2('thirdemail@gmail.com', '321bca#@!', 'Bob', 'Jones')
+    u_id2 = user_2['auth_user_id']
+    u_id3 = user_3['auth_user_id']
+    # Create a dm, which will return {dm_id, dm_name}
+    new_dm = dm_create_v1(user_1['token'], [u_id2, u_id3])
+    # Call send_dm function with invalid message.
+    long_string = 'x'*1001
+    with pytest.raises(InputError):
+        assert message_senddm_v1(user_1['token'], new_dm['dm_id'], long_string)
+ 
+def test_message_send_dm_not_member():
+    '''
+    Given a valid token and message, but invalid dm_id (user is not a member)
+    AccessError is raised.
+    '''
+    clear_v1()
+    # Create users
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    user_3 = auth_register_v2('thirdemail@gmail.com', '321bca#@!', 'Bob', 'Jones')
+    u_id2 = user_2['auth_user_id']
+    # Create a dm, which will return {dm_id, dm_name}
+    new_dm = dm_create_v1(user_1['token'], [u_id2])
+    # Call send_dm function with invalid token.
+    with pytest.raises(AccessError):
+        assert message_senddm_v1(user_3['token'], new_dm['dm_id'], 'hello, I am not part of this channel')
+    
+    
+def test_message_send_dm_one_message():
+    '''
+    Pass in valid token, dm_id and message to message_senddm_v1.
+    Function will append the message and associated info to data['dms']
+    Output should be {message_id} - the unique ID of the message.
+    '''
+    clear_v1()
+    # Create users
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    user_3 = auth_register_v2('thirdemail@gmail.com', '321bca#@!', 'Bob', 'Jones')
+    u_id2 = user_2['auth_user_id']
+    u_id3 = user_3['auth_user_id']
+    # Create a dm, which will return {dm_id, dm_name}
+    new_dm = dm_create_v1(user_1['token'], [u_id2, u_id3])
+    # Call send_dm function with valid parameters
+    message_string = 'hello, this test should pass'
+    send_dm = message_senddm_v1(user_1['token'], new_dm['dm_id'], message_string)
+    # Call dm_messages_v1 and find most recent message by using index 0.
+    result = dm_messages_v1(user_1['token'], new_dm['dm_id'], 0)
+    # Assert that info associated with message_senddm_v1 is equal to output of dm_messages_v1
+    message_list = result['messages']
+    req_info = message_list[0]
+    assert req_info[0]['message'] == message_string 
+    assert req_info[0]['u_id'] == user_1['auth_user_id'] 
+    assert req_info[0]['message_id'] == send_dm['message_id']
+    
+def test_message_send_dm_different_message_ids():
+    '''
+    Checks if message_send returns different ids
+    '''
+    clear_v1()
+    # Create users
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    user_3 = auth_register_v2('thirdemail@gmail.com', '321bca#@!', 'Bob', 'Jones')
+    u_id2 = user_2['auth_user_id']
+    u_id3 = user_3['auth_user_id']
+    # Create a dm, which will return {dm_id, dm_name}
+    new_dm_1 = dm_create_v1(user_1['token'], [u_id2, u_id3])
+    new_dm_2 = dm_create_v1(user_1['token'], [u_id2])
+    string_1 = "hello this is my first message in this dm"
+    message_1 = message_senddm_v1(user_1['token'], new_dm_1['dm_id'], string_1)
+    message_2 = message_senddm_v1(user_1['token'], new_dm_2['dm_id'], string_1)
+    
+    assert message_1['message_id'] != message_2['message_id']
+
+
+def test_message_send_dm_multiple_messages():
+    '''
+    Checks if message_send returns different ids
+    '''
+    clear_v1()
+    # Create users
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    user_3 = auth_register_v2('thirdemail@gmail.com', '321bca#@!', 'Bob', 'Jones')
+    u_id2 = user_2['auth_user_id']
+    u_id3 = user_3['auth_user_id']
+    # Create a dm, which will return {dm_id, dm_name}
+    new_dm_1 = dm_create_v1(user_1['token'], [u_id2, u_id3])
+    str_1 = "hello this is my first message"
+    str_2 = "hello this is my second message"
+    str_3 = "hello this is my third message"
+    message_1 = message_senddm_v1(user_1['token'], new_dm_1['dm_id'], str_1)
+    message_2 = message_senddm_v1(user_1['token'], new_dm_1['dm_id'], str_2)
+    message_3 = message_senddm_v1(user_1['token'], new_dm_1['dm_id'], str_3)
+    # Call dm_messages_v1 and find most recent message by using index 0.
+    result_1 = dm_messages_v1(user_1['token'], new_dm_1['dm_id'], 0)
+
+    # Assert that info associated with message_senddm_v1 is equal to output of dm_messages_v1
+    message_list = result_1['messages']
+    req_info = message_list[0]
+    assert req_info[0]['message_id'] == message_3['message_id']
+    assert req_info[0]['u_id'] == user_1['auth_user_id'] 
+    assert req_info[0]['message'] == str_3
+    
+    req_info = message_list[0]
+    assert req_info[1]['message_id'] == message_2['message_id']
+    assert req_info[1]['u_id'] == user_1['auth_user_id'] 
+    assert req_info[1]['message'] == str_2 
+    
+    req_info = message_list[0]
+    assert req_info[2]['message_id'] == message_1['message_id']
+    assert req_info[2]['u_id'] == user_1['auth_user_id'] 
+    assert req_info[2]['message'] == str_1 
+    
+
+
+
+
+
+
+
+
+
+    

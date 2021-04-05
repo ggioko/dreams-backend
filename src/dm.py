@@ -4,6 +4,72 @@ from src.helper import get_token_user_id, check_token_valid
 import jwt
 import hashlib
 
+def dm_messages_v1(token, dm_id, start):
+    '''    
+    Given a token, ID dm_id and start returns messages from the given
+    DM between start and start+50
+    
+    Arguments: 
+        token (string) - Users session token
+        dm_id (int)    - ID of the DM
+        start (int)    - Start index of messages
+        
+    Exception: 
+        InputError  - DM ID is not a valid DM.
+        InputError  - Start is greater than total number of messages in DM
+        AccessError - Occurs when token passed in is not a valid token.
+        AccessError - Occurs when authorised user is not a a member of the DM
+        
+    Return value: 
+        {messages, start, end} on success
+    ''' 
+
+    # Check if token is valid using helper
+    if check_token_valid(token) == False:
+        raise AccessError(description='Error Invalid token')
+
+    # Get DM messages if authorised user is a member and the dm_id is valid
+    user_id = get_token_user_id(token)
+    dm_valid = False
+    member_valid = False
+    for dm in data['dms']:
+        if dm['dm_id'] == dm_id:
+            dm_valid = True
+            # Check if authorised user is a member of DM
+            for member in dm['all_members']:
+                if user_id == member['u_id']:
+                    member_valid = True
+                    break
+            messages = dm['messages']
+            break
+
+    # Raise error if it could not get messages
+    if dm_valid == False:
+        raise InputError(description="Dm_id does not refer to a valid DM")
+    if member_valid == False:
+        raise AccessError(description="User is not the a member of the DM")
+
+    # Raise inputError if start is larger than number of messages or negative
+    if start >= len(messages) or start < 0:
+        raise InputError(description="Invalid start value")
+    
+    # Loop through messages list, append messages to a list
+    end = start
+    output = []
+    while end < 50 and end < len(messages):
+        output.append(messages[::-end-1])
+        end += 1
+
+    # No more messages to read sets end as -1
+    if end < 50:
+        end = -1
+
+    return {
+        'messages': output,
+        'start': start,
+        'end': end,
+    }
+
 def dm_invite_v1(token, dm_id, u_id):
     '''    
     Given a token, ID dm_id and u_id adds user with u_id to
