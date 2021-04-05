@@ -323,9 +323,9 @@ def test_message_send_dm_one_message():
     # Assert that info associated with message_senddm_v1 is equal to output of dm_messages_v1
     message_list = result['messages']
     req_info = message_list[0]
-    assert req_info['message_id'] == send_dm['message_id']
-    assert req_info['u_id'] == user_1['auth_user_id'] 
     assert req_info['message'] == message_string 
+    assert req_info['u_id'] == user_1['auth_user_id'] 
+    assert req_info['message_id'] == send_dm['message_id']
     
 def test_message_send_dm_different_message_ids():
     '''
@@ -377,9 +377,9 @@ def test_message_send_dm_multiple_messages():
     assert req_info['u_id'] == user_1['auth_user_id'] 
     assert req_info['message'] == str_1
     # Assert that info associated with message_senddm_v1 is equal to output of dm_messages_v1
-    assert result_1['messages'][2]['message_id'] == message_1['message_id'] 
-    assert result_1['messages'][2]['u_id'] == user_1['auth_user_id']
     assert result_1['messages'][2]['message'] == str_1
+    assert result_1['messages'][2]['u_id'] == user_1['auth_user_id']
+    assert result_1['messages'][2]['message_id'] == message_1['message_id'] 
     
     # Assert that info associated with message_senddm_v1 is equal to output of dm_messages_v1
 #    assert result_1['messages'][1]['message_id'] == message_2['message_id'] 
