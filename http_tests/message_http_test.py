@@ -408,7 +408,6 @@ def test_message_share_dm_invalid_token():
     r = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [u_id2]})
     new_dm = r.json()
     r = requests.post(config.url + 'message/senddm/v1', json={'token': user_1['token'],'dm_id': new_dm['dm_id'], 'message': 'Hello'})
-    message_1 = r.json()
     r = requests.post(config.url + 'message/share/v1', json={'token': 'random','og_message_id': new_dm['dm_id'],
     'message': 'test message', 'channel_id': -1, 'dm_id': new_dm['dm_id']})
     assert r.status_code == AccessError().code
@@ -460,7 +459,6 @@ def test_message_share_unauthorised_user_channel():
     optional = "a"
     r = requests.post(config.url + 'message/send/v2', json={'token': id_1['token'], \
         'channel_id' : channel['channel_id'], 'message' : message})
-    message_id = r.json()
     r = requests.get(config.url + 'channel/messages/v2', params={'token': id_1['token'], \
         'channel_id' : channel['channel_id'], 'start' : 0})
     result1 = r.json()
@@ -486,7 +484,6 @@ def test_message_share_long_optional_message():
         optional += f" {i}"
     r = requests.post(config.url + 'message/send/v2', json={'token': id_1['token'], \
         'channel_id' : channel['channel_id'], 'message' : message})
-    message_id = r.json()
     r = requests.get(config.url + 'channel/messages/v2', params={'token': id_1['token'], \
         'channel_id' : channel['channel_id'], 'start' : 0})
     result1 = r.json()
