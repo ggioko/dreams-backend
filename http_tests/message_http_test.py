@@ -392,4 +392,104 @@ def test_message_senddm_errors():
     r = requests.post(config.url + 'message/senddm/v1', json={'token': user_4['token'],'dm_id': new_dm['dm_id'], 'message': 'test message'})
     assert r.status_code == AccessError().code
     
+def test_message_share_dm_invalid_token():
+    '''
+    Given an invalid token.
+    AccessError is raised.
+    '''
+    r = requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user_1 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'secondemail@gmail.com',
+    'password' : '321cba#@!', 'name_first':'Fred', 'name_last':'Smith'})
+    user_2 = r.json()
+    u_id2 = user_2['auth_user_id']
+    r = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [u_id2]})
+    new_dm = r.json()
+    r = requests.post(config.url + 'message/senddm/v1', json={'token': user_1['token'],'dm_id': new_dm['dm_id'], 'message': 'Hello'})
+    message_1 = r.json()
+    r = requests.post(config.url + 'message/share/v1', json={'token': 'random','og_message_id': new_dm['dm_id'],
+    'message': 'test message', 'channel_id': -1, 'dm_id': new_dm['dm_id']})
+    assert r.status_code == AccessError().code
     
+def test_message_share_unauthorised_user_dm():
+    '''
+    User is not part of the DM that they are trying to share to.
+    AccessError is raised.
+    '''
+    r = requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user_1 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'secondemail@gmail.com',
+    'password' : '321cba#@!', 'name_first':'Fred', 'name_last':'Smith'})
+    user_2 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'thirdemail@gmail.com',
+    'password' : '321cba#@!', 'name_first':'John', 'name_last':'Jones'})
+    user_3 = r.json()
+    u_id2 = user_2['auth_user_id']
+    u_id3 = user_3['auth_user_id']
+    r = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [u_id2]})
+    new_dm = r.json()
+    r = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [u_id3]})
+    new_dm_2 = r.json()
+    r = requests.post(config.url + 'message/senddm/v1', json={'token': user_1['token'],'dm_id': new_dm['dm_id'], 'message': 'Hello'})
+    message_1 = r.json()
+    r = requests.post(config.url + 'message/share/v1', json={'token': user_2['token'],'og_message_id': message_1['message_id'],
+    'message': 'test message', 'channel_id': -1, 'dm_id': new_dm_2['dm_id']})
+    assert r.status_code == AccessError().code
+
+
+def test_message_share_unauthorised_user_channel():
+    '''
+    User is not part of the channel that they are trying to share to.
+    AccessError is raised.
+    '''
+    r = requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    id_1 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'secondemail@gmail.com',
+    'password' : '321cba#@!', 'name_first':'Fred', 'name_last':'Smith'})
+    id_2 = r.json()
+    r = requests.post(config.url + 'channels/create/v2', json={'token': id_1['token'], \
+        'name' : "My Channel", 'is_public' : True})
+    channel = r.json()
+    message = "hello this is my new channel"
+    optional = "a"
+    r = requests.post(config.url + 'message/send/v2', json={'token': id_1['token'], \
+        'channel_id' : channel['channel_id'], 'message' : message})
+    message_id = r.json()
+    r = requests.get(config.url + 'channel/messages/v2', params={'token': id_1['token'], \
+        'channel_id' : channel['channel_id'], 'start' : 0})
+    result1 = r.json()
+    r = requests.post(config.url + 'message/share/v1', json={'token': id_2['token'],'og_message_id': result1['messages'][0]['message_id'],
+    'message': optional, 'channel_id': channel['channel_id'], 'dm_id': -1})
+    assert r.status_code == AccessError().code
+
+
+def test_message_share_long_optional_message():
+    '''
+    Checks if an InputError is rasied as optional message longer than 1000 characters
+    '''
+    r = requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    id_1 = r.json()
+    r = requests.post(config.url + 'channels/create/v2', json={'token': id_1['token'], \
+        'name' : "My Channel", 'is_public' : True})
+    channel = r.json()
+    message = "hello this is my new channel"
+    optional = "a"
+    for i in range(1001):
+        optional += f" {i}"
+    r = requests.post(config.url + 'message/send/v2', json={'token': id_1['token'], \
+        'channel_id' : channel['channel_id'], 'message' : message})
+    message_id = r.json()
+    r = requests.get(config.url + 'channel/messages/v2', params={'token': id_1['token'], \
+        'channel_id' : channel['channel_id'], 'start' : 0})
+    result1 = r.json()
+    r = requests.post(config.url + 'message/share/v1', json={'token': id_1['token'],'og_message_id': result1['messages'][0]['message_id'],
+    'message': optional, 'channel_id': channel['channel_id'], 'dm_id': -1})
+    assert r.status_code == InputError().code
