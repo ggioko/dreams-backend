@@ -1,6 +1,6 @@
 from src.error import InputError, AccessError
 from src.data import data
-from src.helper import get_user_data, email_in_use, get_token_user_id
+from src.helper import get_user_data, email_in_use, get_token_user_id, check_token_valid
 from time import time
 
 def message_send_v2(token, channel_id, message):
@@ -66,26 +66,41 @@ def message_remove_v1(token, message_id):
     Return Value:
         Returns {} - (empty dict) on success
     """
+
+    # Checks if token is valid
+    if check_token_valid(token) == False:
+        raise AccessError(description="Not a valid token")
+
+    user_id = get_token_user_id(token)
+
+    # Checks if message_id is still valid (not been removed or has even been created yet)
+    # Checks if user is allowed to delete the message
+    message_found = False
+    auth = False
+
+    channels = data['channels']
+    messages = channels['messages']
+
+    for channel in channels:
+        for message in messages:
+            if message_id == message['message_id']:
+                message_found = True
+                owners = channel['owner_members']
+                # Check if the user trying to delete is a channel owner
+                for owner in owners:
+                    if user_id == owner['u_id']:
+                        auth = True
+                        messages.remove(message)
+                # Check if the user trying to delete is the one who sent it
+                if user_id == message['u_id']:
+                    auth = True
+                    messages.remove(message)
     
-    message = message_check(message_id)
-    if message == None:
-        raise InputError
-    is_owner = owner_channel_check(token, message['channel_id'])
-    user = token_check(token)
-    if user == False:
-        raise AccessError
-
-    is_sender = False
-    #print("message----->",message)
-    if user['u_id'] == message['user_id']:
-        is_sender = True
-
-    #print('is owner: ',is_owner,'is_sender:', is_sender)
-    if (is_owner or is_sender) == False:
-        raise AccessError
-
-    message_data = get_messages_store()
-    message_data['Messages'].remove(message)
+    if message_found == False:
+        raise InputError(description="message_id not found")
+    
+    if auth == False:
+        raise AccessError(description="You are not allowed to delete these message")
 
     return {}
 
@@ -96,7 +111,7 @@ def message_edit_v2(token, message_id, message):
     Arguments:
         token (string)    - Token
         message_id (int)    - Messages id
-        message (string)    - Message given to change
+        message (string)    - Message to replace old message
 
     Exceptions:
         InputError  - Occurs when the message_id refers to a deleted message
