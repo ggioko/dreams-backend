@@ -195,35 +195,56 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
     
     user_id = get_token_user_id(token)
 
-    message_found = False
+    og_message_found = False
     auth = False
     copy_of_message = ''
 
     # Loop through channels to get a copy of the og_message
-    # So check user is in the channel
+    # and to check if user is in the channel
     for channel in data['channels']:
-        for message in channel['messages']:
-            if og_message_id == message['message_id']:
-                message_found = True
+        for messages in channel['messages']:
+            if og_message_id == messages['message_id']:
+                og_message_found = True
                 members = channel['all_members']
                 # Check if the user trying to share is in the channel
                 for member in members:
                     if user_id == member['u_id']:
                         auth = True
-                        copy_of_message = message['message']
+                        copy_of_message = messages['message']
 
 
 
     # If message is not found either channels or dms raises InputError
     # If message is found but user is not in chat, raises AccessError
-    if message_found == False:
+    if og_message_found == False:
         raise InputError(description="Message_id not found")
     
     if auth == False:
         raise AccessError(description="You are not allowed to edit this message")
 
+    #Update message to format seen on frontend
+    send_message = message + copy_of_message 
+    
+    # Share to channel
+    if channel_id != -1
+        # send new message using existing functions
+        message_send_v2(token, channel_id, send_message)
 
-        list_dms = dm_list_v1(token)
-    for dm in list_dms
+    # Share to dm
+    if dm_id != -1
+
+        for channel in data['channels']:
+            for message in channel['messages']:
+                if og_message_id == message['message_id']:
+                    og_message_found = True
+                    members = channel['all_members']
+                    # Check if the user trying to share is in the channel
+                    for member in members:
+                        if user_id == member['u_id']:
+                            auth = True
+                            copy_of_message = message['message']
+
+    list_dms = dm_list_v1(token)
+    for dm in list_dms:
 
     return {}

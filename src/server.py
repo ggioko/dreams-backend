@@ -531,7 +531,27 @@ def dm_leave():
 
     save_data()
     
-    return dumps (response)
+    return dumps(response)
+
+@APP.route("/message/share/v1", methods=['POST'])
+def message_share():
+    """
+    Gets user token, og_message_id, message, channel_id,
+    dm_id from http json and passes it to the message_share_v1 function
+    Returns {reponse} on success where response = shared_message_id
+    """ 
+    data = request.get_json()
+    token = data['token']
+    og_message_id = data['og_message_id']
+    message = data['message']
+    channel_id = data['channel_id']
+    dm_id = data['dm_id']
+
+    response = message_share_v1(token, og_message_id, message, channel_id, dm_id)
+
+    save_data()
+    
+    return dumps(response)
 
 
 load_data()  # Gets data from previous server run
