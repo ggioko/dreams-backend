@@ -97,3 +97,11 @@ def no_check_dreams_change_permission(u_id, permission_id):
             if all_member['u_id'] == u_id:
                 all_member['permission_id'] = permission_id
                 break
+
+def is_dreams_owner(u_id):
+    for user in data['users']:
+        if user['u_id'] == u_id:
+            if user['permission_id'] == 1:
+                return True
+            return False
+    return False

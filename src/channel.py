@@ -1,7 +1,7 @@
 from src.error import InputError, AccessError
 from src.data import data
 from src.channels import channels_list_v2
-from src.helper import get_token_user_id, check_token_valid, SECRET
+from src.helper import get_token_user_id, check_token_valid, SECRET, is_dreams_owner
 import jwt
 import hashlib
 
@@ -141,7 +141,7 @@ def channel_addowner_v1(token, channel_id, u_id):
         if user['u_id'] == auth_user_id:
             authUserMatch = True
             break
-    if authUserMatch == False:
+    if authUserMatch == False and is_dreams_owner(auth_user_id) == False:
         raise AccessError(description='Authorised user not a channel owner')
     userMatch = False
     for user in channel['owner_members']:
@@ -228,7 +228,7 @@ def channel_removeowner_v1(token, channel_id, u_id):
         if user['u_id'] == auth_user_id:
             authUserMatch = True
             break
-    if authUserMatch == False:
+    if authUserMatch == False and is_dreams_owner(auth_user_id) == False:
         raise AccessError(description='Authorised user not a channel owner')
     # print("Got past authusermatch")
     userMatch = False
