@@ -40,9 +40,9 @@ def dm_details_v1(token, dm_id):
             break
 
     if dm_valid == 0:
-        raise InputError("Error occurred dm_id is not valid")
+        raise InputError(description="Error occurred dm_id is not valid")
     if authorisation == 0:
-        raise AccessError("Error authorised user is not a valid member of DM")
+        raise AccessError(description="Error authorised user is not a valid member of DM")
     
     # Used to store members and name of DM
     dmDetails = {} 
@@ -61,5 +61,4 @@ def dm_details_v1(token, dm_id):
                     'name_last': member['name_last'],       
                     'handle_str': member['handle_str'],            
                 })
-
     return dmDetails
