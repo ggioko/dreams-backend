@@ -66,7 +66,6 @@ def message_remove_v1(token, message_id):
     Return Value:
         Returns {} - (empty dict) on success
     """
-
     # Checks if token is valid
     if check_token_valid(token) == False:
         raise AccessError(description="Not a valid token")
@@ -78,11 +77,8 @@ def message_remove_v1(token, message_id):
     message_found = False
     auth = False
 
-    channels = data['channels']
-    messages = data['channels']['messages']
-
-    for channel in channels:
-        for message in messages:
+    for channel in data['channels']:
+        for message in channel['messages']:
             if message_id == message['message_id']:
                 message_found = True
                 owners = channel['owner_members']
@@ -90,11 +86,11 @@ def message_remove_v1(token, message_id):
                 for owner in owners:
                     if user_id == owner['u_id']:
                         auth = True
-                        messages.remove(message)
-                # Check if the user trying to delete is the one who sent it
-                if user_id == message['u_id']:
-                    auth = True
-                    messages.remove(message)
+                        channel['messages'].remove(message)
+                    # Check if the user trying to delete is the one who sent it
+                    elif user_id == message['u_id']:
+                        auth = True
+                        channel['messages'].remove(message)
     
     if message_found == False:
         raise InputError(description="message_id not found")
