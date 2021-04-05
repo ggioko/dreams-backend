@@ -18,6 +18,7 @@ def load_data():
     """
     with open('src/data.p', 'rb') as FILE:
         data = pickle.load(FILE)
+    return data
 
 def get_token_user_id(token):
     """

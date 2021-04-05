@@ -234,8 +234,7 @@ def channel_remove_owner_from_channel():
     channel_id = data['channel_id']
     u_id = data['u_id']
     channel_removeowner_v1(token, channel_id, u_id)
-    return dumps({})
-
+    
     save_data()
 
     return dumps({})
