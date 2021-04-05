@@ -80,7 +80,36 @@ def user_profile_v2(token, u_id):
     return user_info
 
 
-def user_profile_setname_v2(auth_user_id, name_first, name_last):
+def user_profile_setname_v2(token, name_first, name_last):
+    # Check if token is valid
+    token_valid = 0
+    for user in data['active_tokens']:
+        if user == token:
+            token_valid = 1
+    if token_valid == 0:
+        raise AccessError(description = "AccessError - invalid token")
+    # Name size check
+    if len(name_first) < 1 or len(name_first) > 50:
+        raise InputError('First name needs to be between 1 and 50 characters')
+    if len(name_last) < 1 or len(name_last) > 50:
+        raise InputError('Last name needs to be between 1 and 50 characters')
+        
+    # Find current user in data register and change name
+    u_id = get_token_user_id(token)
+    for user in data['users']:
+        if user['u_id'] == u_id:
+            user['name_first'] = name_first
+            user['name_last'] = name_last
+    for channel in data['channels']:
+        for user in channel['owner_members']:
+            if user['u_id'] == u_id:
+                user['name_first'] = name_first
+                user['name_last'] = name_last
+        for user in channel['all_members']:
+            if user['u_id'] == u_id:
+                user['name_first'] = name_first
+                user['name_last'] = name_last
+                
     return {
     }
 
