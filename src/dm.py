@@ -148,3 +148,43 @@ def dm_create_v1(token, u_ids):
     })
 
     return {'dm_id': dm_num, 'dm_name': dm_name}
+
+
+def dm_list_v1(token):
+    '''
+    Given a token,
+    On success returns a list of dictionaries called 'dms':
+    Where each dictionary contains the dm_id and list of members in 
+    alphabetical order as the dm_name
+
+    Arguments:
+        token (string)    - Users id
+
+    Exceptions:
+        AccessError - Occurs when token is invalid
+
+    Return Value:
+        Returns {dms} on success
+        where {dms} consists of {'dms':[{dm_id,name}]}
+    '''
+
+    # Check if token is valid
+    if check_token_valid(token) == False:
+        raise AccessError(description="Error invalid token")
+    
+    dm_list = {}
+    dm_list['dms'] = []
+    # Get the User id from token
+    auth_user_id = get_token_user_id(token)
+    for dm in data['dms']:
+        for member in dm['all_members']:
+            if member['u_id'] == auth_user_id:
+                dm_list['dms'].append({
+                    'dm_id': dm['dm_id'],
+                    'name': dm['name']
+                })
+    
+    return dm_list
+               
+    
+    
