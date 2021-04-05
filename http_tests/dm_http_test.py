@@ -3,7 +3,6 @@ import requests
 import json
 from src import config
 from src.error import AccessError, InputError
-from src.helper import generate_token, get_token_user_id
 
 def test_dm_create():
     """
@@ -23,8 +22,8 @@ def test_dm_create():
     user_3 = r.json()
 
     # Get user ids from members with helper function
-    u_id1 = get_token_user_id(user_2['token'])
-    u_id2 = get_token_user_id(user_3['token'])
+    u_id1 = user_2['auth_user_id']
+    u_id2 = user_3['auth_user_id']
 
     r = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [u_id1, u_id2]})
     assert r.json() == {'dm_id' : 1, 'dm_name' : "bobjones, fredsmith, haydeneverest"}
@@ -46,14 +45,13 @@ def test_dm_create_errors():
     'password' : '321bca#@!', 'name_first':'Bob', 'name_last':'Jones'})
     user_3 = r.json()
 
-    # Get user ids from members with helper function
-    u_id1 = get_token_user_id(user_2['token'])
-    u_id2 = get_token_user_id(user_3['token'])
+    # Get user ids 
+    u_id1 = user_2['auth_user_id']
+    u_id2 = user_3['auth_user_id']
 
     # Test the case where the token is invalid
     # Expected forbidden AccessError
-    invalid_token = generate_token(4)
-    r = requests.post(config.url + 'dm/create/v1',  json={'token': invalid_token, 'u_ids': [u_id1, u_id2]})
+    r = requests.post(config.url + 'dm/create/v1',  json={'token': -1, 'u_ids': [u_id1, u_id2]})
     assert r.status_code == AccessError().code
 
     # Testing when an u_id does not refer to a valid member
@@ -78,9 +76,9 @@ def test_dm_details():
     'password' : '321bca#@!', 'name_first':'Bob', 'name_last':'Jones'})
     user_3 = r.json()
 
-    # Get user ids from members with helper function
-    u_id1 = get_token_user_id(user_2['token'])
-    u_id2 = get_token_user_id(user_3['token'])
+    # Get user ids
+    u_id1 = user_2['auth_user_id']
+    u_id2 = user_3['auth_user_id']
 
     r = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [u_id1, u_id2]})
     dm_1 = r.json()
@@ -113,17 +111,16 @@ def test_dm_details_errors():
     'password' : '321bca#@!', 'name_first':'Billy', 'name_last':'Elliot'})
     user_4 = r.json()
 
-    # Get user ids from members with helper function
-    u_id1 = get_token_user_id(user_2['token'])
-    u_id2 = get_token_user_id(user_3['token'])
+    # Get user ids
+    u_id1 = user_2['auth_user_id']
+    u_id2 = user_3['auth_user_id']
 
     r = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [u_id1, u_id2]})
     dm_1 = r.json()
 
     # Testing when an invalid token is used
     # expected AccessError
-    invalid_token = generate_token(6)
-    r = requests.get(config.url + 'dm/details/v1', params={'token': invalid_token, 'dm_id': dm_1['dm_id']})
+    r = requests.get(config.url + 'dm/details/v1', params={'token': -1, 'dm_id': dm_1['dm_id']})
     assert r.status_code == AccessError().code
 
     # Testing when an invalid DM ID is used
