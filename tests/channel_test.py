@@ -3,7 +3,7 @@ import pytest
 from src.auth import auth_register_v1, auth_register_v2, auth_logout_v1
 from src.channel import channel_messages_v1, channel_messages_v2
 from src.channel import channel_join_v1, channel_join_v2, channel_invite_v2, channel_details_v2
-from src.channel import channel_addowner_v1, channel_removeowner_v1
+from src.channel import channel_addowner_v1, channel_removeowner_v1, channel_leave_v1
 from src.channels import channels_create_v1, channels_create_v2
 from src.helper import generate_token, get_token_user_id, SECRET
 
@@ -190,6 +190,43 @@ def test_channel_removeowner_invalid_remover():
     channel_addowner_v1(auth_user_token, channelID['channel_id'], user2ID['auth_user_id'])
     with pytest.raises(AccessError):
         channel_removeowner_v1(user1ID['token'], channelID['channel_id'], user2ID['auth_user_id'])
+
+def test_channel_leave_working():
+    '''
+    Tests channel_leave_v1() with all correct information
+    '''
+    clear_v1()
+    
+    auth_user_token = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')['token']
+    user2 = auth_register_v2('validemail3@gmail.com', '123abcd!@#', 'Haydeen', 'Everesst')
+    channelID = channels_create_v2(auth_user_token, 'dankmemechannel', True)
+    channel_join_v2(user2['token'], channelID['channel_id'])
+    assert channel_leave_v1(user2['token'], channelID['channel_id']) == {}
+
+def test_channel_leave_invalid_channel_id():
+    '''
+    Tests channel_leave_v1() with an invalid channel ID
+    '''
+    clear_v1()
+
+    auth_user_token = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')['token']
+    user2 = auth_register_v2('validemail3@gmail.com', '123abcd!@#', 'Haydeen', 'Everesst')
+    channelID = channels_create_v2(auth_user_token, 'dankmemechannel', True)
+    channel_join_v2(user2['token'], channelID['channel_id'])
+    with pytest.raises(InputError):
+        channel_leave_v1(user2['token'], channelID['channel_id'] + 1)
+	
+def test_channel_leave_user_not_in_channel():
+    '''
+    Tests channel_leave_v1() with all correct information
+    '''
+    clear_v1()
+
+    auth_user_token = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')['token']
+    user2 = auth_register_v2('validemail3@gmail.com', '123abcd!@#', 'Haydeen', 'Everesst')
+    channelID = channels_create_v2(auth_user_token, 'dankmemechannel', True)
+    with pytest.raises(AccessError):
+        channel_leave_v1(user2['token'], channelID['channel_id'])
 
 def test_channel_details_invalid_channel_id():
     """
