@@ -129,7 +129,7 @@ def test_setname():
                              'email': 'validemail0@gmail.com',
                              'name_first': 'Fred',
                              'name_last': 'Smith',
-                             'handle_str': 'HaydenEverest'          
+                             'handle_str': 'haydeneverest'          
     }}
     
 def test_setname_invalid_token():

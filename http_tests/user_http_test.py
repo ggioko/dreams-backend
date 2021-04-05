@@ -151,7 +151,7 @@ def test_user_profile_setname():
                              'email': 'validemail@gmail.com',
                              'name_first': 'Fred',
                              'name_last': 'Smith',
-                             'handle_str': 'HaydenEverest'          
+                             'handle_str': 'haydeneverest'          
     }}
 
 def test_user_profile_setname_errors():
