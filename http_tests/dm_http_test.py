@@ -313,3 +313,112 @@ def test_dm_remove_http_non_owner():
     r = requests.delete(config.url + 'dm/remove/v1',  json={'token': user_2['token'], 'dm_id': dm_1['dm_id']})
     assert r.status_code == AccessError().code
 
+
+def test_dm_invite_http_valid():
+    """
+    Test to see if dm invite works by inviting a user then
+    them calling dm_details 
+    """
+    r = requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user_1 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'secondemail@gmail.com',
+    'password' : '321cba#@!', 'name_first':'Fred', 'name_last':'Smith'})
+    user_2 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'thirdemail@gmail.com',
+    'password' : '321bca#@!', 'name_first':'Bob', 'name_last':'Jones'})
+    user_3 = r.json()
+
+    r = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [user_2['auth_user_id']]})
+    dm_1 = r.json()
+
+    requests.post(config.url + 'dm/invite/v1',  json={'token': user_1['token'],'dm_id' : dm_1['dm_id'] ,'u_id': user_3['auth_user_id']})
+    
+    assert requests.get(config.url + 'dm/details/v1', params={'token': user_3['token'], 'dm_id': dm_1['dm_id']})
+
+
+def test_dm_invite_http_invalid_dm_id():
+    """
+    Test to see if dm invite raises input error by passing in
+    an invalid DM ID 
+    """
+    r = requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user_1 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'secondemail@gmail.com',
+    'password' : '321cba#@!', 'name_first':'Fred', 'name_last':'Smith'})
+    user_2 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'thirdemail@gmail.com',
+    'password' : '321bca#@!', 'name_first':'Bob', 'name_last':'Jones'})
+    user_3 = r.json()
+
+    requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [user_2['auth_user_id']]})
+
+    r = requests.post(config.url + 'dm/invite/v1',  json={'token': user_1['token'],'dm_id' : 33 ,'u_id': user_3['auth_user_id']})
+    assert r.status_code == InputError().code
+
+
+def test_dm_invite_http_invalid_u_id():
+    """
+    Test to see if dm invite raises input error by passing in
+    an invalid User ID 
+    """
+    r = requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user_1 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'secondemail@gmail.com',
+    'password' : '321cba#@!', 'name_first':'Fred', 'name_last':'Smith'})
+    user_2 = r.json()
+    requests.post(config.url + 'auth/register/v2', json={'email':'thirdemail@gmail.com',
+    'password' : '321bca#@!', 'name_first':'Bob', 'name_last':'Jones'})
+    r = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [user_2['auth_user_id']]})
+    dm_1 = r.json()
+
+    r = requests.post(config.url + 'dm/invite/v1',  json={'token': user_1['token'],'dm_id' : dm_1['dm_id'] ,'u_id': 33})
+    assert r.status_code == InputError().code
+
+
+def test_dm_invite_http_invalid_token():
+    """
+    Test to see if dm invite raises access error by passing in
+    an invalid token
+    """
+    r = requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user_1 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'secondemail@gmail.com',
+    'password' : '321cba#@!', 'name_first':'Fred', 'name_last':'Smith'})
+    user_2 = r.json()
+    requests.post(config.url + 'auth/register/v2', json={'email':'thirdemail@gmail.com',
+    'password' : '321bca#@!', 'name_first':'Bob', 'name_last':'Jones'})
+    r = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [user_2['auth_user_id']]})
+    dm_1 = r.json()
+
+    r = requests.post(config.url + 'dm/invite/v1',  json={'token': 22,'dm_id' : dm_1['dm_id'] ,'u_id': 33})
+    assert r.status_code == AccessError().code
+
+def test_dm_invite_http_non_member():
+    """
+    Test to see if dm invite raises access error when a user
+    who is not a member of the dm tries to invite someone
+    """
+    r = requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user_1 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'secondemail@gmail.com',
+    'password' : '321cba#@!', 'name_first':'Fred', 'name_last':'Smith'})
+    user_2 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'thirdemail@gmail.com',
+    'password' : '321bca#@!', 'name_first':'Bob', 'name_last':'Jones'})
+    user_3 = r.json()
+    r = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [user_2['auth_user_id']]})
+    dm_1 = r.json()
+
+    r = requests.post(config.url + 'dm/invite/v1',  json={'token': user_3['token'],'dm_id' : dm_1['dm_id'] ,'u_id': user_1['auth_user_id']})
+    assert r.status_code == AccessError().code
+
