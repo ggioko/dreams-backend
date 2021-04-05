@@ -422,3 +422,108 @@ def test_dm_invite_http_non_member():
     r = requests.post(config.url + 'dm/invite/v1',  json={'token': user_3['token'],'dm_id' : dm_1['dm_id'] ,'u_id': user_1['auth_user_id']})
     assert r.status_code == AccessError().code
 
+def test_dm_messages_http_invalid_token():
+    """
+    Test to see if dm messages raises access error by passing in
+    an invalid token
+    """
+    requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user_1 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'secondemail@gmail.com',
+    'password' : '321cba#@!', 'name_first':'Fred', 'name_last':'Smith'})
+    user_2 = r.json()
+    r = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [user_2['auth_user_id']]})
+    dm_1 = r.json()
+    r = requests.get(config.url + 'dm/messages/v1',  params={'token': 1, 'dm_id': dm_1['dm_id'], 'start' : 0})
+    assert r.status_code == AccessError().code
+    
+def test_dm_messages_http_invalid_dm_id():
+    """
+    Test to see if dm messages raises input error by passing in
+    an invalid DM ID
+    """
+    requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user_1 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'secondemail@gmail.com',
+    'password' : '321cba#@!', 'name_first':'Fred', 'name_last':'Smith'})
+    user_2 = r.json()
+    requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [user_2['auth_user_id']]})
+    r = requests.get(config.url + 'dm/messages/v1',  params={'token': user_1['token'], 'dm_id': 33, 'start' : 0})
+    assert r.status_code == InputError().code
+
+def test_dm_messages_http_invalid_start():
+    """
+    Test to see if dm messages raises input error by passing in
+    an invalid start index
+    """
+    requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user_1 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'secondemail@gmail.com',
+    'password' : '321cba#@!', 'name_first':'Fred', 'name_last':'Smith'})
+    user_2 = r.json()
+    r = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [user_2['auth_user_id']]})
+    dm_1 = r.json()
+    r = requests.get(config.url + 'dm/messages/v1',  params={'token': user_1['token'], 'dm_id': dm_1['dm_id'], 'start' : 33})
+    assert r.status_code == InputError().code
+
+def test_dm_messages_http_unauthorised_user():
+    """
+    Test to see if dm messages raises access error when a user
+    who is not a member of the dm calls the function
+    """
+    requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user_1 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'secondemail@gmail.com',
+    'password' : '321cba#@!', 'name_first':'Fred', 'name_last':'Smith'})
+    user_2 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'thirdemail@gmail.com',
+    'password' : '321bca#@!', 'name_first':'Bob', 'name_last':'Jones'})
+    user_3 = r.json()
+    r = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [user_2['auth_user_id']]})
+    dm_1 = r.json()
+    r = requests.get(config.url + 'dm/messages/v1',  params={'token': user_3['token'], 'dm_id': dm_1['dm_id'], 'start' : 0})
+    assert r.status_code == AccessError().code
+
+def test_dm_messages_http_valid():
+    """
+    Test to see if dm messages works with valid data
+    """
+    requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user_1 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'secondemail@gmail.com',
+    'password' : '321cba#@!', 'name_first':'Fred', 'name_last':'Smith'})
+    user_2 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'thirdemail@gmail.com',
+    'password' : '321bca#@!', 'name_first':'Bob', 'name_last':'Jones'})
+    user_3 = r.json()
+    r = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [user_2['auth_user_id'], user_3['auth_user_id']]})
+    dm_1 = r.json()
+    message_1 = "My first message"
+    message_2 = "My second message"
+
+    r = requests.post(config.url + 'message/senddm/v1', json={'token': user_1['token'], 'dm_id': dm_1['dm_id'], 'message' : message_1})
+    m_1 = r.json()
+    r = requests.post(config.url + 'message/senddm/v1', json={'token': user_2['token'], 'dm_id': dm_1['dm_id'], 'message' : message_2})
+    m_2 = r.json()
+
+    r = requests.get(config.url + 'dm/messages/v1',  params={'token': user_3['token'], 'dm_id': dm_1['dm_id'], 'start' : 0})
+    output = r.json()
+    assert output['messages'][1]['message_id'] == m_1['message_id']
+    assert output['messages'][1]['u_id'] == user_1['auth_user_id']
+    assert output['messages'][1]['message'] == message_1
+    assert output['messages'][0]['message_id'] == m_2['message_id']
+    assert output['messages'][0]['u_id'] == user_2['auth_user_id']
+    assert output['messages'][0]['message'] == message_2
+    assert output['start'] == 0
+    assert output['end'] == -1
+
