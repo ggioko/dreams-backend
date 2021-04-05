@@ -1,9 +1,10 @@
 import pytest
 from src.error import InputError, AccessError
-from src.dm import dm_create_v1, dm_details_v1
+from src.dm import dm_create_v1, dm_details_v1, dm_remove_v1
 from src.auth import auth_register_v2
 from src.other import clear_v1
-from src.helper import get_token_user_id, generate_token
+from src.helper import generate_token, get_token_user_id
+
 
 # Testing when valid infomation is passes throught dm_details
 # expected success
@@ -110,4 +111,39 @@ def test_dm_create_success():
     u_id2 = get_token_user_id(user_3['token'])
     new_dm = dm_create_v1(user_1['token'], [u_id1, u_id2])
     assert new_dm['dm_id'] == 1
-    assert new_dm['dm_name'] == "bobjones, fredsmith, haydeneverest"       
+    assert new_dm['dm_name'] == "bobjones, fredsmith, haydeneverest"
+
+def test_dm_remove_valid():
+    """
+    Test to see if dm removes when the owner calls the function
+    DM details is expected to return an error from not being able to find
+    the DM
+    """
+    clear_v1()
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    dm = dm_create_v1(user_1['token'], [user_2['auth_user_id']])
+    assert dm_details_v1(user_1['token'], dm['dm_id'])
+    dm_remove_v1(user_1['token'], dm['dm_id'])
+    with pytest.raises(InputError):
+        assert dm_details_v1(user_1['token'], dm['dm_id'])
+
+def test_dm_remove_invalid_dm_id():
+    """
+    Test to see if dm raises input error from invalid dm_id
+    """
+    clear_v1()
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    with pytest.raises(InputError):
+        assert dm_remove_v1(user_1['token'], -1)
+
+def test_dm_remove_non_creator():
+    """
+    Test to see if dm raises access error when user is not dm owner
+    """
+    clear_v1()
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    dm = dm_create_v1(user_1['token'], [user_2['auth_user_id']])
+    with pytest.raises(AccessError):
+        assert dm_remove_v1(user_2['token'], dm['dm_id'])
