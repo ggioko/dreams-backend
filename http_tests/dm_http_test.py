@@ -297,7 +297,7 @@ def test_dm_invite_http_non_member():
     r = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [user_2['auth_user_id']]})
     dm_1 = r.json()
 
-    r = requests.post(config.url + 'dm/invite/v1',  json={'token': user_3['token'],'dm_id' : dm_1['dm_id'] ,'u_id': 33})
+    r = requests.post(config.url + 'dm/invite/v1',  json={'token': user_3['token'],'dm_id' : dm_1['dm_id'] ,'u_id': user_1['auth_user_id']})
     assert r.status_code == AccessError().code
 
     
