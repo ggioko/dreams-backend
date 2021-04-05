@@ -96,7 +96,7 @@ def message_remove_v1(token, message_id):
         raise InputError(description="Message_id not found")
     
     if auth == False:
-        raise AccessError(description="You are not allowed to delete these message")
+        raise AccessError(description="You are not allowed to delete this message")
 
     return {}
 
@@ -160,6 +160,6 @@ def message_edit_v2(token, message_id, message):
         raise InputError(description="Message_id not found")
     
     if auth == False:
-        raise AccessError(description="You are not allowed to delete these message")
+        raise AccessError(description="You are not allowed to edit this message")
 
     return {}
