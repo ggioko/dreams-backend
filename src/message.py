@@ -93,10 +93,10 @@ def message_remove_v1(token, message_id):
                         channel['messages'].remove(message)
     
     if message_found == False:
-        raise InputError(description="message_id not found")
+        raise InputError(description="Message_id not found")
     
     if auth == False:
-        raise AccessError(description="You are not allowed to delete these message")
+        raise AccessError(description="You are not allowed to delete this message")
 
     return {}
 
@@ -119,5 +119,47 @@ def message_edit_v2(token, message_id, message):
     Return Value:
         Returns {} - (empty dict) on success
     """
-    return {
-    }
+    # Checks if token is valid
+    if check_token_valid(token) == False:
+        raise AccessError(description="Not a valid token")
+
+    # If message is over 1000 characters, raise InputError
+    if len(message) > 1000:
+        raise InputError(description="Message is more than 1000 characters")
+
+    # If the new message is an empty string, the message is deleted.
+    if len(message) == 0:
+        message_remove_v1(token, message_id)
+        return {}
+    
+    edited_message = message
+
+    user_id = get_token_user_id(token)
+
+    # Checks if message_id is still valid (not been removed or has even been created yet)
+    # Checks if user is allowed to delete the message
+    message_found = False
+    auth = False
+
+    for channel in data['channels']:
+        for message in channel['messages']:
+            if message_id == message['message_id']:
+                message_found = True
+                owners = channel['owner_members']
+                # Check if the user trying to delete is a channel owner
+                for owner in owners:
+                    if user_id == owner['u_id']:
+                        auth = True
+                        message['message'] = edited_message
+                    # Check if the user trying to delete is the one who sent it
+                    elif user_id == message['u_id']:
+                        auth = True
+                        message['message'] = edited_message
+    
+    if message_found == False:
+        raise InputError(description="Message_id not found")
+    
+    if auth == False:
+        raise AccessError(description="You are not allowed to edit this message")
+
+    return {}

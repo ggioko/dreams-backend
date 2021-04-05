@@ -11,7 +11,7 @@ from src.dm import dm_create_v1, dm_details_v1, dm_remove_v1, dm_invite_v1, dm_l
 from src.channel import channel_addowner_v1, channel_removeowner_v1, channel_leave_v1
 from src.other import clear_v1
 from src.user import users_all_v1, user_profile_v2, user_profile_setemail_v2, user_profile_setname_v2, user_profile_sethandle_v1
-from src.message import message_send_v2, message_remove_v1
+from src.message import message_send_v2, message_remove_v1, message_edit_v2
 from src.helper import save_data, load_data
 
 def defaultHandler(err):
@@ -465,6 +465,25 @@ def set_name():
     
     return dumps({})
 
+@APP.route("/message/edit/v2", methods=["PUT"])
+def edit():
+    """
+    Gets user token, message_id and a message from http json and passes it to the
+    message_edit_v2 function
+    Returns {} (empty dictionary) on success
+    """
+    data = request.get_json()
+
+    token = data['token']
+    message_id = int(data['message_id'])
+    message = data['message']
+
+    message_edit_v2(token, message_id, message)
+
+    save_data()
+
+    return dumps({})
+    
 @APP.route("/user/profile/sethandle/v1", methods = ['PUT'])
 def set_handle():
     """
