@@ -1,7 +1,7 @@
 import pytest
 from src.error import InputError, AccessError
-from src.dm import dm_create_v1, dm_details_v1, dm_remove_v1, dm_invite_v1, dm_leave_v1, dm_list_v1
-
+from src.dm import dm_create_v1, dm_details_v1, dm_remove_v1, dm_invite_v1, dm_leave_v1, dm_list_v1, \
+    dm_messages_v1
 from src.auth import auth_register_v2
 from src.other import clear_v1
 
@@ -334,3 +334,75 @@ def test_dm_invite_non_member():
 
     with pytest.raises(AccessError):
         assert dm_invite_v1(user_3['token'], dm['dm_id'], user_3['auth_user_id'])
+
+def test_dm_messages_invalid_token():
+    """
+    Test to see if dm messages raises access error by passing in
+    an invalid token
+    """
+    clear_v1()
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    dm_1 = dm_create_v1(user_1['token'], [user_2['auth_user_id']])
+    with pytest.raises(AccessError):
+        assert dm_messages_v1(-1, dm_1['dm_id'], 0)
+        
+def test_dm_messages_invalid_dm_id():
+    """
+    Test to see if dm messages raises input error by passing in
+    an invalid DM ID
+    """
+    clear_v1()
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    dm_create_v1(user_1['token'], [user_2['auth_user_id']])
+    with pytest.raises(InputError):
+        assert dm_messages_v1(user_1['token'], -1, 0)
+
+def test_dm_messages_invalid_start():
+    """
+    Test to see if dm messages raises input error by passing in
+    an invalid start index
+    """
+    clear_v1()
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    dm_1 = dm_create_v1(user_1['token'], [user_2['auth_user_id']])
+    with pytest.raises(InputError):
+        assert dm_messages_v1(user_1['token'], dm_1['dm_id'], 20)
+
+def test_dm_messages_unauthorised_user():
+    """
+    Test to see if dm messages raises access error when a user
+    who is not a member of the dm calls the function
+    """
+    clear_v1()
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    user_3 = auth_register_v2('thirdemail@gmail.com', '321bca#@!', 'Bob', 'Jones')
+    dm_1 = dm_create_v1(user_1['token'], [user_2['auth_user_id']])
+    with pytest.raises(AccessError):
+        assert dm_messages_v1(user_3['token'], dm_1['dm_id'], 0)
+
+def test_dm_messages_valid():
+    """
+    Test to see if dm messages works with valid data
+    """
+    clear_v1()
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    user_3 = auth_register_v2('thirdemail@gmail.com', '321bca#@!', 'Bob', 'Jones')
+    dm_1 = dm_create_v1(user_1['token'], [user_2['auth_user_id']])
+    message_1 = "My first message"
+    message_2 = "My second message"
+    m_1 = message_send_dm_v1(user_1['token'], dm_1['dm_id'], message_1)
+    m_2 = message_send_dm_v1(user_2['token'], dm_1['dm_id'], message_2)
+    output = dm_messages_v1(user_3['token'], dm_1['dm_id'], 0)
+    assert output['messages'][0]['message_id'] == m_1['message_id']
+    assert output['messages'][0]['u_id'] == user_1['auth_user_id']
+    assert output['messages'][0]['message'] == message_1
+    assert output['messages'][1]['message_id'] == m_2['message_id']
+    assert output['messages'][1]['u_id'] == user_2['auth_user_id']
+    assert output['messages'][1]['message'] == message_2
+    assert output['start'] == 0
+    assert output['end'] == -1

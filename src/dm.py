@@ -4,6 +4,27 @@ from src.helper import get_token_user_id, check_token_valid, SECRET
 import jwt
 import hashlib
 
+def dm_messages_v1(token, dm_id, start):
+    '''    
+    Given a token, ID dm_id and start returns messages from the given
+    DM between start and start+50
+    
+    Arguments: 
+        token (string) - Users session token
+        dm_id (int)    - ID of the DM
+        start (int)    - Start index of messages
+        
+    Exception: 
+        InputError  - DM ID is not a valid DM.
+        InputError  - Start is greater than total number of messages in DM
+        AccessError - Occurs when token passed in is not a valid token.
+        AccessError - Occurs when authorised user is not a a member of the DM
+        
+    Return value: 
+        {messages, start, end} on success
+    ''' 
+    pass
+
 def dm_invite_v1(token, dm_id, u_id):
     '''    
     Given a token, ID dm_id and u_id adds user with u_id to
