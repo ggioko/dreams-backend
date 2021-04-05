@@ -7,7 +7,7 @@ from src import config
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 from src.channels import channels_create_v2, channels_listall_v2, channels_list_v2
 from src.channel import channel_join_v2, channel_invite_v2, channel_messages_v2, channel_details_v2
-from src.channel import channel_addowner_v1
+from src.channel import channel_addowner_v1, channel_removeowner_v1
 from src.other import clear_v1
 from src.user import users_all_v1, user_profile_v2
 from src.message import message_send_v1
@@ -201,6 +201,19 @@ def channel_add_owner_to_channel():
     channel_id = data['channel_id']
     u_id = data['u_id']
     channel_addowner_v1(token, channel_id, u_id)
+    return dumps({})
+
+@APP.route("/channel/removeowner/v1", methods=["POST"])
+def channel_remove_owner_from_channel():
+    """
+    Gets input data from http json and passes it to channel_removeowner_v1()
+    Returns {} if no errors are raised.
+    """
+    data = request.get_json()
+    token = data['token']
+    channel_id = data['channel_id']
+    u_id = data['u_id']
+    channel_removeowner_v1(token, channel_id, u_id)
     return dumps({})
 
 @APP.route("/channel/join/v2", methods=["POST"])

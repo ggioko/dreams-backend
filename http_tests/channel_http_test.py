@@ -209,9 +209,7 @@ def test_channel_removeowner():
     # Only one owner left in channel - Input Error
     test_4 = requests.post(config.url + 'channel/removeowner/v1', json={'token': rego_1['token'],\
     'channel_id': new_channel['channel_id'], 'u_id':rego_1['auth_user_id']})
-    assert test_4.status_code == InputError().code 
-    
-
+    assert test_4.status_code == InputError().code
 
 def test_channel_join_errors():
     """

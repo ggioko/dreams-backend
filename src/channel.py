@@ -173,7 +173,7 @@ def channel_addowner_v1(token, channel_id, u_id):
     }
 
 
-def channel_removeowner_v1(auth_user_id, channel_id, u_id):
+def channel_removeowner_v1(token, channel_id, u_id):
     '''
     channel_removeowner removes a user as an owner of a channel
 
@@ -191,6 +191,7 @@ def channel_removeowner_v1(auth_user_id, channel_id, u_id):
     Return Value:
         Returns an empty dictionary when exceptions are not raised
 '''
+    # print (token, str(channel_id), str(u_id))
     # Checks if the channel provided is a channel in the list
     foundChannel = {}
     for channel in data['channels']:
@@ -199,17 +200,21 @@ def channel_removeowner_v1(auth_user_id, channel_id, u_id):
             break
     if foundChannel == {}:
         raise InputError(description='Invalid channel ID provided')
+    # print("got past finding the channel")
 
     # Checks to see if remover is logged in
     token_active = False
     active_tokens = data['active_tokens']
     # Search through active tokens
     for x in active_tokens:
+        # print("x = " + x)
+        # print("token = " + token)
         if x == token:
             token_active = True
             break
     if (token_active == False):
         raise AccessError(description='Token invalid, user not logged in')
+    # print("got past is auth_user logged in check")
     
     # Gets ID of remover
     decoded_token = jwt.decode(token, SECRET, algorithms=['HS256'])
@@ -223,6 +228,7 @@ def channel_removeowner_v1(auth_user_id, channel_id, u_id):
             break
     if authUserMatch == False:
         raise AccessError(description='Authorised user not a channel owner')
+    # print("Got past authusermatch")
     userMatch = False
     for user in channel['owner_members']:
         if user['u_id'] == u_id:
@@ -230,6 +236,7 @@ def channel_removeowner_v1(auth_user_id, channel_id, u_id):
             break
     if userMatch == False:
         raise InputError(description='Owner to remove is not currently an owner')
+    # print("Got past person to remove not an owner")
     
     if len(channel['owner_members']) < 2:
         raise InputError(description='Owner to remove is the only owner of the channel')
