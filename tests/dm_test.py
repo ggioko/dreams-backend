@@ -400,11 +400,15 @@ def test_dm_messages_valid():
     m_1 = message_senddm_v1(user_1['token'], dm_1['dm_id'], message_1)
     m_2 = message_senddm_v1(user_2['token'], dm_1['dm_id'], message_2)
     output = dm_messages_v1(user_3['token'], dm_1['dm_id'], 0)
-    assert output['messages'][1]['message_id'] == m_1['message_id']
-    assert output['messages'][1]['u_id'] == user_1['auth_user_id']
-    assert output['messages'][1]['message'] == message_1
-    assert output['messages'][0]['message_id'] == m_2['message_id']
-    assert output['messages'][0]['u_id'] == user_2['auth_user_id']
-    assert output['messages'][0]['message'] == message_2
+    # Assert that info associated with message_senddm_v1 is equal to output of dm_messages_v1
+    message_list = output['messages']
+    req_info = message_list[0]
+    assert req_info[1]['message_id'] == m_1['message_id']
+    assert req_info[1]['u_id'] == user_1['auth_user_id']
+    assert req_info[1]['message'] == message_1
+    assert req_info[0]['message_id'] == m_2['message_id']
+    assert req_info[0]['u_id'] == user_2['auth_user_id']
+    assert req_info[0]['message'] == message_2
     assert output['start'] == 0
     assert output['end'] == -1
+
