@@ -1,7 +1,8 @@
 #from src.helper import get_token_user_id
 from src.error import InputError, AccessError
 from src.data import data
-from src.helper import check_token_valid
+from src.helper import check_token_valid, email_in_use, get_token_user_id
+import re
 
 def users_all_v1(token):
     '''
@@ -37,26 +38,6 @@ def users_all_v1(token):
 
     return user_dict
 
-def user_profile_v1(auth_user_id, u_id):
-    """
-    For a valid user, returns information about their user_id, email, first name, last name, and handle.
-    
-    Arguments:
-        (auth_user_id, u_id)
-    Exception:
-        InputError when user with u_id is not a valid user.
-    Return value:
-        {user: {u_id, email, name_first, name_last, handle_str}}
-    """
-    return {
-        'user': {
-            'u_id': 1,
-            'email': 'cs1531@cse.unsw.edu.au',
-            'name_first': 'Hayden',
-            'name_last': 'Jacobs',
-            'handle_str': 'haydenjacobs',
-        },
-    }
 
 def user_profile_v2(token, u_id):
     """
@@ -99,14 +80,41 @@ def user_profile_v2(token, u_id):
     return user_info
 
 
-def user_profile_setname_v1(auth_user_id, name_first, name_last):
+def user_profile_setname_v2(auth_user_id, name_first, name_last):
     return {
     }
 
-def user_profile_setemail_v1(auth_user_id, email):
+def user_profile_setemail_v2(token, email):
+    # Email syntax check
+    if not re.match('^[a-zA-Z0-9]+[\\._]?[a-zA-Z0-9]+[@]\\w+[.]\\w{2,3}$',email):
+        raise InputError('InputError: Incorrect email format')
+    # Check if email is in use
+    if email_in_use(email) == True:
+        raise InputError('InputError - Email is already in use')
+    # Check if token is valid
+    token_valid = 0
+    for user in data['active_tokens']:
+        if user == token:
+            token_valid = 1
+    if token_valid == 0:
+        raise AccessError(description = "AccessError - invalid token")
+    
+    # Find current user in data register and change email.
+    u_id = get_token_user_id(token)
+    for user in data['users']:
+        if user['u_id'] == u_id:
+            user['email'] = email
+    for channel in data['channels']:
+        for user in channel['owner_members']:
+            if user['u_id'] == u_id:
+                user['email'] == email
+        for user in channel['all_members']:
+            if user['u_id'] == u_id:
+                user['email'] == email
+                
     return {
     }
 
-def user_profile_sethandle_v1(auth_user_id, handle_str):
+def user_profile_sethandle_v2(auth_user_id, handle_str):
     return {
     }

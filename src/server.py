@@ -9,7 +9,7 @@ from src.channels import channels_create_v2, channels_listall_v2, channels_list_
 from src.channel import channel_join_v2, channel_invite_v2, channel_messages_v2, channel_details_v2
 from src.channel import channel_addowner_v1, channel_removeowner_v1
 from src.other import clear_v1
-from src.user import users_all_v1, user_profile_v2
+from src.user import users_all_v1, user_profile_v2, user_profile_setemail_v2
 from src.message import message_send_v1
 
 
@@ -296,7 +296,21 @@ def channels_list():
     data = channels_list_v2(token)
     
     return dumps(data)
+
+@APP.route("/user/profile/setemail/v2", methods = ['PUT'])
+def set_email():
+    """
+    Gets user token and email from http json and pass is to the
+    user_profile_v2 function
+    Returns {} on success
+    """
     
+    data = request.get_json()
+    token = data['token']
+    new_email = data['email']
+    user_profile_setemail_v2(token, new_email)
+    
+    return dumps({})
 
 if __name__ == "__main__":
     APP.run(port=config.port) # Do not edit this port
