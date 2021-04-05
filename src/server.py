@@ -13,6 +13,7 @@ from src.other import clear_v1
 from src.user import users_all_v1, user_profile_v2, user_profile_setemail_v2, user_profile_setname_v2, user_profile_sethandle_v1
 from src.message import message_send_v2, message_remove_v1, message_edit_v2, message_senddm_v1
 from src.helper import save_data, load_data
+from src.admin import userpermission_change_v1
 
 def defaultHandler(err):
     response = err.get_response()
@@ -206,6 +207,9 @@ def invite_user_to_channel():
     channel_id = data['channel_id']
     u_id = data['u_id']
     channel_invite_v2(token, channel_id, u_id)
+
+    save_data()
+
     return dumps({})
 
 @APP.route("/channel/addowner/v1", methods=["POST"])
@@ -219,6 +223,9 @@ def channel_add_owner_to_channel():
     channel_id = data['channel_id']
     u_id = data['u_id']
     channel_addowner_v1(token, channel_id, u_id)
+
+    save_data()
+
     return dumps({})
 
 @APP.route("/channel/removeowner/v1", methods=["POST"])
@@ -465,6 +472,18 @@ def set_name():
     
     return dumps({})
 
+@APP.route("/admin/userpermission/change/v1", methods=['POST'])
+def userpermission_change():
+    """
+    Gets input data from http json and passes it to userpermission_change_v1()
+    Returns {} if no errors are raised.
+    """
+    data = request.get_json()
+    token = data['token']
+    u_id = data['u_id']
+    permission_id = data['permission_id']
+    userpermission_change_v1(token, u_id, permission_id)
+    
 @APP.route("/message/edit/v2", methods=["PUT"])
 def edit():
     """
@@ -551,9 +570,8 @@ def send_dm():
     
     return dumps (response)
 
+
 load_data()  # Gets data from previous server run
 
 if __name__ == "__main__":
     APP.run(port=config.port) # Do not edit this port
-
-

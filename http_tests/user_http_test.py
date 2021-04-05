@@ -1,8 +1,7 @@
-#import pytest
+import pytest
 import requests
-#import json
+import json
 from src import config
-from src.helper import generate_token
 from src.error import AccessError, InputError
 
 def test_user_profile():
@@ -80,7 +79,7 @@ def test_users_all_v1_invalid_token():
     'password' : '1234abc!@#', 'name_first':'Haydennn', 'name_last':'Everesttt'})
     
     # Get a fake token
-    invalid_token = generate_token(5)
+    invalid_token = -1
 
     # Call user/all/v1 to get list of users
     r = requests.get(config.url + 'users/all/v1', json={'token': invalid_token})

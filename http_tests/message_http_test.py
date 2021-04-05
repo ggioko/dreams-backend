@@ -1,8 +1,8 @@
+import pytest
 import requests
 import json
 from src import config
 from src.error import AccessError, InputError
-from src.helper import generate_token
     
 def test_message_send_runs():
     '''

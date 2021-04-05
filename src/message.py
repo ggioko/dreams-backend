@@ -1,6 +1,6 @@
 from src.error import InputError, AccessError
 from src.data import data
-from src.helper import get_user_data, email_in_use, get_token_user_id, check_token_valid
+from src.helper import get_token_user_id, check_token_valid, is_dreams_owner
 from time import time
 
 def message_send_v2(token, channel_id, message):
@@ -77,6 +77,9 @@ def message_remove_v1(token, message_id):
     message_found = False
     auth = False
 
+    if is_dreams_owner(user_id):
+        auth = True
+
     for channel in data['channels']:
         for message in channel['messages']:
             if message_id == message['message_id']:
@@ -140,6 +143,9 @@ def message_edit_v2(token, message_id, message):
     # Checks if user is allowed to delete the message
     message_found = False
     auth = False
+
+    if is_dreams_owner(user_id):
+        auth = True
 
     for channel in data['channels']:
         for message in channel['messages']:

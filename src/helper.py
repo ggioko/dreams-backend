@@ -3,6 +3,8 @@ from src.data import data
 
 SECRET = 'dorito'
 
+valid_permission_ids = [0,1]
+
 def save_data():
     """
     Opens a pickle data file and saves current data to it
@@ -75,4 +77,31 @@ def check_token_valid(token):
     for x in active_tokens:
         if x == token:
             return True
+    return False
+
+def no_check_dreams_change_permission(u_id, permission_id):
+    print(data['users'])
+    
+    for user in data['users']:
+        # print(user)
+        if user['u_id'] == u_id:
+            user['permission_id'] = permission_id
+            break
+    channels = data['channels']
+    for channel in channels:
+        for owner_member in channel['owner_members']:
+            if owner_member['u_id'] == u_id:
+                owner_member['permission_id'] = permission_id
+                break
+        for all_member in channel['all_members']:
+            if all_member['u_id'] == u_id:
+                all_member['permission_id'] = permission_id
+                break
+
+def is_dreams_owner(u_id):
+    for user in data['users']:
+        if user['u_id'] == u_id:
+            if user['permission_id'] == 1:
+                return True
+            return False
     return False
