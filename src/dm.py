@@ -21,8 +21,30 @@ def dm_remove_v1(token, dm_id):
         
     Return value: 
         {} on success
-    '''
-    pass
+    '''   
+    # Check if token is valid using helper
+    if check_token_valid(token) == False:
+        raise AccessError(description='Error Invalid token')
+    
+    # Check if dm_id is valid
+    user_id = get_token_user_id(token)
+    owner = False
+    dm_valid = False
+    for dm in data['dms']:
+        if dm['dm_id'] == dm_id:
+            dm_valid = True
+            # Check if authorised user is a member of DM
+            for member in dm['owner_members']:
+                if user_id == member['u_id']:
+                    owner = True
+                    data['dms'].remove(dm)
+
+    if dm_valid == False:
+        raise InputError(description="Dm_id does not refer to a valid DM")
+    if owner == False:
+        raise AccessError(description="User is not the original DM creator")
+
+    return {}
 
 def dm_create_v1(token, u_ids):
     '''
