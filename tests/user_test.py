@@ -6,6 +6,8 @@ from src.auth import auth_register_v2
 from src.other import clear_v1
 from src.user import users_all_v1, user_profile_v2, user_profile_setemail_v2, user_profile_setname_v2, user_profile_sethandle_v1
 from src.helper import generate_token
+from src.channels import channels_create_v2
+from src.channel import channel_details_v2
 
 def test_users_all_v1_successful():
     '''
@@ -83,6 +85,39 @@ def test_setemail():
                              'name_last': 'Everest',
                              'handle_str': 'haydeneverest'          
     }}
+    
+def test_setemail_channel_members():
+    """
+    Pass in a user with valid token and new email.
+    If they are a member of a channel, their info in the channel should also be updated.
+    """ 
+    clear_v1()
+    user = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_profile_setemail_v2(user['token'], 'newemail@gmail.com')
+    channel_1 = channels_create_v2(user['token'], 'Channel1', True)
+    channel_info = channel_details_v2(user['token'], channel_1['channel_id'])
+    assert channel_info == {
+        'name': 'Channel1',
+        'owner_members': [
+            {
+                'u_id': 1,
+                'email': 'newemail@gmail.com',
+                'name_first': 'Hayden',
+                'name_last': 'Everest',
+                'handle_str': 'haydeneverest',
+            }
+        ],
+        'all_members': [
+            {
+                'u_id': 1,
+                'email': 'newemail@gmail.com',
+                'name_first': 'Hayden',
+                'name_last': 'Everest',
+                'handle_str': 'haydeneverest',
+            }
+        ],
+        
+    }
 
 def test_setemail_invalid_email():
     """
