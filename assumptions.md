@@ -35,3 +35,6 @@
 
 ### channel_details
 * In testing, channels_create and channel_join are working correctly
+
+### channel_leave
+* If a channel owner leaves the channel, they are still an owner of the channel
