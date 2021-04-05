@@ -1,7 +1,6 @@
 import pytest
-#from src.helper import get_token_user_id
+
 from src.error import InputError, AccessError
-#from src.data import data
 from src.auth import auth_register_v2
 from src.other import clear_v1
 from src.user import users_all_v1, user_profile_v2, user_profile_setemail_v2, user_profile_setname_v2, user_profile_sethandle_v1

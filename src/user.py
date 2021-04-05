@@ -1,4 +1,3 @@
-#from src.helper import get_token_user_id
 from src.error import InputError, AccessError
 from src.data import data
 from src.helper import check_token_valid, email_in_use, get_token_user_id, get_user_data

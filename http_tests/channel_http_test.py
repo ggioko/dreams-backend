@@ -2,7 +2,6 @@ import pytest
 import requests
 import json
 from src import config
-from src.helper import generate_token
 from src.error import AccessError, InputError
 
 def test_channel_details():
@@ -266,7 +265,7 @@ def test_channel_join_errors():
     r = requests.post(config.url + 'channels/create/v2', json = {'token': register3['token'], 'name': 'Channel1', 'is_public': False})
     private_channel1 = r.json()
 
-    invalid_token = generate_token(5)
+    invalid_token = -1
 
     # Test the case where the token is invalid - Expected fobidden 403 (AccessError)
     r = requests.post(config.url + 'channel/join/v2', json = {'token': invalid_token, 'channel_id': public_channel1['channel_id']})
@@ -313,7 +312,7 @@ def test_channel_messages_errors():
     channel1 = r.json()
     
     # Test the case where the token is invalid - Expected fobidden 403 (AccessError)
-    invalid_token = generate_token(4)
+    invalid_token = -1
     r = requests.get(config.url + 'channel/messages/v2', params={'token': invalid_token, 'channel_id': channel1['channel_id'], 'start': 0})
     assert r.status_code == AccessError().code
 

@@ -1,8 +1,8 @@
 import pytest
+
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 from src.other import clear_v1
 from src.error import InputError, AccessError
-from src.helper import generate_token
 
 def test_auth_register_valid():
     '''
@@ -149,6 +149,6 @@ def test_auth_logout_invalid_token():
     clear_v1()
     auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     # uses the generate token helper that creates fake tokens for testing
-    invalid_token = generate_token(4)
+    invalid_token = -1
     with pytest.raises(AccessError):
         assert auth_logout_v1(invalid_token)
