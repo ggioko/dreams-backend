@@ -430,6 +430,25 @@ def set_name():
     
     return dumps({})
 
+@APP.route("/message/edit/v2", methods=["PUT"])
+def edit():
+    """
+    Gets user token, message_id and a message from http json and passes it to the
+    message_edit_v2 function
+    Returns {} (empty dictionary) on success
+    """
+    data = request.get_json()
+
+    token = data['token']
+    message_id = int(data['message_id'])
+    message = data['message']
+
+    message_edit_v2(token, message_id, message)
+
+    save_data()
+
+    return dumps({})
+
 load_data()  # Gets data from previous server run
 
 if __name__ == "__main__":

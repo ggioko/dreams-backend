@@ -128,7 +128,7 @@ def message_edit_v2(token, message_id, message):
         raise InputError(description="Message is more than 1000 characters")
 
     # If the new message is an empty string, the message is deleted.
-    if len(message) = 0:
+    if len(message) == 0:
         message_remove_v1(token, message_id)
         return {}
     
