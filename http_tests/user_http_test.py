@@ -106,7 +106,7 @@ def test_user_profile_setemail():
                              'email': 'newemail@gmail.com',
                              'name_first': 'Hayden',
                              'name_last': 'Everest',
-                             'handle_str': 'HaydenEverest'          
+                             'handle_str': 'haydeneverest'          
     }}
 
 

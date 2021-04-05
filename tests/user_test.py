@@ -81,7 +81,7 @@ def test_setemail():
                              'email': 'newemail@gmail.com',
                              'name_first': 'Hayden',
                              'name_last': 'Everest',
-                             'handle_str': 'HaydenEverest'          
+                             'handle_str': 'haydeneverest'          
     }}
 
 def test_setemail_invalid_email():
