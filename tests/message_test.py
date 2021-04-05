@@ -73,7 +73,7 @@ def test_message_remove_valid_owner():
     id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     channel_1 = channels_create_v2(id_1['token'], "MyChannel", True)
     message = "hello this is my new channel"
-    message_1 = message_send_v2(id_1['token'], channel_1['channel_id'], message)
+    message_send_v2(id_1['token'], channel_1['channel_id'], message)
     result1 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
     message_remove_v1(id_1['token'], result1['messages'][0]['message_id'])
     result2 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
@@ -88,10 +88,10 @@ def test_message_remove_valid_sender():
     id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     id_2 = auth_register_v2('validemail2@gmail.com', '123abc2!@#', 'Haydenn', 'Everestt')
     channel_1 = channels_create_v2(id_1['token'], "MyChannel", True)
-    channel_2 = channels_create_v2(id_2['token'], "MyChannel2", True)
+    channels_create_v2(id_2['token'], "MyChannel2", True)
     message = "hello this is my new channel"
     channel_join_v2(id_2['token'], channel_1['channel_id'])
-    message_1 = message_send_v2(id_2['token'], channel_1['channel_id'], message)
+    message_send_v2(id_2['token'], channel_1['channel_id'], message)
     result1 = channel_messages_v2(id_2['token'], channel_1['channel_id'], 0)
     message_remove_v1(id_2['token'], result1['messages'][0]['message_id'])
     result2 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
@@ -105,8 +105,8 @@ def test_message_remove_invalid_message_id():
     id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     channel_1 = channels_create_v2(id_1['token'], "MyChannel", True)
     message = "hello this is my new channel"
-    message_1 = message_send_v2(id_1['token'], channel_1['channel_id'], message)
-    result1 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
+    message_send_v2(id_1['token'], channel_1['channel_id'], message)
+    channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
     # 145234234234234242 is a random channel id
     with pytest.raises(InputError):
         assert message_remove_v1(id_1['token'], 145234234234234242)
@@ -121,11 +121,11 @@ def test_message_remove_invalid_user_trying_to_delete():
     id_2 = auth_register_v2('validemail2@gmail.com', '123abc2!@#', 'Haydenn', 'Everestt')
     id_3 = auth_register_v2('validemail3@gmail.com', '123abc2!@#', 'Haydennn', 'Everesttt')
     channel_1 = channels_create_v2(id_1['token'], "MyChannel", True)
-    channel_2 = channels_create_v2(id_2['token'], "MyChannel2", True)
+    channels_create_v2(id_2['token'], "MyChannel2", True)
     message = "hello this is my new channel"
     channel_join_v2(id_2['token'], channel_1['channel_id'])
     channel_join_v2(id_3['token'], channel_1['channel_id'])
-    message_1 = message_send_v2(id_2['token'], channel_1['channel_id'], message)
+    message_send_v2(id_2['token'], channel_1['channel_id'], message)
     result1 = channel_messages_v2(id_2['token'], channel_1['channel_id'], 0)
     with pytest.raises(AccessError):
         assert message_remove_v1(id_3['token'], result1['messages'][0]['message_id'])
