@@ -133,7 +133,7 @@ def user_profile_setemail_v2(token, email):
     return {
     }
 
-def user_profile_sethandle_v2(token, handle_str):
+def user_profile_sethandle_v1(token, handle_str):
     # Check if token is valid using helper
     if check_token_valid(token) == False:
         raise AccessError(description = 'Invalid token')

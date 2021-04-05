@@ -175,7 +175,7 @@ def test_sethandle():
     user_info  = user_profile_v2(user['token'], user['auth_user_id'])
     assert user_info == {'user': {
                              'u_id': user['auth_user_id'],
-                             'email': 'newemail@gmail.com',
+                             'email': 'validemail0@gmail.com',
                              'name_first': 'Hayden',
                              'name_last': 'Everest',
                              'handle_str': 'newhandle'          
@@ -210,3 +210,4 @@ def test_sethandle_already_used():
     auth_register_v2('usedemail@gmail.com', '123abc!@#', 'Fred', 'Smith')
     with pytest.raises(InputError):                        
         assert user_profile_sethandle_v1(user_1['token'], 'fredsmith')
+    
