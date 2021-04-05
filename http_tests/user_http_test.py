@@ -120,14 +120,14 @@ def test_user_profile_setemail_errors():
     r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com', \
     'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
     user_1 = r.json()
-    r = requests.post(config.url + 'auth/register/v2', json={'email':'takenemail@gmail.com', \
+    requests.post(config.url + 'auth/register/v2', json={'email':'takenemail@gmail.com', \
     'password' : '123abc!@#', 'name_first':'Fred', 'name_last':'Smith'})
-    user_2 = r.json()
+
     # Invalid email - Input Error
     r = requests.put(config.url + 'user/profile/setemail/v2', json ={'token': user_1['token'], 'email': 'invalidemail.com'})
     assert r.status_code == InputError().code
     # Taken email - Input Error
-    r = requests.put(config.url + 'user/profile/setemail/v2', json ={'token': user_1['token'], 'email': user_2['email']})
+    r = requests.put(config.url + 'user/profile/setemail/v2', json ={'token': user_1['token'], 'email': 'takenemail@gmail.com'})
     assert r.status_code == InputError().code
     # Invalid token - Access Error
     r = requests.put(config.url + 'user/profile/setemail/v2', json ={'token': 'invalid_token', 'email': 'newemail@gmail.com'})
