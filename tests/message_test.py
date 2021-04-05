@@ -280,6 +280,23 @@ def test_message_send_dm_invalid_message():
     long_string = 'x'*1001
     with pytest.raises(InputError):
         assert message_senddm_v1(user_1['token'], new_dm['dm_id'], long_string)
+ 
+def test_message_send_dm_not_member():
+    '''
+    Given a valid token and message, but invalid dm_id (user is not a member)
+    AccessError is raised.
+    '''
+    clear_v1()
+    # Create users
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    user_3 = auth_register_v2('thirdemail@gmail.com', '321bca#@!', 'Bob', 'Jones')
+    u_id2 = user_2['auth_user_id']
+    # Create a dm, which will return {dm_id, dm_name}
+    new_dm = dm_create_v1(user_1['token'], [u_id2])
+    # Call send_dm function with invalid token.
+    with pytest.raises(AccessError):
+        assert message_senddm_v1(user_3['token'], new_dm['dm_id'], 'hello, I am not part of this channel')
     
     
 def test_message_send_dm_one_message():
