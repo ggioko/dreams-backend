@@ -148,3 +148,66 @@ def dm_create_v1(token, u_ids):
     })
 
     return {'dm_id': dm_num, 'dm_name': dm_name}
+
+def dm_leave_v1(token, dm_id):
+    '''
+    Given a DM ID, the user is removed as a member of this DM
+
+    Arguments:
+        token (string)    - Users id
+        dm_id (int)    - DM ID
+
+    Exceptions:
+        InputError - Occurs when a u_id does not refer to a valid member
+        AccessError - Occurs when token is invalid or Authorised user is 
+                    not a member of DM with dm_id
+
+    Return Value:
+        Returns {} on success
+    '''
+    # Check if token is valid using helper
+    if check_token_valid(token) == False:
+        raise AccessError(description='Error Invalid token')
+    
+    # Check if dm_id is valid
+    user_id = get_token_user_id(token)
+    authorisation = 0
+    dm_valid = 0
+    for dm in data['dms']:
+        if dm['dm_id'] == dm_id:
+            # Check if authorised user is a member of DM
+            for member in dm['all_members']:
+                if user_id == member['u_id']:
+                    authorisation = 1
+            dm_valid = 1
+            break
+
+    if dm_valid == 0:
+        raise InputError(description="Error occurred dm_id is not valid")
+    if authorisation == 0:
+        raise AccessError(description="Error authorised user is not a valid member of DM")
+
+    # Remove user from all_members
+    reuser = {}
+
+    # Loop through list to find the member being removed
+    for dm in data['dms']:
+        if dm['dm_id'] == dm_id:
+            for member in dm['all_members']:
+                if member['u_id'] == user_id:
+                # Copy all the user data for easier access
+                    reuser = {
+                        'u_id': user['u_id'],
+                        'email': user['email'],
+                        'name_first': user['name_first'],
+                        'name_last': user['name_last'],
+                        'handle_str': user['handle_str'],
+                    }
+                    # Remove user
+                    dm['all_members'].remove(reuser)
+                    break
+                
+    return {}
+
+
+    
