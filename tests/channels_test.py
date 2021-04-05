@@ -2,11 +2,9 @@ import pytest
 
 from src.channel import channel_join_v2  
 from src.channels import channels_create_v2, channels_listall_v2, channels_list_v2
-from src.auth import auth_register_v2, get_token
-
+from src.auth import auth_register_v2
 from src.other import clear_v1
 from src.error import InputError, AccessError
-from src.helper import generate_token
 
 #from src.data import data
 
@@ -14,7 +12,7 @@ from src.helper import generate_token
 # Expected AccessError
 def test_channels_create_invalid_auth_user_id():
     clear_v1()
-    invalid_token = generate_token(4)
+    invalid_token = -1
     with pytest.raises(AccessError):
         assert channels_create_v2(invalid_token, 'channel1', True)
 

@@ -1,12 +1,10 @@
 import pytest
 
-from src.auth import auth_register_v1, auth_register_v2, auth_logout_v1
-from src.channel import channel_messages_v1, channel_messages_v2
-from src.channel import channel_join_v1, channel_join_v2, channel_invite_v2, channel_details_v2
+from src.auth import auth_register_v2, auth_logout_v1
+from src.channel import channel_messages_v2
+from src.channel import channel_join_v2, channel_invite_v2, channel_details_v2
 from src.channel import channel_addowner_v1, channel_removeowner_v1, channel_leave_v1
-from src.channels import channels_create_v1, channels_create_v2
-from src.helper import generate_token, get_token_user_id, SECRET
-
+from src.channels import channels_create_v2
 from src.error import InputError, AccessError
 from src.other import clear_v1
 
@@ -317,7 +315,7 @@ def test_channel_messages_invalid_token():
     clear_v1()
     register1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     channel1 = channels_create_v2(register1['token'], 'channel_1', True)
-    invalid_token = generate_token(4)
+    invalid_token = -1
     with pytest.raises(AccessError):
         assert channel_messages_v2(invalid_token, channel1['channel_id'], 0)
         
@@ -355,8 +353,8 @@ def test_channel_join_invalid_token():
     clear_v1()
     valid_token1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     valid_token2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
-    invalid_token1 = generate_token(4)
-    invalid_token2 = generate_token(7)
+    invalid_token1 = -1
+    invalid_token2 = -2
     channels_create_v2(valid_token1['token'], "Channel1", True)
     channels_create_v2(valid_token2['token'], "Channel2", True)
     with pytest.raises(AccessError):
