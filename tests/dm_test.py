@@ -392,7 +392,7 @@ def test_dm_messages_valid():
     user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
     user_3 = auth_register_v2('thirdemail@gmail.com', '321bca#@!', 'Bob', 'Jones')
-    dm_1 = dm_create_v1(user_1['token'], [user_2['auth_user_id']])
+    dm_1 = dm_create_v1(user_1['token'], [user_2['auth_user_id'], user_3['auth_user_id']])
     message_1 = "My first message"
     message_2 = "My second message"
     m_1 = message_send_dm_v1(user_1['token'], dm_1['dm_id'], message_1)

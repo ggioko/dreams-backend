@@ -49,12 +49,12 @@ def dm_messages_v1(token, dm_id, start):
     if member_valid == False:
         raise AccessError(description="User is not the a member of the DM")
 
-    # Raise inputError if start is larger than number of messages
-    if start >= len(messages):
-        raise InputError(description="Start value is larger than number of messages")
+    # Raise inputError if start is larger than number of messages or negative
+    if start >= len(messages) or start < 0:
+        raise InputError(description="Invalid start value")
     
     # Loop through messages list, append messages to a list
-    end = 0
+    end = start
     output = []
     while end < 50 and end < len(messages):
         output.append(messages[::-end-1])
