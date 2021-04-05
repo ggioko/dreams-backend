@@ -136,4 +136,56 @@ def test_dm_details_errors():
     r = requests.get(config.url + 'dm/details/v1', params={'token': user_4['token'], 'dm_id': dm_1['dm_id']})
     assert r.status_code == AccessError().code
 
+def test_dm_list():
+    """
+    A simple test to check dm_details works by passing valid information
+    """
+    # Clear data first
+    requests.delete(config.url + 'clear/v1')
+    # Register members
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user_1 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'secondemail@gmail.com',
+    'password' : '321cba#@!', 'name_first':'Fred', 'name_last':'Smith'})
+    user_2 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'thirdemail@gmail.com',
+    'password' : '321bca#@!', 'name_first':'Bob', 'name_last':'Jones'})
+    user_3 = r.json()
+#    r = requests.post(config.url + 'auth/register/v2', json={'email':'fourthemail@gmail.com',
+#    'password' : '321bca#@!', 'name_first':'Billy', 'name_last':'Elliot'})
+#    user_4 = r.json()
     
+    # Get user ids from members with helper function
+    u_id1 = get_token_user_id(user_1['token'])
+    u_id2 = get_token_user_id(user_2['token'])
+    u_id3 = get_token_user_id(user_3['token'])
+
+    r1 = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [u_id2, u_id3]})
+    new_dm = r1.json()
+    r2 = requests.post(config.url + 'dm/create/v1',  json={'token': user_2['token'], 'u_ids': [u_id1]})
+    new_dm_2 = r2.json()
+    r = requests.get(config.url + 'dm/list/v1',  params={'token': user_1['token']})
+    assert r.json() == {
+        'dms': [
+        {
+                'dm_id': new_dm['dm_id'], 
+                'name': new_dm['dm_name']
+        },
+        {
+                'dm_id': new_dm_2['dm_id'],
+                'name': new_dm_2['dm_name']
+        }
+        ],
+    }
+
+
+def test_dm_list_error():
+    """
+    Test for AccessError
+    """
+    # Clear data first
+    requests.delete(config.url + 'clear/v1')
+    # Call dm/list/v1 with an invalid token
+    r = requests.get(config.url + 'dm/list/v1',  params={'token': 'invalid_token'})
+    assert r.status_code == AccessError().code
