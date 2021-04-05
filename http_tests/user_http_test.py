@@ -20,8 +20,8 @@ def test_user_profile():
                              'email': 'validemail@gmail.com',
                              'name_first': 'Hayden',
                              'name_last': 'Everest',
-                             'handle_str': 'HaydenEverest'          
-          }}
+                             'handle_str': 'haydeneverest'          
+    }}
     
     
 def test_user_profile_errors():
@@ -61,8 +61,8 @@ def test_users_all_v1_successful():
     user_list = r.json()
 
     assert user_list['users'] == [
-        {'u_id': 1, 'email': 'validemail@gmail.com', 'name_first': 'Hayden', 'name_last': 'Everest', 'handle_str': 'HaydenEverest'},
-        {'u_id': 2, 'email': 'validemail22@gmail.com', 'name_first': 'Haydennn', 'name_last': 'Everesttt', 'handle_str': 'HaydennnEveresttt'}
+        {'u_id': 1, 'email': 'validemail@gmail.com', 'name_first': 'Hayden', 'name_last': 'Everest', 'handle_str': 'haydeneverest'},
+        {'u_id': 2, 'email': 'validemail22@gmail.com', 'name_first': 'Haydennn', 'name_last': 'Everesttt', 'handle_str': 'haydennneveresttt'}
     ]
 
 def test_users_all_v1_invalid_token():
@@ -87,3 +87,50 @@ def test_users_all_v1_invalid_token():
 
     # Test the case where the token is invalid - Expected fobidden 403 (AccessError)
     assert r.status_code == AccessError().code
+
+def test_user_profile_setemail():
+    '''
+    Register a user and calls user/profile/setemail/v2 to change email successfully.
+    '''
+    # Clear data first.
+    requests.delete(config.url + 'clear/v1')
+    # Register a user
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com', \
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user = r.json()
+    requests.put(config.url + 'user/profile/setemail/v2', json ={'token': user['token'], 'email': 'newemail@gmail.com'})
+    
+    r3 = requests.get(config.url + 'user/profile/v2', json={'token': user['token'], 'u_id': user['auth_user_id']})
+    assert r3.json() == {'user': {
+                             'u_id': user['auth_user_id'],
+                             'email': 'newemail@gmail.com',
+                             'name_first': 'Hayden',
+                             'name_last': 'Everest',
+                             'handle_str': 'haydeneverest'          
+    }}
+
+
+def test_user_profile_setemail_errors():
+    '''
+    Checks the InputError (400) and AccessError (403) cases.
+    '''
+    # Clear data first.
+    requests.delete(config.url + 'clear/v1')
+    # Register some users
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com', \
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user_1 = r.json()
+    requests.post(config.url + 'auth/register/v2', json={'email':'takenemail@gmail.com', \
+    'password' : '123abc!@#', 'name_first':'Fred', 'name_last':'Smith'})
+
+    # Invalid email - Input Error
+    r = requests.put(config.url + 'user/profile/setemail/v2', json ={'token': user_1['token'], 'email': 'invalidemail.com'})
+    assert r.status_code == InputError().code
+    # Taken email - Input Error
+    r = requests.put(config.url + 'user/profile/setemail/v2', json ={'token': user_1['token'], 'email': 'takenemail@gmail.com'})
+    assert r.status_code == InputError().code
+    # Invalid token - Access Error
+    r = requests.put(config.url + 'user/profile/setemail/v2', json ={'token': 'invalid_token', 'email': 'newemail@gmail.com'})
+    assert r.status_code == AccessError().code
+     
+    
