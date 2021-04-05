@@ -188,25 +188,15 @@ def dm_leave_v1(token, dm_id):
         raise AccessError(description="Error authorised user is not a valid member of DM")
 
     # Remove user from all_members
-    reuser = {}
 
     # Loop through list to find the member being removed
     for dm in data['dms']:
         if dm['dm_id'] == dm_id:
             for member in dm['all_members']:
                 if member['u_id'] == user_id:
-                # Copy all the user data for easier access
-                    reuser = {
-                        'u_id': user['u_id'],
-                        'email': user['email'],
-                        'name_first': user['name_first'],
-                        'name_last': user['name_last'],
-                        'handle_str': user['handle_str'],
-                    }
-                    # Remove user
-                    dm['all_members'].remove(reuser)
-                    break
-                
+                    # Copy all the user data for easier access
+                    dm['all_members'].remove(member)
+
     return {}
 
 
