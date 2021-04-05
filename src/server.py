@@ -7,6 +7,7 @@ from src import config
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 from src.channels import channels_create_v2, channels_listall_v2, channels_list_v2
 from src.channel import channel_join_v2, channel_invite_v2, channel_messages_v2, channel_details_v2
+from src.dm import dm_create_v1
 from src.channel import channel_addowner_v1, channel_removeowner_v1
 from src.other import clear_v1
 from src.user import users_all_v1, user_profile_v2, user_profile_setemail_v2
@@ -44,7 +45,7 @@ def echo():
 def channels_create():
     """
     Gets user data from http json and passes it to the
-    channels_register_v2 function
+    channels_create_v2 function
 
     Returns { 'channel_id': channel_id,} on success
 
@@ -297,6 +298,23 @@ def channels_list():
     
     return dumps(data)
 
+@APP.route("/dm/create/v1", methods=['POST'])
+def dm_create():
+    """
+    Gets user data from http json and passes it to the
+    dm_create_v1 function
+
+    Returns { dm_id, dm_name} on success
+
+    """
+    data = request.get_json()
+
+    token = data['token']
+    u_ids = data['u_ids']
+
+    response = dm_create_v1(token, u_ids)
+
+    return dumps (response)    
 @APP.route("/user/profile/setemail/v2", methods = ['PUT'])
 def set_email():
     """
