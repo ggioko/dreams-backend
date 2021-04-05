@@ -7,7 +7,7 @@ from src import config
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 from src.channels import channels_create_v2, channels_listall_v2, channels_list_v2
 from src.channel import channel_join_v2, channel_invite_v2, channel_messages_v2, channel_details_v2
-from src.dm import dm_create_v1, dm_details_v1, dm_remove_v1
+from src.dm import dm_create_v1, dm_details_v1, dm_leave_v1, dm_remove_v1
 from src.channel import channel_addowner_v1, channel_removeowner_v1, channel_leave_v1
 from src.other import clear_v1
 from src.user import users_all_v1, user_profile_v2, user_profile_setemail_v2, user_profile_setname_v2, user_profile_sethandle_v1
@@ -463,6 +463,23 @@ def set_handle():
     save_data()
     
     return dumps({})
+
+@APP.route("/dm/leave/v1", methods=['POST'])
+def dm_leave():
+    """
+    Gets user token and dm_id from http json and passes 
+    it to the dm_leave_v1 function
+    Returns {} on success
+    """ 
+    data = request.get_json()
+    token = data['token']
+    dm_id = data['dm_id']
+
+    response = dm_leave_v1(token, dm_id)
+
+    save_data()
+    
+    return dumps (response)
 
 load_data()  # Gets data from previous server run
 
