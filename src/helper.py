@@ -4,16 +4,20 @@ from src.data import data
 SECRET = 'dorito'
 
 def save_data():
-    global data
+    """
+    Opens a pickle data file and saves current data to it
+    """
     with open('src/data.p', 'wb') as FILE:
         pickle.dump(data, FILE)
 
 
 def load_data():
-    global data
+    """
+    Opens a pickle data file and loads saved data from it
+    and stores it into the data global variable
+    """
     with open('src/data.p', 'rb') as FILE:
         data = pickle.load(FILE)
-
 
 def get_token_user_id(token):
     """

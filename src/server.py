@@ -56,6 +56,7 @@ def channels_create():
     is_public = data['is_public']
 
     response = channels_create_v2(token, name, is_public)
+    
     save_data()
 
     return dumps (response)
@@ -92,7 +93,8 @@ def clear():
 
     save_data()
 
-    return dumps({})
+    return dumps({
+    })
 
 @APP.route("/auth/register/v2", methods=['POST'])
 def register():
@@ -133,6 +135,8 @@ def message_send():
     message = data['message']
 
     data = message_send_v1(token, channel_id, message)
+
+    save_data()
 
     return dumps(data)
     
@@ -295,8 +299,8 @@ def channels_list():
     save_data()
     
     return dumps(data)
-    
+
+load_data()  
 
 if __name__ == "__main__":
-    load_data()
     APP.run(port=config.port) # Do not edit this port
