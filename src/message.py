@@ -169,3 +169,68 @@ def message_edit_v2(token, message_id, message):
         raise AccessError(description="You are not allowed to edit this message")
 
     return {}
+
+
+def message_senddm_v1(token, dm_id, message):
+    """
+    Send a message from authorised user to the DM specified by dm_id.
+    Each message will have its own unique message_id in all of Dreams.
+
+    Arguments:
+        token (string)      - Token
+        dm_id (int)         - identifies the dm to receive the message
+        message (string)    - Message being sent as a string
+
+    Exceptions:
+        InputError  - Message is over 1000 characters
+        AccessError - Invalid token
+                    - User is not a member of the dm they are trying to message.
+
+    Return Value:
+        Returns {} - (empty dict) on success    
+    """
+    # Check if token is valid
+    if check_token_valid(token) == False:
+        raise AccessError(description="Not a valid token")
+        
+    u_id = get_token_user_id(token)
+    # Check if user is a member of the dm
+#    membership = 0
+#    for dm in data['dms']:
+#        if dm['dm_id'] == dm_id:
+#            for member in dm['all_members']:
+#                if u_id == member['u_id']:
+#                    membership = 1 
+#    if membership == 0:
+#        raise AccessError(description="Not a member of this dm")
+        
+    # Check size of message
+    if len(message) > 1000:
+        raise InputError(description="Message must be 1000 characters or less")
+        
+    # Otherwise, send the message to the specified dm
+    global data
+    data['message_count'] += 1
+    message_id = data['message_count']
+    
+    
+    for dm in data['dms']:
+        if dm_id == dm['dm_id']:
+            user_ids = [dm['all_members'][c]['u_id'] for c in range(len(dm['all_members']))]
+            if u_id not in user_ids:
+                raise AccessError(description="Not a member of this dm")
+                
+            dm['messages'].append({
+                'message_id': message_id,
+                'u_id': u_id,
+                'message': message,
+                'time_created': int(time()),
+            })
+       
+    return {'message_id': message_id}
+ 
+    
+
+
+
+
