@@ -7,7 +7,7 @@ from src import config
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 from src.channels import channels_create_v2, channels_listall_v2, channels_list_v2
 from src.channel import channel_join_v2, channel_invite_v2, channel_messages_v2, channel_details_v2
-from src.dm import dm_create_v1
+from src.dm import dm_create_v1, dm_details_v1
 from src.channel import channel_addowner_v1, channel_removeowner_v1
 from src.other import clear_v1
 from src.user import users_all_v1, user_profile_v2, user_profile_setemail_v2
@@ -329,6 +329,20 @@ def set_email():
     user_profile_setemail_v2(token, new_email)
     
     return dumps({})
+
+@APP.route("/dm/details/v1", methods=['GET'])
+def dm_details():
+    """
+    Gets user token and dm_id from http json and pass is to the
+    dm_details_v1 function
+    Returns {name, members} on success
+    """
+    token = request.args.get('token')
+    dm_id = int(request.args.get('dm_id'))
+
+    data = dm_details_v1(token, dm_id)
+    
+    return dumps(data)  
 
 if __name__ == "__main__":
     APP.run(port=config.port) # Do not edit this port
