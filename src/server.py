@@ -7,10 +7,12 @@ from src import config
 from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
 from src.channels import channels_create_v2, channels_listall_v2, channels_list_v2
 from src.channel import channel_join_v2, channel_invite_v2, channel_messages_v2, channel_details_v2
-from src.channel import channel_addowner_v1
+from src.dm import dm_create_v1, dm_details_v1
+from src.channel import channel_addowner_v1, channel_removeowner_v1
 from src.other import clear_v1
-from src.user import users_all_v1, user_profile_v2
-from src.message import message_send_v2, message_remove_v1
+from src.user import users_all_v1, user_profile_v2, user_profile_setemail_v2, user_profile_setname_v2
+from src.message import message_send_v1
+from src.helper import save_data, load_data
 
 
 def defaultHandler(err):
@@ -44,7 +46,7 @@ def echo():
 def channels_create():
     """
     Gets user data from http json and passes it to the
-    channels_register_v2 function
+    channels_create_v2 function
 
     Returns { 'channel_id': channel_id,} on success
 
@@ -56,6 +58,8 @@ def channels_create():
     is_public = data['is_public']
 
     response = channels_create_v2(token, name, is_public)
+    
+    save_data()
 
     return dumps (response)
 
@@ -73,6 +77,8 @@ def login_user():
    
     data = auth_login_v2(email, password)
 
+    save_data()
+
     return dumps({
         'token' : data['token'],
         'auth_user_id' : data['auth_user_id']
@@ -86,6 +92,9 @@ def clear():
     Returns {} on success
     """
     clear_v1()
+
+    save_data()
+
     return dumps({})
 
 @APP.route("/auth/register/v2", methods=['POST'])
@@ -104,6 +113,8 @@ def register():
     name_last = data['name_last']
 
     data = auth_register_v2(email,password,name_first,name_last)
+
+    save_data()
 
     return dumps({
         'token' : data['token'],
@@ -126,6 +137,8 @@ def message_send():
 
     data = message_send_v2(token, channel_id, message)
 
+    save_data()
+
     return dumps(data)
     
 
@@ -139,6 +152,8 @@ def listall():
     """
     token = request.args.get('token')
     data = channels_listall_v2(token)
+
+    save_data()
 
     return dumps(
         data
@@ -156,6 +171,8 @@ def logout_user():
     token = data['token']
     result = auth_logout_v1(token)
 
+    save_data()
+
     return dumps({
         'is_success': result
     })
@@ -172,6 +189,8 @@ def channel_details():
     channel_id = int(request.args.get('channel_id'))
 
     data = channel_details_v2(token, channel_id)
+
+    save_data()
     
     return dumps(
         data
@@ -203,6 +222,22 @@ def channel_add_owner_to_channel():
     channel_addowner_v1(token, channel_id, u_id)
     return dumps({})
 
+@APP.route("/channel/removeowner/v1", methods=["POST"])
+def channel_remove_owner_from_channel():
+    """
+    Gets input data from http json and passes it to channel_removeowner_v1()
+    Returns {} if no errors are raised.
+    """
+    data = request.get_json()
+    token = data['token']
+    channel_id = data['channel_id']
+    u_id = data['u_id']
+    channel_removeowner_v1(token, channel_id, u_id)
+    
+    save_data()
+
+    return dumps({})
+
 @APP.route("/channel/join/v2", methods=["POST"])
 def channel_join():
     """ 
@@ -218,6 +253,8 @@ def channel_join():
  
     channel_join_v2(token, channel_id)
 
+    save_data()
+
     return dumps({})
 
 
@@ -232,10 +269,10 @@ def user_profile():
     token = data['token']
     u_id = data['u_id']
     data = user_profile_v2(token, u_id)
+
+    save_data()
     
-    return dumps(
-        data
-    )
+    return dumps(data)
 
 @APP.route("/channel/messages/v2", methods=["GET"])
 def channel_messages():
@@ -250,6 +287,8 @@ def channel_messages():
     start = int(request.args.get('start'))
 
     response = channel_messages_v2(token, channel_id, start)
+
+    save_data()
 
     return dumps(response)
     
@@ -266,6 +305,8 @@ def users_all():
     
     user_list = users_all_v1(token)
 
+    save_data()
+
     return dumps({
         'users': user_list['users']
     })
@@ -281,6 +322,8 @@ def channels_list():
     data = request.get_json()
     token = data['token']
     data = channels_list_v2(token)
+
+    save_data()
     
     return dumps(data)
 
@@ -301,6 +344,75 @@ def message_remove():
     save_data()
 
     return dumps({})
+
+@APP.route("/dm/create/v1", methods=['POST'])
+def dm_create():
+    """
+    Gets user data from http json and passes it to the
+    dm_create_v1 function
+    Returns { dm_id, dm_name} on success
+    """
+    
+    u_ids = data['u_ids']
+
+    response = dm_create_v1(token, u_ids)
+
+    save_data()
+
+    return dumps (response) 
+
+@APP.route("/user/profile/setemail/v2", methods = ['PUT'])
+def set_email():
+    """
+    Gets user token and email from http json and pass is to the
+    user_profile_setemail_v2 function
+    Returns {} on success
+    """
+    
+    data = request.get_json()
+    token = data['token']
+    new_email = data['email']
+    user_profile_setemail_v2(token, new_email)
+
+    save_data()
+    
+    return dumps({})
+
+@APP.route("/dm/details/v1", methods=['GET'])
+def dm_details():
+    """
+    Gets user token and dm_id from http json and pass is to the
+    dm_details_v1 function
+    Returns {name, members} on success
+    """
+    token = request.args.get('token')
+    dm_id = int(request.args.get('dm_id'))
+
+    data = dm_details_v1(token, dm_id)
+
+    save_data()
+    
+    return dumps(data) 
+
+@APP.route("/user/profile/setname/v2", methods = ['PUT'])
+def set_name():
+    """
+    Gets user token, new first name and last name from http json and passes 
+    it to the user_profile_setname_v2 function
+    Returns {} on success
+    """
+    
+    data = request.get_json()
+    token = data['token']
+    name_first = data['name_first']
+    name_last = data['name_last']
+    user_profile_setname_v2(token, name_first, name_last)
+
+    save_data()
+    
+    return dumps({})
+
+load_data()  # Gets data from previous server run
 
 if __name__ == "__main__":
     APP.run(port=config.port) # Do not edit this port

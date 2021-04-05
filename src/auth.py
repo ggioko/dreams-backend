@@ -197,6 +197,9 @@ def auth_register_v2(email, password, name_first, name_last):
     if not re.match('^[a-zA-Z0-9]+[\\._]?[a-zA-Z0-9]+[@]\\w+[.]\\w{2,3}$',email):
         raise InputError(description='Incorrect email format')
 
+    # Change handle to all lowercase
+    handle = handle.lower()
+
     # Saves user data
     user = {
         'u_id': id,

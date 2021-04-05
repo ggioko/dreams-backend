@@ -43,6 +43,7 @@ data = {
             ],
         },
     ],
+    'dms' : [],
     'active_tokens' : [],
     'message_count' : 0,
 }
