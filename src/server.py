@@ -297,6 +297,9 @@ def message_remove():
     message_id = int(data['message_id'])
 
     message_remove_v1(token, message_id)
+
+    save_data()
+
     return dumps({})
 
 if __name__ == "__main__":

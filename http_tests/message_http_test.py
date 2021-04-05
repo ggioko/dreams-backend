@@ -132,7 +132,6 @@ def test_http_message_remove_invalid_message_id():
     channel = r.json()
     r = requests.post(config.url + 'message/send/v2', json={'token': id['token'], \
         'channel_id' : channel['channel_id'], 'message' : "my first message"})
-    message = r.json()
     r = requests.delete(config.url + 'message/remove/v1', json={'token': id['token'], \
         'message_id' : 145234234234234242})
     
