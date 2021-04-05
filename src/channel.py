@@ -80,9 +80,7 @@ def channel_invite_v2(token, channel_id, u_id):
             }
 
     # Added user to all members for channel
-    for channel in data['channels']:
-        if channel['id'] == channel_id:
-            channel['all_members'].append(reuser)
+    channel['all_members'].append(reuser)
     
     return {
     }
@@ -139,7 +137,7 @@ def channel_addowner_v1(token, channel_id, u_id):
     # Checks that inviter is an owner member
     authUserMatch = False
     for user in channel['owner_members']:
-        if str(user['u_id']) == str(auth_user_id):
+        if user['u_id'] == auth_user_id:
             authUserMatch = True
             break
     if authUserMatch == False:
@@ -150,7 +148,7 @@ def channel_addowner_v1(token, channel_id, u_id):
             userMatch = True
             break
     if userMatch == True:
-        raise AccessError(description='New owner already an owner of channel')
+        raise InputError(description='New owner already an owner of channel')
     
 
     # Add user to channel
@@ -168,13 +166,99 @@ def channel_addowner_v1(token, channel_id, u_id):
             }
 
     # Added user to channel 
-    for channel in data['channels']:
-        if channel['id'] == channel_id:
-            channel['owner_members'].append(reuser)
-            channel['all_members'].append(reuser)
+    channel['owner_members'].append(reuser)
+    channel['all_members'].append(reuser)
     
     return {
     }
+
+
+def channel_removeowner_v1(token, channel_id, u_id):
+    '''
+    channel_removeowner removes a user as an owner of a channel
+
+    Arguments:
+        token (str)        - The token of an existing owner of the channel
+        channel_id (int)   - The ID of the channel that the ownership is to be revoked from
+        u_id (int)         - The ID of the owner soon to have reduced privileges
+
+    Exceptions:
+        InputError  - Occurs when channel_id does not refer to a valid channel
+					  Occurs when user with user id u_id is not an owner of the channel
+					  Occurs when the user is currently the only owner
+        AccessError - Occurs when the authorised user is not an owner of the **Dreams**, or an owner of this channel
+
+    Return Value:
+        Returns an empty dictionary when exceptions are not raised
+'''
+    # print (token, str(channel_id), str(u_id))
+    # Checks if the channel provided is a channel in the list
+    foundChannel = {}
+    for channel in data['channels']:
+        if channel['id'] == channel_id:
+            foundChannel = channel
+            break
+    if foundChannel == {}:
+        raise InputError(description='Invalid channel ID provided')
+    # print("got past finding the channel")
+
+    # Checks to see if remover is logged in
+    token_active = False
+    active_tokens = data['active_tokens']
+    # Search through active tokens
+    for x in active_tokens:
+        # print("x = " + x)
+        # print("token = " + token)
+        if x == token:
+            token_active = True
+            break
+    if (token_active == False):
+        raise AccessError(description='Token invalid, user not logged in')
+    # print("got past is auth_user logged in check")
+    
+    # Gets ID of remover
+    decoded_token = jwt.decode(token, SECRET, algorithms=['HS256'])
+    auth_user_id = decoded_token['u_id']
+
+    # Checks that remover is an owner member
+    authUserMatch = False
+    for user in channel['owner_members']:
+        if user['u_id'] == auth_user_id:
+            authUserMatch = True
+            break
+    if authUserMatch == False:
+        raise AccessError(description='Authorised user not a channel owner')
+    # print("Got past authusermatch")
+    userMatch = False
+    for user in channel['owner_members']:
+        if user['u_id'] == u_id:
+            userMatch = True
+            break
+    if userMatch == False:
+        raise InputError(description='Owner to remove is not currently an owner')
+    # print("Got past person to remove not an owner")
+    
+    if len(channel['owner_members']) < 2:
+        raise InputError(description='Owner to remove is the only owner of the channel')
+    
+    # Remove user form owner_members
+    reuser = {}
+    # Loop until u_id match
+    for user in data['users']:
+        if u_id == user['u_id']:
+            # Copy all the user data for easier access
+            reuser = {
+                'u_id': user['u_id'],
+                'email': user['email'],
+                'name_first': user['name_first'],
+                'name_last': user['name_last'],
+                'handle_str': user['handle_str'],
+            }
+    channel['owner_members'].remove(reuser)
+
+    return {
+    }
+
 
 def channel_details_v1(auth_user_id, channel_id):
     '''
@@ -644,13 +728,3 @@ def channel_join_v2(token, channel_id):
         raise AccessError(description='The channel you are trying to join is private')
     
     return {}
-
-# Not required for iteration 1
-# def channel_addowner_v1(auth_user_id, channel_id, u_id):
-#     return {
-#     }
-
-# Not required for iteration 1
-# def channel_removeowner_v1(auth_user_id, channel_id, u_id):
-#     return {
-#     }

@@ -159,10 +159,57 @@ def test_channel_addowner():
     test_4 = requests.post(config.url + 'channel/addowner/v1', json={'token': rego_1['token'],\
     'channel_id': new_channel['channel_id'], 'u_id':rego_2['auth_user_id']})
     assert test_4.status_code == 200
-    # Correct repeat information - Access error
+    # Correct repeat information - Input error
     test_5 = requests.post(config.url + 'channel/addowner/v1', json={'token': rego_1['token'],\
     'channel_id': new_channel['channel_id'], 'u_id':rego_2['auth_user_id']})
-    assert test_5.status_code == AccessError().code
+    assert test_5.status_code == InputError().code
+
+def test_channel_removeowner():
+    """
+    Tests to see if channel_addowner_v1 is working as intended
+    """
+    # Clear register:
+    r = requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'madladadmin@gmail.com',\
+    'password':'123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    rego_1 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'peasantuser@gmail.com',\
+    'password':'diffpassword!', 'name_first':'Everest', 'name_last':'Hayden'})
+    rego_2 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail3@gmail.com',\
+    'password':'123abcd!@#', 'name_first':'Haydeen', 'name_last':'Everesst'})
+    rego_3 = r.json()
+    r = requests.post(config.url + 'channels/create/v2', json={'token':rego_1['token'],\
+    'name':'dankmemechannel', 'is_public':False})
+    new_channel = r.json()
+    # Successful addition
+    requests.post(config.url + 'channel/addowner/v1', json={'token': rego_1['token'],\
+    'channel_id': new_channel['channel_id'], 'u_id':rego_2['auth_user_id']})
+
+    # invalid channel id - Input error
+    test_1 = requests.post(config.url + 'channel/removeowner/v1', json={'token': rego_1['token'],\
+    'channel_id': new_channel['channel_id'] + 1, 'u_id':rego_2['auth_user_id']})
+    assert test_1.status_code == InputError().code
+
+    # invalid to be removed owner - Input error
+    test_2 = requests.post(config.url + 'channel/removeowner/v1', json={'token': rego_1['token'],\
+    'channel_id': new_channel['channel_id'], 'u_id':rego_3['auth_user_id']})
+    assert test_2.status_code == InputError().code
+
+    # Unauthorised person removing - Access error
+    test_3 = requests.post(config.url + 'channel/removeowner/v1', json={'token': rego_3['token'],\
+    'channel_id': new_channel['channel_id'], 'u_id':rego_2['auth_user_id']})
+    assert test_3.status_code == AccessError().code
+
+    # Correct removal - success
+    test_3 = requests.post(config.url + 'channel/removeowner/v1', json={'token': rego_1['token'],\
+    'channel_id': new_channel['channel_id'], 'u_id':rego_2['auth_user_id']})
+    assert test_3.status_code == 200
+
+    # Only one owner left in channel - Input Error
+    test_4 = requests.post(config.url + 'channel/removeowner/v1', json={'token': rego_1['token'],\
+    'channel_id': new_channel['channel_id'], 'u_id':rego_1['auth_user_id']})
+    assert test_4.status_code == InputError().code
 
 def test_channel_join_errors():
     """
