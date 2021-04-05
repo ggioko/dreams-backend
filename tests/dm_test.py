@@ -5,6 +5,7 @@ from src.dm import dm_create_v1, dm_details_v1, dm_remove_v1, dm_invite_v1, dm_l
     dm_messages_v1
 from src.auth import auth_register_v2
 from src.other import clear_v1
+from src.message import message_senddm_v1
 
 
 def test_dm_details():
@@ -396,8 +397,8 @@ def test_dm_messages_valid():
     dm_1 = dm_create_v1(user_1['token'], [user_2['auth_user_id'], user_3['auth_user_id']])
     message_1 = "My first message"
     message_2 = "My second message"
-    m_1 = message_send_dm_v1(user_1['token'], dm_1['dm_id'], message_1)
-    m_2 = message_send_dm_v1(user_2['token'], dm_1['dm_id'], message_2)
+    m_1 = message_senddm_v1(user_1['token'], dm_1['dm_id'], message_1)
+    m_2 = message_senddm_v1(user_2['token'], dm_1['dm_id'], message_2)
     output = dm_messages_v1(user_3['token'], dm_1['dm_id'], 0)
     assert output['messages'][1]['message_id'] == m_1['message_id']
     assert output['messages'][1]['u_id'] == user_1['auth_user_id']
