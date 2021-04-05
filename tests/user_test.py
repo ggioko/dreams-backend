@@ -167,6 +167,39 @@ def test_setname():
                              'name_last': 'Smith',
                              'handle_str': 'haydeneverest'          
     }}
+
+def test_setname_channel_members():    
+    """
+    Pass in a user with valid token and new name.
+    If they are a member of a channel, their info in the channel should also be updated.
+    """ 
+    clear_v1()
+    user = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_profile_setname_v2(user['token'], 'Fred', 'Smith')
+    channel_1 = channels_create_v2(user['token'], 'Channel1', True)
+    channel_info = channel_details_v2(user['token'], channel_1['channel_id'])
+    assert channel_info == {
+        'name': 'Channel1',
+        'owner_members': [
+            {
+                'u_id': 1,
+                'email': 'validemail@gmail.com',
+                'name_first': 'Fred',
+                'name_last': 'Smith',
+                'handle_str': 'haydeneverest',
+            }
+        ],
+        'all_members': [
+            {
+                'u_id': 1,
+                'email': 'validemail@gmail.com',
+                'name_first': 'Fred',
+                'name_last': 'Smith',
+                'handle_str': 'haydeneverest',
+            }
+        ],
+        
+    }
     
 
 def test_setname_invalid_firstname():
@@ -215,6 +248,39 @@ def test_sethandle():
                              'name_last': 'Everest',
                              'handle_str': 'newhandle'          
     }}
+    
+def test_sethandle_channel_members():    
+    """
+    Pass in a user with valid token and new handle.
+    If they are a member of a channel, their info in the channel should also be updated.
+    """ 
+    clear_v1()
+    user = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_profile_sethandle_v1(user['token'], 'newhandle')
+    channel_1 = channels_create_v2(user['token'], 'Channel1', True)
+    channel_info = channel_details_v2(user['token'], channel_1['channel_id'])
+    assert channel_info == {
+        'name': 'Channel1',
+        'owner_members': [
+            {
+                'u_id': 1,
+                'email': 'validemail@gmail.com',
+                'name_first': 'Hayden',
+                'name_last': 'Everest',
+                'handle_str': 'newhandle',
+            }
+        ],
+        'all_members': [
+            {
+                'u_id': 1,
+                'email': 'validemail@gmail.com',
+                'name_first': 'Hayden',
+                'name_last': 'Everest',
+                'handle_str': 'newhandle',
+            }
+        ],
+        
+    }
     
 def test_sethandle_invalid_token():
     """
