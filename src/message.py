@@ -1,6 +1,7 @@
 from src.error import InputError, AccessError
 from src.data import data
 from src.helper import get_token_user_id, check_token_valid
+from dm import dm_list_v1
 from time import time
 
 def message_send_v2(token, channel_id, message):
@@ -191,40 +192,38 @@ def message_share_v1(token, og_message_id, message, channel_id, dm_id):
     # If message is over 1000 characters, raise InputError
     if len(message) > 1000:
         raise InputError(description="Message is more than 1000 characters")
-
-    # If the new message is an empty string, the message is deleted.
-    if len(message) == 0:
-        message_remove_v1(token, message_id)
-        return {}
     
-    edited_message = message
-
     user_id = get_token_user_id(token)
 
-    # Checks if message_id is still valid (not been removed or has even been created yet)
-    # Checks if user is allowed to delete the message
     message_found = False
     auth = False
+    copy_of_message = ''
 
+    # Loop through channels to get a copy of the og_message
+    # So check user is in the channel
     for channel in data['channels']:
         for message in channel['messages']:
-            if message_id == message['message_id']:
+            if og_message_id == message['message_id']:
                 message_found = True
-                owners = channel['owner_members']
-                # Check if the user trying to delete is a channel owner
-                for owner in owners:
-                    if user_id == owner['u_id']:
+                members = channel['all_members']
+                # Check if the user trying to share is in the channel
+                for member in members:
+                    if user_id == member['u_id']:
                         auth = True
-                        message['message'] = edited_message
-                    # Check if the user trying to delete is the one who sent it
-                    elif user_id == message['u_id']:
-                        auth = True
-                        message['message'] = edited_message
-    
+                        copy_of_message = message['message']
+
+
+
+    # If message is not found either channels or dms raises InputError
+    # If message is found but user is not in chat, raises AccessError
     if message_found == False:
         raise InputError(description="Message_id not found")
     
     if auth == False:
         raise AccessError(description="You are not allowed to edit this message")
+
+
+        list_dms = dm_list_v1(token)
+    for dm in list_dms
 
     return {}
