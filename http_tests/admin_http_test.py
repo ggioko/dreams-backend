@@ -1,5 +1,8 @@
-# Test commented out due to utilisng helper function. Could not be used 
-
+# HTTP tests theoretically written, but not working due to reliance on a helper function.
+# The helper function was necessary in this case as there is no inbuilt way to make a new
+# owner of dreams without already having an existing owner's token, hence the data has to
+# be modified directly. This works (although is not black box) in standard pytest, however
+# this data is not passed correctly when run through HTTP.
 
 import pytest
 # import requests
@@ -23,19 +26,13 @@ def test_userpermission_change():
 #     r = requests.post(config.url + 'auth/register/v2', json={'email':'peasantuser@gmail.com',\
 #     'password':'diffpassword!', 'name_first':'Everest', 'name_last':'Hayden'})
 #     rego_2 = r.json()
-#     # print(data)
     
 #     # Tests with a non-owner requesting a permission change
 #     test_1 = requests.post(config.url + 'admin/userpermission/change/v1', json={ \
 #     'token': rego_1['token'], 'u_id':rego_2['auth_user_id'], 'permission_id': 1})
 #     assert test_1.status_code == AccessError().code
     
-#     print("auth_user_id = " + str(rego_1['auth_user_id']))
-
-#     # Call helper function to make user1 dreams owner
-#     # Not a black box test, but no inbuilt functions allow for this to happen, so data
-#     # must be modified directly
-#     # If in a production system, the first owner would manually set thir permissions_id
+#     # Call helper function to make user1 dreams owner, read comment at top of file for info
 #     no_check_dreams_change_permission(rego_1['auth_user_id'], 1)
 
 #     # Tests a non-valid user being invited

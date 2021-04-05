@@ -2,7 +2,6 @@ import pytest
 
 from src.auth import auth_register_v2
 from src.admin import userpermission_change_v1
-from src.data import data
 from src.helper import no_check_dreams_change_permission
 
 from src.error import InputError, AccessError
@@ -17,9 +16,10 @@ def test_admin_userpermission_change_success():
     user2 = auth_register_v2('validemail2@gmail.com', '1234abc!@#', 'Haydenn', 'Everestt')
     
     # Call helper function to make user1 dreams owner
-    # Not a black box test, but no inbuilt functions allow for this to happen, so data
-    # must be modified directly
-    # If in a production system, the first owner would manually set thir permissions_id
+    # Not a black box test, but no inbuilt functions allow for a dreams owner to be set without
+    # there already being a dreams owner to make that change, so the data must be modified 
+    # directly. This is done through a helper function in this case. If the system was deployed,
+    # the owner would manually assign themselves this in the data structure before deployment.
     no_check_dreams_change_permission(user1['auth_user_id'], 1)
 
     assert userpermission_change_v1(user1['token'], user2['auth_user_id'], 1) == {}
@@ -32,9 +32,10 @@ def test_admin_userpermission_change_invalid_user():
     user1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     
     # Call helper function to make user1 dreams owner
-    # Not a black box test, but no inbuilt functions allow for this to happen, so data
-    # must be modified directly
-    # If in a production system, the first owner would manually set thir permissions_id
+    # Not a black box test, but no inbuilt functions allow for a dreams owner to be set without
+    # there already being a dreams owner to make that change, so the data must be modified 
+    # directly. This is done through a helper function in this case. If the system was deployed,
+    # the owner would manually assign themselves this in the data structure before deployment.
     no_check_dreams_change_permission(user1['auth_user_id'], 1)
 
     with pytest.raises(InputError):
@@ -49,9 +50,10 @@ def test_admin_userpermission_change_invalid_permission():
     user2 = auth_register_v2('validemail2@gmail.com', '1234abc!@#', 'Haydenn', 'Everestt')
 
     # Call helper function to make user1 dreams owner
-    # Not a black box test, but no inbuilt functions allow for this to happen, so data
-    # must be modified directly
-    # If in a production system, the first owner would manually set thir permissions_id
+    # Not a black box test, but no inbuilt functions allow for a dreams owner to be set without
+    # there already being a dreams owner to make that change, so the data must be modified 
+    # directly. This is done through a helper function in this case. If the system was deployed,
+    # the owner would manually assign themselves this in the data structure before deployment.
     no_check_dreams_change_permission(user1['auth_user_id'], 1)
 
     with pytest.raises(InputError):
