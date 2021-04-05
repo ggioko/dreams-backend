@@ -133,4 +133,45 @@ def test_user_profile_setemail_errors():
     r = requests.put(config.url + 'user/profile/setemail/v2', json ={'token': 'invalid_token', 'email': 'newemail@gmail.com'})
     assert r.status_code == AccessError().code
      
+def test_user_profile_setname():
+    '''
+    Register a user and calls user/profile/setname/v2 to change name successfully.
+    '''
+    # Clear data first.
+    requests.delete(config.url + 'clear/v1')
+    # Register a user
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com', \
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user = r.json()
+    requests.put(config.url + 'user/profile/setname/v2', json ={'token': user['token'], 'name_first': 'Fred', 'name_last': 'Smith'})
+    
+    r3 = requests.get(config.url + 'user/profile/v2', json={'token': user['token'], 'u_id': user['auth_user_id']})
+    assert r3.json() == {'user': {
+                             'u_id': user['auth_user_id'],
+                             'email': 'validemail@gmail.com',
+                             'name_first': 'Fred',
+                             'name_last': 'Smith',
+                             'handle_str': 'haydeneverest'          
+    }}
+
+def test_user_profile_setname_errors():
+    '''
+    Checks the InputError (400) and AccessError (403) cases.
+    '''
+    # Clear data first.
+    requests.delete(config.url + 'clear/v1')
+    # Register some users
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com', \
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user = r.json()
+
+    # Invalid token - Access Error
+    r = requests.put(config.url + 'user/profile/setname/v2', json ={'token': 'invalid_token', 'name_first': 'Fred', 'name_last': 'Smith'})
+    assert r.status_code == AccessError().code     
+    # Invalid name_first - Input Error
+    r = requests.put(config.url + 'user/profile/setname/v2', json ={'token': user['token'], 'name_first': 'asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2', 'name_last': 'Smith'})
+    assert r.status_code == InputError().code 
+    # Invalid name_last - Input Error
+    r = requests.put(config.url + 'user/profile/setname/v2', json ={'token': user['token'], 'name_first': 'Fred', 'name_last': 'asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2asdvsdwu8d2'})
+    assert r.status_code == InputError().code 
     
