@@ -80,7 +80,10 @@ def check_token_valid(token):
     return False
 
 def no_check_dreams_change_permission(u_id, permission_id):
+    print(data['users'])
+    
     for user in data['users']:
+        # print(user)
         if user['u_id'] == u_id:
             user['permission_id'] = permission_id
             break

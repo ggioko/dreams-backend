@@ -28,9 +28,9 @@ def userpermission_change_v1(token, u_id, permission_id):
 
     user_exists = False
     for user in data['users']:
+        print(user['u_id'])
         if user['u_id'] == u_id:
-            if user['permission_id'] == 1:
-                user_exists = True
+            user_exists = True
             break
     if user_exists == False:
         raise InputError(description='Person to change permssions of does not exist')
