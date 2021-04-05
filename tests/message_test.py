@@ -1,11 +1,11 @@
 import pytest
-from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
+
+from src.auth import auth_register_v2, auth_logout_v1
 from src.channels import channels_create_v2
 from src.channel import channel_messages_v2, channel_join_v2
-from src.message import message_send_v2, message_remove_v1
+from src.message import message_send_v2, message_remove_v1, message_edit_v2
 from src.other import clear_v1
 from src.error import InputError, AccessError
-from src.helper import generate_token
 
 def test_message_send_valid():
     '''
@@ -129,3 +129,116 @@ def test_message_remove_invalid_user_trying_to_delete():
     result1 = channel_messages_v2(id_2['token'], channel_1['channel_id'], 0)
     with pytest.raises(AccessError):
         assert message_remove_v1(id_3['token'], result1['messages'][0]['message_id'])
+
+def test_message_edit_valid_owner():
+    '''
+    Given a message, message id and token, checks if the message in message_id
+    is replaced with the given message. 
+    Test for channel owner
+    '''
+    clear_v1()
+    id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    channel_1 = channels_create_v2(id_1['token'], "MyChannel", True)
+    message = "hello this is my new channel"
+    edit = "This is an edited message"
+    message_send_v2(id_1['token'], channel_1['channel_id'], message)
+    result1 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
+    assert result1['messages'][0]['message'] == message
+    message_edit_v2(id_1['token'], result1['messages'][0]['message_id'], edit)
+    result2 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
+    assert result2['messages'][0]['message'] == edit
+
+def test_message_edit_valid_sender():
+    '''
+    Given a message, message id and token, checks if the message in message_id
+    is replaced with the given message. 
+    Test for channel sender but not a owner
+    '''
+    clear_v1()
+    id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    id_2 = auth_register_v2('validemail2@gmail.com', '123abc2!@#', 'Haydenn', 'Everestt')
+    channel_1 = channels_create_v2(id_1['token'], "MyChannel", True)
+    channels_create_v2(id_2['token'], "MyChannel2", True)
+    message = "hello this is my new channel"
+    edit = "This is an edited message"
+    channel_join_v2(id_2['token'], channel_1['channel_id'])
+    message_send_v2(id_2['token'], channel_1['channel_id'], message)
+    result1 = channel_messages_v2(id_2['token'], channel_1['channel_id'], 0)
+    assert result1['messages'][0]['message'] == message
+    message_edit_v2(id_2['token'], result1['messages'][0]['message_id'], edit)
+    result2 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
+    assert result2['messages'][0]['message'] == edit
+
+def test_message_edit_invalid_editor():
+    '''
+    Given a message, message id and token, checks if an AccessError is raised
+    as a person who is not the channel owner or sender tries to edit the message.
+    '''
+    clear_v1()
+    id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    id_2 = auth_register_v2('validemail2@gmail.com', '123abc2!@#', 'Haydenn', 'Everestt')
+    id_3 = auth_register_v2('validemail3@gmail.com', '1233abc2!@#', 'Haydennn', 'Everesttt')
+    channel_1 = channels_create_v2(id_1['token'], "MyChannel", True)
+    message = "hello this is my new channel"
+    edit = "This is an edited message"
+    channel_join_v2(id_2['token'], channel_1['channel_id'])
+    channel_join_v2(id_3['token'], channel_1['channel_id'])
+    message_send_v2(id_2['token'], channel_1['channel_id'], message)
+    result1 = channel_messages_v2(id_2['token'], channel_1['channel_id'], 0)
+    assert result1['messages'][0]['message'] == message
+    with pytest.raises(AccessError):
+        message_edit_v2(id_3['token'], result1['messages'][0]['message_id'], edit)
+
+def test_message_edit_invalid_message_length():
+    '''
+    Given a message, message id and token, checks if an InputError is rasied
+    as the message that is to replace the og message longer than 1000 characters
+    '''
+    clear_v1()
+    id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    channel_1 = channels_create_v2(id_1['token'], "MyChannel", True)
+    message = "hello this is my new channel"
+
+    edit = "a"
+    for i in range(1001):
+        edit += f" {i}"
+
+    message_send_v2(id_1['token'], channel_1['channel_id'], message)
+    result1 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
+    assert result1['messages'][0]['message'] == message
+    with pytest.raises(InputError):
+        message_edit_v2(id_1['token'], result1['messages'][0]['message_id'], edit)
+
+def test_message_edit_invalid_message_id():
+    '''
+    Given a message, message id and token, checks an InputError is raised 
+    as the message_id is invalid - either already been delted or not in list of messages
+    '''
+    clear_v1()
+    id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    channel_1 = channels_create_v2(id_1['token'], "MyChannel", True)
+    message = "hello this is my new channel"
+    edit = "This is an edited message"
+    message_send_v2(id_1['token'], channel_1['channel_id'], message)
+    result1 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
+    assert result1['messages'][0]['message'] == message
+    message_remove_v1(id_1['token'], result1['messages'][0]['message_id'])
+    with pytest.raises(InputError):
+        message_edit_v2(id_1['token'], result1['messages'][0]['message_id'], edit)
+
+def test_message_edit_invalid_token():
+    '''
+    Given a message, message id and token, checks and AccessError is raised
+    as the token is invalid
+    '''
+    clear_v1()
+    id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    channel_1 = channels_create_v2(id_1['token'], "MyChannel", True)
+    message = "hello this is my new channel"
+    edit = "This is an edited message"
+    message_send_v2(id_1['token'], channel_1['channel_id'], message)
+    result1 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
+    assert result1['messages'][0]['message'] == message
+    auth_logout_v1(id_1['token'])
+    with pytest.raises(AccessError):
+        message_edit_v2(id_1['token'], result1['messages'][0]['message_id'], edit)

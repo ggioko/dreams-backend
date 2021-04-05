@@ -1,7 +1,6 @@
-#from src.helper import get_token_user_id
 from src.error import InputError, AccessError
 from src.data import data
-from src.helper import check_token_valid, email_in_use, get_token_user_id
+from src.helper import check_token_valid, email_in_use, get_token_user_id, get_user_data
 import re
 
 def users_all_v1(token):
@@ -59,12 +58,9 @@ def user_profile_v2(token, u_id):
     if user_valid == 0:
         raise InputError(description = "InputError - invalid u_id")
 
-    token_valid = 0
-    for user in data['active_tokens']:
-        if user == token:
-            token_valid = 1
-    if token_valid == 0:
-        raise AccessError(description = "AccessError - invalid token")
+    # Check if token is valid using helper
+    if check_token_valid(token) == False:
+        raise AccessError(description = 'Invalid token')
     # Create empty dictionary with key 'user'
     user_info = {}
     user_info['user'] = {}
@@ -81,13 +77,9 @@ def user_profile_v2(token, u_id):
 
 
 def user_profile_setname_v2(token, name_first, name_last):
-    # Check if token is valid
-    token_valid = 0
-    for user in data['active_tokens']:
-        if user == token:
-            token_valid = 1
-    if token_valid == 0:
-        raise AccessError(description = "AccessError - invalid token")
+    # Check if token is valid using helper
+    if check_token_valid(token) == False:
+        raise AccessError(description='Invalid token')
     # Name size check
     if len(name_first) < 1 or len(name_first) > 50:
         raise InputError('First name needs to be between 1 and 50 characters')
@@ -120,13 +112,9 @@ def user_profile_setemail_v2(token, email):
     # Check if email is in use
     if email_in_use(email) == True:
         raise InputError('InputError - Email is already in use')
-    # Check if token is valid
-    token_valid = 0
-    for user in data['active_tokens']:
-        if user == token:
-            token_valid = 1
-    if token_valid == 0:
-        raise AccessError(description = "AccessError - invalid token")
+    # Check if token is valid using helper
+    if check_token_valid(token) == False:
+        raise AccessError(description = 'Invalid token')
     
     # Find current user in data register and change email.
     u_id = get_token_user_id(token)
@@ -144,6 +132,31 @@ def user_profile_setemail_v2(token, email):
     return {
     }
 
-def user_profile_sethandle_v2(auth_user_id, handle_str):
+def user_profile_sethandle_v1(token, handle_str):
+    # Check if token is valid using helper
+    if check_token_valid(token) == False:
+        raise AccessError(description = 'Invalid token')
+    # Check to see if handle is between 3 and 20 chars inclusive
+    if len(handle_str) < 3 or len(handle_str) > 20:
+        raise InputError(description = "handle_str is not between 3 and 20 chars inclusive")
+    # Check to see if handle is used already
+    handles = get_user_data('handle_str')
+    if handle_str in handles:
+        raise InputError(description = "handle_str is already in use")
+    
+    # Otherwise, find user in data register and change handle to new handle_str.
+    u_id = get_token_user_id(token)
+    for user in data['users']:
+        if user['u_id'] == u_id:
+            user['handle_str'] = handle_str
+    for channel in data['channels']:
+        for user in channel['owner_members']:
+            if user['u_id'] == u_id:
+                user['handle_str'] = handle_str
+        for user in channel['all_members']:
+            if user['u_id'] == u_id:
+                user['handle_str'] = handle_str
+    
     return {
     }
+    
