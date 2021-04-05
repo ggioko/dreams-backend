@@ -35,3 +35,7 @@
 
 ### channel_details
 * In testing, channels_create and channel_join are working correctly
+
+### dm_leave
+* If owner leaves the DM, the owner still remain as the owner (creator of the DM), 
+  just not a member of the DM anymore and cannot use the DM or access it unless they rejoin. 
