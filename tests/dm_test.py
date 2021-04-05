@@ -151,9 +151,9 @@ def test_dm_list_success():
     user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
     user_3 = auth_register_v2('thirdemail@gmail.com', '321bca#@!', 'Bob', 'Jones')
-    u_id1 = get_token_user_id(user_1['token'])
-    u_id2 = get_token_user_id(user_2['token'])
-    u_id3 = get_token_user_id(user_3['token'])
+    u_id1 = user_1['auth_user_id']
+    u_id2 = user_2['auth_user_id']
+    u_id3 = user_3['auth_user_id']
     new_dm = dm_create_v1(user_1['token'], [u_id2, u_id3])
     new_dm_2 = dm_create_v1(user_2['token'], [u_id1])
     dms = dm_list_v1(user_1['token'])
