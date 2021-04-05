@@ -136,4 +136,61 @@ def test_dm_details_errors():
     r = requests.get(config.url + 'dm/details/v1', params={'token': user_4['token'], 'dm_id': dm_1['dm_id']})
     assert r.status_code == AccessError().code
 
+def test_dm_remove_http_valid():
+    """
+    Testings dm remove by making sure the dm_id is invalid in dm_details
+    """
+    requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user_1 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'secondemail@gmail.com',
+    'password' : '321cba#@!', 'name_first':'Fred', 'name_last':'Smith'})
+    user_2 = r.json()
+
+    r = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [user_2['auth_user_id']]})
+    dm_1 = r.json()
+
+    # Checks if DM exists
+    r = requests.get(config.url + 'dm/details/v1', params={'token': user_1['token'], 'dm_id': dm_1['dm_id']})
+    assert r.status_code == 200
+
+    requests.delete(config.url + 'dm/remove/v1',  json={'token': user_1['token'], 'dm_id': dm_1['dm_id']})
+
+    # Checks if DM no longer exists
+    r = requests.get(config.url + 'dm/details/v1', params={'token': user_1['token'], 'dm_id': dm_1['dm_id']})
+    assert r.status_code == InputError().code
+
+def test_dm_remove_http_invalid_dm_id():
+    """
+    Testings dm remove input error by passing in an invalid dm_id
+    """
+    requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user_1 = r.json()
+
+    r = requests.delete(config.url + 'dm/remove/v1',  json={'token': user_1['token'], 'dm_id': -1})
+    assert r.status_code == InputError().code
+
+def test_dm_remove_http_non_owner():
+    """
+    Testings dm remove input error by passing non owner token
+    """
+    requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user_1 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'secondemail@gmail.com',
+    'password' : '321cba#@!', 'name_first':'Fred', 'name_last':'Smith'})
+    user_2 = r.json()
+
+    r = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [user_2['auth_user_id']]})
+    dm_1 = r.json()
+
+    r = requests.delete(config.url + 'dm/remove/v1',  json={'token': user_2['token'], 'dm_id': dm_1['dm_id']})
+    assert r.status_code == AccessError().code
+
+    
+
     

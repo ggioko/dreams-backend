@@ -122,7 +122,7 @@ def test_dm_remove_valid():
     clear_v1()
     user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
-    dm = dm_create_v1(user_1['token'], [user_1['auth_user_id'],user_2['auth_user_id']])
+    dm = dm_create_v1(user_1['token'], [user_2['auth_user_id']])
     assert dm_details_v1(user_1['token'], dm['dm_id'])
     dm_remove_v1(user_1['token'], dm['dm_id'])
     with pytest.raises(InputError):
@@ -144,6 +144,6 @@ def test_dm_remove_non_creator():
     clear_v1()
     user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
-    dm = dm_create_v1(user_1['token'], [user_1['auth_user_id'],user_2['auth_user_id']])
+    dm = dm_create_v1(user_1['token'], [user_2['auth_user_id']])
     with pytest.raises(AccessError):
         assert dm_remove_v1(user_2['token'], dm['dm_id'])
