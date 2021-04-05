@@ -4,7 +4,7 @@ from src.error import InputError, AccessError
 #from src.data import data
 from src.auth import auth_register_v2
 from src.other import clear_v1
-from src.user import users_all_v1, user_profile_v2, user_profile_setemail_v2
+from src.user import users_all_v1, user_profile_v2, user_profile_setemail_v2, user_profile_sethandle_v2
 from src.helper import generate_token
 
 def test_users_all_v1_successful():
@@ -114,3 +114,52 @@ def test_setemail_invalid_token():
     auth_register_v2('validemail0@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     with pytest.raises(AccessError):                        
         assert user_profile_setemail_v2('invalid_token', 'newemail@gmail.com')
+
+def test_sethandle():
+    """
+    Pass in a user with valid token and new handle.
+    The handle in their data store is now replaced with this new handle.
+    """
+    clear_v1()
+    user = auth_register_v2('validemail0@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_profile_sethandle_v2(user['token'], 'newhandle')
+    user_info  = user_profile_v2(user['token'], user['auth_user_id'])
+    assert user_info == {'user': {
+                             'u_id': user['auth_user_id'],
+                             'email': 'newemail@gmail.com',
+                             'name_first': 'Hayden',
+                             'name_last': 'Everest',
+                             'handle_str': 'newhandle'          
+    }}
+    
+
+def test_sethandle_invalid_token():
+    """
+    Pass in a user with invalid token and valid handle.
+    Should return AccessError
+    """
+    clear_v1()
+    auth_register_v2('validemail0@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    with pytest.raises(AccessError):                        
+        assert user_profile_sethandle_v2('invalid_token', 'newhandle')
+
+def test_sethandle_invalid_handle():
+    """
+    Pass in a user with valid token but invalid handle.
+    Should return InputError
+    """
+    clear_v1()
+    user = auth_register_v2('validemail0@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    with pytest.raises(InputError):
+        assert user_profile_sethandle_v2(user['token'], 'thishandleislongerthantwentycharacters')
+
+def test_sethandle_already_used():
+    """
+    Pass in a user with valid token but email already taken by someone else.
+    Should return InputError
+    """
+    clear_v1()
+    user_1 = auth_register_v2('validemail0@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    auth_register_v2('usedemail@gmail.com', '123abc!@#', 'Fred', 'Smith')
+    with pytest.raises(InputError):                        
+        assert user_profile_sethandle_v2(user_1['token'], 'fredsmith')
