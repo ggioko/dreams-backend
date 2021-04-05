@@ -159,10 +159,10 @@ def test_channel_addowner():
     test_4 = requests.post(config.url + 'channel/addowner/v1', json={'token': rego_1['token'],\
     'channel_id': new_channel['channel_id'], 'u_id':rego_2['auth_user_id']})
     assert test_4.status_code == 200
-    # Correct repeat information - Access error
+    # Correct repeat information - Input error
     test_5 = requests.post(config.url + 'channel/addowner/v1', json={'token': rego_1['token'],\
     'channel_id': new_channel['channel_id'], 'u_id':rego_2['auth_user_id']})
-    assert test_5.status_code == AccessError().code
+    assert test_5.status_code == InputError().code
 
 def test_channel_removeowner():
     """

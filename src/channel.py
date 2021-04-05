@@ -148,7 +148,7 @@ def channel_addowner_v1(token, channel_id, u_id):
             userMatch = True
             break
     if userMatch == True:
-        raise AccessError(description='New owner already an owner of channel')
+        raise InputError(description='New owner already an owner of channel')
     
 
     # Add user to channel
