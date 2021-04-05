@@ -79,7 +79,7 @@ def message_remove_v1(token, message_id):
     auth = False
 
     channels = data['channels']
-    messages = channels['messages']
+    messages = data['channels']['messages']
 
     for channel in channels:
         for message in messages:
