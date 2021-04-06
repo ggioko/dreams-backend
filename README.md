@@ -17,23 +17,7 @@
 
 ## 0. Change Log
 
-* 12/03: Extended Iteration due date by 1 day, fixed up marking criteria to add to 100%
-* 14/03: See commit for more info, non-trivial clarifications include:
-  * Correct `error.py` file pushed to repository
-  * Clarity on `handle_str` length when updating str
-  * Adding some missing locations that show when behaviour on channels is the same as behaviour on DMs
-  * Clarity on behaviour on how contents of messages are changed when an admin removes a user
-  * Valid email format re-added to spec (accidentally removed)
-  * Clarified the data type of `notifications`
-  * `dm/create/v1` behaviour clarified
-  * `message/share/v1` behaviour clarified in cases where no message is given
-  * <b>Behaviour of `handle` generation on `auth/register` clarified. The handle is truncated to 20 characters during concatenation, but the process of adding the number at the end can extend the 20 characters.</b> For groups that have implemented this behaviour differently (as per some forum posts), you are allowed to keep that implementation and you will not lose marks.
-* 16/03:
-  * Clarified that messages from users in a channel should remain after they leave the channel
-  * Clarified the parameters of dm/create
-  * Specified that the creator of a DM is also the owner
-* 20/03: Fixed parameters of dm/create
-* 26/03: Removed "React" from the notification data type, as that isn't until iteration 3
+N/A
 
 ## 1. Aims:
 
@@ -87,31 +71,49 @@ This iteration is now complete. Please see commit history to view information pe
 
 ## 4. Iteration 2: Building a web server
 
-### 4.1. Task
+This iteration is now complete. Please see commit history to view information pertaining to iteration 2.
 
-**NOTE:** In merging the instructions for this iteration into your repo, you may get a failed pipeline. This is most likely because your code is not pylint compliant. If this is the case, that is the *first* thing you should address for this iteration. It is important you have a *stable* master branch before proceeding to add additional features.
 
-In this iteration, more features were added to the specification, and the focus has been changed to HTTP endpoints. Many of the theory surrounding iteration 2 will be covered in week 4-6 lectures. Note that there will still be 1 or 2 features of the frontend that will not work because the routes will not appear until iteration 3.
+## 5. Iteration 3: Completing the lifecycle
+
+
+Iteration 3 builds off all of the work you've completed in iteration 2.
+
+If you haven't completed the implementations for iteration 2, you must complete them as part of this iteration. The automarking for iteration 3 will test on a fully completed interface.
+
+### 5.1. Task
 
 In this iteration, you are expected to:
 
-1. Implement and test the HTTP Flask server according to the entire interface provided in the specification.
+1. Implement and test the HTTP Flask server according to the entire interface provided in the specification, including features that were added in iteration 3, including:
+    * `message/sendlater`
+    * `message/sendlaterdm`
+    * `message/react`
+    * `message/unreact`
+    * `message/pin`
+    * `message/unpin`
+    * `user/profile/uploadphoto`
+    * `user/stats`
+    * `users/stats`
+    * `standup/start`
+    * `standup/active`
+    * `standup/send`
+    * `auth/passwordreset/request`
+    * `auth/passwordreset/reset`
 
-    * Part of this section may be automarked.
+    * Part of this section will be automarked.
 
-    * Pylint has been added to your continuous integration file, meaning that code that isn't pylint compliant will now fail the pipeline. The provided `.pylintrc` file is *very* lenient, so there is no reason you should have to disable any additional checks.
+    * It is required that your data is persistent just like iteration 2.
 
-    * Additionally, CI pipelines will measure *branch* coverage for all `.py` files that aren't tests. The coverage percentage for master is visible in a badge at the top of this repo and changes in coverage will appear in Merge Requests. Do note that coverage of `server.py` is not measured, nor will what is executed by your HTTP tests. This is because, when running HTTP tests, the server is run in a separate process.
+    * Pylint is assessed identical to that of iteration 2.
 
-    * Your implementation should build upon your work in iteration 1, and ideally your HTTP layer is just a wrapper for underlying functions you've written that handle the logic. Your implementation will rely on topics taught in week 4 (HTTP servers and testing) as well as week 5 (authentication and authorisation).
+    * *Branch* coverage for all .py files that aren't tests is assessed identical to that of iteration 2.
 
-    * Your implementation will need to implement persistence of data (see section 4.4).
+    * You can structure your tests however you choose, as long as they are appended with `_test.py`.
 
-    * You can structure your tests however you choose, as long as they are appended with `_test.py`. It's important you consider how to separate (or combine) your **unit/integration** tests from iteration 1 with the extra **system** tests (HTTP with requests library) in iteration 2. You will be marked on both tests being present/used in this iteration. **An example of a HTTP test has been provided for you in `http_tests/echo_http_test.py`**.
+    * A frontend has been built by Andrea and Andrew that you can use in this iteration, and use your backend to power it (note: an incomplete backend will mean the frontend cannot work). **You can, if you wish, make changes to the frontend code, but it is not required for this iteration.** As part of this iteration it's required that your backend code can correctly power the frontend.
 
-    * You do not have to rewrite all of your pytests as HTTP tests - the latter can test the system at a higher level. For example, to test a success case for `message/send` via HTTP routes you will need to call `auth/register` and `channels/create`; this means you do not need the success case for those two functions seperately. Your HTTP tests will need to cover all success/error conditions for each endpoint, however.
-
-    * Ensure that you correctly manage sessions and tokens in terms of authentication and authorisation, as per requirements laid out in section 6.9
+    * You must comply with instructions laid out in `5.2`
 
 2. Continue demonstrating effective project management and effective git usage
 
@@ -121,25 +123,27 @@ In this iteration, you are expected to:
 
     * As for iteration 1 all task tracking and management will need to be done via the GitLab Taskboard.
 
-    * You are required to regularly and thoughtfully make merge requests for the smallest reasonable units, and merge them into `master`.
+3. Document the planning of new features.
 
-To run the server you should always use the command
+    * You are required to scope out 2-3 problems to solve for future iterations of **Dreams**. You aren't required to build/code them, but you are required to go through SDLC steps of requirements analysis, conceptual modelling, and design.
 
-```bash
-python3 src/server.py
-```
+    * Full detail of this can be found in `5.3`.
 
-This will start the server on the next available port. If you get any errors relating to `flask_cors`, ensure you have installed all the necessary Python libraries for this course (the list of libraries was updated for this iteration). You can do this with:
+4. Analytics
 
-```bash
-pip3 install $(curl https://www.cse.unsw.edu.au/~cs1531/21T1/requirements.txt)
-```
+   You are required to begin keeping track of certain metrics in your backend to be displayed on the frontend.
 
-A frontend has been built by Andrea and Andrew that you can use in this iteration, and use your backend to power it (note: an incomplete backend will mean the frontend cannot work). **You can, if you wish, make changes to the frontend code, but it is not required for this iteration.** The source code for the frontend is only provided for your own fun or curiosity.
+   Full detail of this can be found `5.4`
 
-### 4.2. Implementing and testing features
+6. Deploy your backend to the cloud.
 
-You should first approach this project by considering its distinct "features". Each feature should add some meaningful functionality to the project, but still be as small as possible. You should aim to size features as the smallest amount of functionality that adds value without making the project more unstable. For each feature you should:
+   You are required to deploy your backend to AlwaysData so that it can be accessed from anywhere in the world.
+
+   Full detail of this can be found in `5.5`
+
+### 5.2. How to implement and test features
+
+Continue working this project by making distinct "features". Each feature should add some meaningful functionality to the project, but still be as small as possible. You should aim to size features as the smallest amount of functionality that adds value without making the project more unstable. For each feature you should:
 
 1. Create a new branch.
 2. Write tests for that feature and commit them to the branch.
@@ -163,32 +167,131 @@ Your tests, keep in mind the following:
 * Similarly, merging in branches with untested features is also **very bad practice**. We will assume, and you should too, that any code without tests does not work.
 * Pushing directly to `master` is not possible for this repo. The only way to get code into master is via a merge request. If you discover you have a bug in `master` that got through testing, create a bugfix branch and merge that in via a merge request.
 
-### 4.3. Recommended approach
+### 5.3. Planning for the next problems to solve
 
-Our recommendation with this iteration is that you:
+Software development is an iterative process - we're never truly finished. As we complete the development and testing of one feature, we're often then trying to understand the requirements and needs of our users to design the next set of features in our product.
 
-1. Start out trying to implement the new functions the same way you did in iteration 1 (a series of implemented functions, categorised in files, with black-box pytests testing them).
-2. Write another layer of HTTP tests that test the inputs/outputs on routes according to the specific, and while writing tests for each component/feature, write the Flask route/endpoint for that feature too.
+For iteration 3 you are going to produce a short report in `planning.pdf` and place it in the repository. The contents of this report will be a simplified approach to understanding user problems, developing requirements, and doing some early designs.
 
-This approach means that you can essentially finish the project/testing logic without worrying about HTTP, and then simply wrap the HTTP/Flask layer on top of it at the end.
+N.B. If you don't know how to produce a PDF, you can easily make one in google docs and then export to PDF.
 
-### 4.4. Storing data
+#### [Requirements] Elicitation
 
-You are required to store data persistently in this iteration.
+Find 2-3 people to interview as target users. Target users are people who currently use a tool like **Dreams**, or intend to. Collect their name and email address.
 
-Modify your backend such that it is able to persist and reload its data store if the process is stopped and started again. The persistence should happen at regular intervals so that in the event of unexpected program termination (e.g. sudden power outage) a minimal amount of data is lost. You may implement this using whatever method of serialisation you prefer (e.g. pickle, JSON).
+Develop a series of questions to ask these target users to understand what *problems* they might have with teamwork-driven communication tools that are currently unsolved by **Dreams**. Give these questions to your target users and record their answers.
 
-### 4.5. Submission
+Once you have done this, think about how you would solve the following problem and write down a brief description of a proposed solution.
 
-This iteration due date and demonstrate week is described in section 7. You will demonstrate this submission inline with the information provided in section 7.
+#### [Requirements] Analysis & Specification - Use Cases
 
-### 4.6. Versioning
+Once you've elicited this information, it's time to consolidate it.
 
-You might notice that some routes are suffixed with `v1` and `v2`, and that all the new routes are `v1` yet all the old routes are `v2`. Why is this? When you make changes to specifications, it's usually good practice to give the new function/capability/route a different unique name. This way, if people are using older versions of the specification they can't accidentally call the updated function/route with the wrong data input.
+Take the responses from the elicitation and express these requirements as **User Stories**. Document these user stories. For each user story, add User Acceptance Criteria as notes so that you have a clear definition of when a story has been completed.
 
-Hint: Yes, your `v2` routes can use the `X_Y_v1` functions you had in iteration 1, regardless of whether you rename the functions or not. The layer of abstraction in iteration 2 has changed from the function interface to the HTTP interface, and therefore your 'functions' from iteration 1 are essentailly now just implementation details, and therefore are completely modifiable by you.
+Once documented, generate at least one use case that attempts to tell a story of a solution that satifies the requirements elicited. You can generate a visual diagram or a more written-recipe style, as per lectures.
 
-### 4.7. Marking Criteria
+#### [Requirements] Validation
+
+With your completed use case work, reach out to the 2-3 people you interviewed originally and inquire as to the extent to which these use cases would adequately describe the problem they're trying to solve. Ask them for a comment on this, and record their comments in the PDF.
+
+#### [Design] Interface Design
+
+Now that we've established our _problem_ (described as requirements), it's time to think about our _solution_ in terms of what capabilities would be necessary. You will specify these capabilities as HTTP endpoints, similar to what is described in `6.2`. There is no minimum or maximum of what is needed - it will depend on what problem you're solving.
+
+#### [Design] Conceptual Modelling (State)
+
+Now that you have a sense of the problem to solve, and what capabilities you will need to provide to solve it, add at least one state diagram to your PDF to show how the state of the application would change based on user actions. The aim of this diagram is how to a developer understand the different states the user or application.
+
+### 5.4. Analytics
+
+Andrea and Andrew have implemented analytics pages for users and for the Dream workspace in the front-end and need data.
+Your task is to add to your back-end functionality that keeps track of these metrics:
+
+For users:
+  * The number of channels the user is a part of
+  * The number of DMs the user is a part of
+  * The number of messages the user has sent
+  * The user's involvement, as defined by this pseudocode: `sum(num_channels_joined, num_dms_joined, num_msgs_sent)/sum(num_dreams_channels, num_dreams_dms, num_dreams_msgs)`
+
+For the Dream workspace:
+  * The number of channels that exist currently
+  * The number of DMs that exist currently
+  * The number of messages that exist currently
+  * The workspace's utilization, which is a ratio of the number of users who have joined at least one channel/DM to the total number of channels and DMs, as defined by this pseudocode: `num_users_who_have_joined_at_least_one_channel_or_dm / total_num_users`
+
+As UNSW is very interested in its users' engagement, the analytics must be **time-series data**. This means every change to the above metrics must be timestamped and archived, rather than just the most recent change.
+
+In addition to keeping track of these metrics, you are required to implement two new endpoints, the details of which can be found in Section `6.2`.
+
+### 5.5. Deployment
+
+You and your team are to host your back-end on a cloud-provider such as <a href="https://www.alwaysdata.com/en/" > AlwaysData</a>. Once your back-end has been deployed to the cloud, you will be able to point the front-end to use the new URL of where the back-end is deployed and use your back-end from anywhere in the world.
+
+Depending on how you and your team have structured your project, your current method of using data may have to be rethought. Deploying to cloud and developing locally require two different mindsets and you and your team may find that you held some assumptions that are valid when developing locally but do not hold when being hosted on the cloud.
+
+
+#### 5.5.1. One-time setup
+
+### Setup
+
+1. Navigate to https://admin.alwaysdata.com/ and sign up with a new account (one per team is fine). Use a password you're happy both sharing with your team members and being made public on the internet in the worst case. Set your "Account name" as your 1531 group name (e.g. FRI09AMANGO) for simplicity. Don't worry about any of the "Payment" sections, you won't be charged any money.
+
+2. After logging in, in the sidebar click on "Web > Sites" in the sidebar
+
+![](docs/deploy1.png)
+
+3. Delete the "Default Site", and then click the "Install an an application" button and choose "Flask".
+
+![](docs/deploy2.png)
+
+4. On the details page, choose a name "COMP1531 Deployed", set the address to be the one stated immediately above the input as "currently unused" (this will be similar to your username), and for installation set it as as /www/cs1531deploy. Submit the form.
+
+![](docs/deploy3.png)
+
+5. On the "Web > Sites" page go to "Edit" for your one site.
+
+![](docs/deploy9.png)
+
+6. Scroll down and change "Application path" to `/www/cs1531deploy/src/server.py:app` and change the Python version to `3.9.2`. Click submit.
+
+![](docs/deploy10.png)
+
+7. Navigate to the "Remote access" tab in the sidebar, and select "SSH". Click on the "edit" button for the one entry that is there.
+
+![](docs/deploy4.png)
+
+8. Enter another password (another one you would be feel comfortable if became public in a worse case), and tick the "Enable password login" button. Submit the form.
+
+![](docs/deploy5.png)
+
+9. Open `deploy.sh` in your cloned repository. You will need to replace the `TODO-TODO-TODO` with the following:
+ * USERNAME: Your username you signed up with (e.g. fri09amango)
+ * SSH_HOST: The name of the host at the top of the SSH page (e.g. ssh-fri09amango.alwaysdata.net)
+
+![](docs/deploy6.png)
+![](docs/deploy7.png)
+![](docs/deploy8.png)
+
+#### 5.5.2. For each deployment
+
+Every time you want to deploy the code that is on your local machine, simply run:
+```bash
+bash deploy.sh
+```
+
+This script will deploy the code to alwaysdata. While it's deploying you will be asked to enter your SSH password (determined in step 8) on two occasions.
+
+Once you have done this, navigate back to "Web > Sites" on alwaysdata and click the "Restart" button for your one site.
+
+![](docs/deploy9.png)
+
+Then navigate to the URL of that particular site. Now you have your backend running on the internet.
+
+Note: This is only supported on linux terminals (including VLAB).
+
+### 5.6. Marking Criteria
+
 
 <table>
   <tr>
@@ -198,25 +301,25 @@ Hint: Yes, your `v2` routes can use the `X_Y_v1` functions you had in iteration 
   </tr>
   <tr>
     <td>Automarking (Testing)</td>
-    <td>15%</td>
+    <td>10%</td>
     <td><ul>
       <li>Correctly written tests based on the specification requirements</li>
       <li>Code coverage (99% coverage gives 30% of the marks for this section)</li>
     </ul>
   </td>
-  </ul>
+  </tr>
   <tr>
     <td>Automarking (Implementation)</td>
-    <td>35%</td>
+    <td>40%</td>
     <td><ul>
       <li>Correct implementation of specified functions</li>
       <li>Correctly linted code (worth 10% of this section)</li>
     </ul>
   </td>
-  </ul>
+  </tr>
   <tr>
     <td>Code Quality</td>
-    <td>30%</td>
+    <td>20%</td>
     <td><ul>
       <li>Demonstrated an understanding of good test <b>coverage</b></li>
       <li>Demonstrated an understanding of the importance of <b>clarity</b> on the communication test and code purposes</li>
@@ -227,10 +330,18 @@ Hint: Yes, your `v2` routes can use the `X_Y_v1` functions you had in iteration 
       <li>Implementation of persistent state</li>
     </ul>
   </td>
-  </ul>
+  </tr>
+  <tr>
+    <td>Integrations</td>
+    <td>5%</td>
+    <td><ul>
+      <li>Successful deployment to AlwaysData</li>
+    </ul>
+  </td>
+  </tr>
   <tr>
     <td>Git & Project Management</td>
-    <td>20%</td>
+    <td>10%</td>
     <td><ul>
       <li>Meaningful and informative git commit names being used</li>
       <li>At least 12 merge requests into master made</li>
@@ -243,13 +354,59 @@ Hint: Yes, your `v2` routes can use the `X_Y_v1` functions you had in iteration 
     </ul>
   </td>
   </tr>
+  <tr>
+    <td>Requirements & Design for future work</td>
+    <td>15%</td>
+    <td><ul>
+      <li>Requirements elicited from potential users, recorded as user stories</li>
+      <li>User journey justified and expressed as use case(s)</li>
+      <li>Interface proposed as a potential solution to provide capabilities</li>
+      <li>State diagram drawn to demonstrate how application responds to actions</li>
+    </ul>
+  </td>
+  </tr>
+  <tr>
+      <td>(Bonus Marks) Extra Features</td>
+      <td>10%</td>
+      <td><ul>      
+            <li>Up to 10% extra marks can be gained through additions of "extra feature(s)".</li>
+            <li>Marks will be awarded based on 1) Originality, 2) Technical or creative achievement, 3) Lack of bugs associated with it, 4) Size/scale of the addition.</li>
+            <li>To give a rough indication of how much time should be spent on extra features, a group which has spent half of their collective iteration 3 time on extra features (which are functional) would receive full marks</li>
+      </ul>
+      </td>
+  </tr>
 </table>
 
-For this and for all future milestones, you should consider the other expectations as outlined in section 8 below.
+### 5.7. Submission
 
-## 5. Iteration 3: Completing the lifecycle
+This iteration due date and demonstrate week is described in section 7. You will demonstrate this submission inline with the information provided in section 7.
 
-Coming Soon
+### 5.8. Extra Features
+
+Your tutor is not required to provide any assistance with this, as it's intended for more advanced students once they complete all other criteria at a high level of quality.
+A brief explanation of your additions must be written in a file <code>extra.md</code> that is added to your repo.
+
+Here are some suggestions for extra features.
+
+1. Frontend - **Hangman on Frontend**
+
+    After a game of Hangman has been started any user in the channel can type /guess X where X is an individual letter. If that letter is contained in the word or phrase they're trying to guess, the app should indicate where it occurs. If it does not occur, more of the hangman is drawn. There is a lot of flexibility in how you achieve this. It can be done only by modifying the backend and relying on messages to communicate the state of the game (e.g. after making a guess, the "Hangman" posts a message with a drawing of the hangman in ASCII/emoji art). Alternatively you can modify the frontend, if you want to experiment with fancier graphics.
+
+    The app should use words and phrases from an external source, not just a small handful hardcoded into the app. One suitable source is /usr/share/dict/words available on Unix-based systems. Alternatively, the python wikiquote module is available via pip and can be used to retrieve quotes and phrases from Wikiquote.
+
+    Note that this part of the specification is deliberately open-ended. You're free to make your own creative choices in exactly how the game should work, as long as the end result is something that could be fairly described as Hangman.
+
+2. Frontend - **Dark Mode** - Modify the frontend code so that on the flip of a switch in the navbar, the website is now in "dark mode" with a colour schema of your choosing.
+
+3. Frontend - **LaTEX / Markdown Support** - Modify the frontend code so that messages in channels and dms can be rendered in LaTEX and/or Markdown.
+
+4. **Databases** - Implementing persistence using a form of database. This can be done in python using the `sqlite3` or `peewee` or `psycopg2` modules to run SQL queries on a local .db file or a remote db.
+
+5. **Object-Oriented Programming** - Refactor your code so data is stored in objects instead of dictionaries.
+
+6. **Type Checking** - Use the `typing` module to statically type-check your functions.
+
+7. **New Features** - Implement one or more of the features you have elicited in your Requirements & Design.
 
 ## 6. Interface specifications
 
@@ -328,12 +485,72 @@ These interface specifications come from Andrea and Andrew, who are building the
   </tr>
   <tr>
     <td>(outputs only) named exactly <b>notifications</b></td>
-    <td>List of dictionaries, where each dictionary contains types { channel_id, dm_id, notification_message } where channel_id is the id of the channel that the event happened in, and is <code>-1</code> if it is being sent to a DM. dm_id is the DM that the event happened in, and is <code>-1</code> if it is being sent to a channel. The list should be ordered from most to least recent. Notification_message is a string of the following format for each trigger action:<ul><li>tagged: "{User’s handle} tagged you in {channel/DM name}: {first 20 characters of the message}"</li><li>added to a channel/DM: "{User’s handle} added you to {channel/DM name}"</li></ul>
+    <td>List of dictionaries, where each dictionary contains types { channel_id, dm_id, notification_message } where channel_id is the id of the channel that the event happened in, and is <code>-1</code> if it is being sent to a DM. dm_id is the DM that the event happened in, and is <code>-1</code> if it is being sent to a channel. The list should be ordered from most to least recent. Notification_message is a string of the following format for each trigger action:<ul><li>tagged: "{User’s handle} tagged you in {channel/DM name}: {first 20 characters of the message}"</li><li>reacted message: "{User’s handle} reacted to your message in {channel/DM name}"</li><li>added to a channel/DM: "{User’s handle} added you to {channel/DM name}"</li></ul>
     </td>
   </tr>
   <tr>
     <td>named exactly <b>u_ids</b></td>
     <td>List of user ids</td>
+  </tr>
+  <tr>
+    <td>contains substring <b>code</b></td>
+    <td>string</td>
+  </tr>
+  <tr>
+    <td>has suffix <b>_id</b></td>
+    <td>integer</td>
+  </tr>
+  <tr>
+    <td>has prefix <b>num_</b></td>
+    <td>integer</td>
+  </tr>
+  <tr>
+    <td>has suffix <b>_rate</b></td>
+    <td>float between 0 and 1 inclusive</td>
+  </tr>
+  <tr>
+    <td>(outputs only) named exactly <b>user_stats</b></td>
+    <td> Dictionary of shape {<br />
+    &emsp;channels_joined: [{num_channels_joined, time_stamp}],<br/>
+    &emsp;dms_joined: [{num_dms_joined, time_stamp}], <br />
+    &emsp;messages_sent: [{num_messages_sent, time_stamp}], <br />
+    &emsp;involvement_rate <br />
+    }
+    </td>
+  </tr>
+  <tr>
+    <td>(outputs only) named exactly <b>dreams_stats</b></td>
+    <td> Dictionary of shape {<br />
+    &emsp;channels_exist: [{num_channels_exist, time_stamp}], <br />
+    &emsp;dms_exist: [{num_dms_exist, time_stamp}], <br />
+    &emsp;messages_exist: [{num_messages_exist, time_stamp}], <br />
+    &emsp;utilization_rate <br />
+    }
+    </td>
+  </tr>
+  <tr>
+    <td>has suffix <b>end</b></td>
+    <td>integer</td>
+  </tr>
+  <tr>
+    <td>has suffix <b>start</b></td>
+    <td>integer</td>
+  </tr>
+  <tr>
+    <td>has suffix <b>_url</b></td>
+    <td>string</td>
+  </tr>
+  <tr>
+    <td>(outputs only) name ends in <b>reacts</b></td>
+    <td>List of dictionaries, where each dictionary contains types { react_id, u_ids, is_this_user_reacted } where react_id is the id of a react, and u_ids is a list of user id's of people who've reacted for that react. is_this_user_reacted is whether or not the authorised user has been one of the reacts to this post</td>
+  </tr>
+  <tr>
+    <td>(V2) (outputs only) named exactly <b>user</b></td>
+    <td>Dictionary containing u_id, email, name_first, name_last, handle_str, profile_img_url</td>
+  </tr>
+  <tr>
+    <td>(V2) (outputs only) named exactly <b>messages</b></td>
+    <td>List of dictionaries, where each dictionary contains types { message_id, u_id, message, time_created, reacts, is_pinned  }</td>
   </tr>
 </table>
 
@@ -767,7 +984,185 @@ These interface specifications come from Andrea and Andrew, who are building the
     <td style="color: red; font-weight: bold;">DELETE</td>
     <td><b>Parameters:</b><br /><code>()</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
     <td>N/A</td>
-  </tr> 
+  </tr>
+  <tr>
+    <td><code>standup/start/v1</code><br /><br />For a given channel, start the standup period whereby for the next "length" seconds if someone calls "standup_send" with a message, it is buffered during the X second window then at the end of the X second window a message will be added to the message queue in the channel from the user who started the standup. X is an integer that denotes the number of seconds that the standup occurs for</td>
+    <td style="font-weight: bold; color: blue;">POST</td>
+    <td><b>Parameters:</b><br /><code>(token, channel_id, length)</code><br /><br /><b>Return Type:</b><br /><code>{ time_finish }</code></td>
+    <td>
+      <b>InputError</b> when any of:
+      <ul>
+        <li>Channel ID is not a valid channel</li>
+        <li>An active standup is currently running in this channel</li>
+      </ul>
+        <b>AccessError</b> when any of:<ul><li>Authorised user is not in the channel</li>
+        </ul>
+      </td>
+  </tr>
+  <tr>
+    <td><code>standup/active/v1</code><br /><br />For a given channel, return whether a standup is active in it, and what time the standup finishes. If no standup is active, then time_finish returns None</td>
+    <td style="font-weight: bold; color: green;">GET</td>
+    <td><b>Parameters:</b><br /><code>(token, channel_id)</code><br /><br /><b>Return Type:</b><br /><code>{ is_active, time_finish }</code></td>
+    <td>
+      <b>InputError</b> when any of:
+      <ul>
+        <li>Channel ID is not a valid channel</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td><code>standup/send/v1</code><br /><br />Sending a message to get buffered in the standup queue, assuming a standup is currently active</td>
+    <td style="font-weight: bold; color: blue;">POST</td>
+    <td><b>Parameters:</b><br /><code>(token, channel_id, message)</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
+    <td>
+      <b>InputError</b> when any of:
+      <ul>
+        <li>Channel ID is not a valid channel</li>
+        <li>Message is more than 1000 characters (not including the username and colon)</li>
+        <li>An active standup is not currently running in this channel</li>
+      </ul>
+      <b>AccessError</b> when
+      <ul>
+        <li>The authorised user is not a member of the channel that the message is within</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td><code>auth/passwordreset/request/v1</code><br /><br />Given an email address, if the user is a registered user, sends them an email containing a specific secret code, that when entered in auth_passwordreset_reset, shows that the user trying to reset the password is the one who got sent this email.</td>
+    <td style="font-weight: bold; color: blue;">POST</td>
+    <td><b>Parameters:</b><br /><code>(email)</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
+    <td>N/A</td>
+  </tr>
+  <tr>
+    <td><code>auth/passwordreset/reset</code><br /><br />Given a reset code for a user, set that user's new password to the password provided</td>
+    <td style="font-weight: bold; color: blue;">POST</td>
+    <td><b>Parameters:</b><br /><code>(reset_code, new_password)</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
+    <td>
+      <b>InputError</b> when any of:
+      <ul>
+        <li>reset_code is not a valid reset code</li>
+        <li>Password entered is less than 6 characters long</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td><code>/user/stats/v1</code><br /><br />Fetches the required statistics about this user's use of UNSW Dreams</td>
+    <td style="font-weight: bold; color: green;">GET</td>
+    <td><b>Parameters:</b><br /><code>(token)</code><br /><br /><b>Return Type:</b><br /><code>{ user_stats }</code></td>
+    <td>N/A</td>
+  </tr>
+  <tr>
+    <td><code>/users/stats/v1</code><br /><br />Fetches the required statistics about the use of UNSW Dreams</td>
+    <td style="font-weight: bold; color: green;">GET</td>
+    <td><b>Parameters:</b><br /><code>(token)</code><br /><br /><b>Return Type:</b><br /><code>{ dreams_stats }</code></td>
+    <td>N/A</td>
+  </tr>
+  <tr>
+    <td><code>/user/profile/uploadphoto/v1</code><br /><br />Given a URL of an image on the internet, crops the image within bounds (x_start, y_start) and (x_end, y_end). Position (0,0) is the top left.</td>
+    <td style="font-weight: bold; color: blue;">POST</td>
+    <td><b>Parameters:</b><br /><code>(token, img_url, x_start, y_start, x_end, y_end)</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
+    <td>
+      <b>InputError</b> when any of:
+      <ul>
+        <li>img_url returns an HTTP status other than 200.</li>
+        <li>any of x_start, y_start, x_end, y_end are not within the dimensions of the image at the URL.</li>
+        <li>Image uploaded is not a JPG</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td><code>message/sendlater/v1</code><br /><br />Send a message from authorised_user to the channel specified by channel_id automatically at a specified time in the future</td>
+    <td style="font-weight: bold; color: blue;">POST</td>
+    <td><b>Parameters:</b><br /><code>(token, channel_id, message, time_sent)</code><br /><br /><b>Return Type:</b><br /><code>{ message_id }</code></td>
+    <td>
+      <b>InputError</b> when any of:
+      <ul>
+        <li>Channel ID is not a valid channel</li>
+        <li>Message is more than 1000 characters</li>
+        <li>Time sent is a time in the past</li>
+      </ul>
+        <b>AccessError</b> when: <li> the authorised user has not joined the channel they are trying to post to</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td><code>message/sendlaterdm/v1</code><br /><br />Send a message from authorised_user to the DM specified by dm_id automatically at a specified time in the future</td>
+    <td style="font-weight: bold; color: blue;">POST</td>
+    <td><b>Parameters:</b><br /><code>(token, dm_id, message, time_sent)</code><br /><br /><b>Return Type:</b><br /><code>{ message_id }</code></td>
+    <td>
+      <b>InputError</b> when any of:
+      <ul>
+        <li>DM ID is not a valid DM</li>
+        <li>Message is more than 1000 characters</li>
+        <li>Time sent is a time in the past</li>
+      </ul>
+        <b>AccessError</b> when: <li> the authorised user is not a member of the DM they are trying to post to</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td><code>message/react/v1</code><br /><br />Given a message within a channel or DM the authorised user is part of, add a "react" to that particular message</td>
+    <td style="font-weight: bold; color: blue;">POST</td>
+    <td><b>Parameters:</b><br /><code>(token, message_id, react_id)</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
+    <td>
+      <b>InputError</b> when any of:
+      <ul>
+        <li>message_id is not a valid message within a channel or DM that the authorised user has joined</li>
+        <li>react_id is not a valid React ID. The only valid react ID the frontend has is 1</li>
+        <li>Message with ID message_id already contains an active React with ID react_id from the authorised user</li>
+      </ul>
+      <b>AccessError</b> when:
+      <ul>
+        <li>The authorised user is not a member of the channel or DM that the message is within</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td><code>message/unreact/v1</code><br /><br />Given a message within a channel or DM the authorised user is part of, remove a "react" to that particular message</td>
+    <td style="font-weight: bold; color: blue;">POST</td>
+    <td><b>Parameters:</b><br /><code>(token, message_id, react_id)</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
+    <td>
+        <b>InputError</b> when any of:
+        <ul><li>message_id is not a valid message within a channel or DM that the authorised user has joined</li>
+        <li>react_id is not a valid React ID</li>
+        <li>Message with ID message_id does not contain an active React with ID react_id from the authorised user</li>
+      </ul>
+      <b>AccessError</b> when:
+      <ul>
+        <li>The authorised user is not a member of the channel or DM that the message is within</li>
+      </ul>
+    </td>
+  </tr>
+  <tr>
+    <td><code>message/pin/v1</code><br /><br />Given a message within a channel or DM, mark it as "pinned" to be given special display treatment by the frontend</td>
+    <td style="font-weight: bold; color: blue;">POST</td>
+    <td><b>Parameters:</b><br /><code>(token, message_id)</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
+    <td>
+      <b>InputError</b> when any of:
+      <ul>
+        <li>message_id is not a valid message</li>
+        <li>Message with ID message_id is already pinned</li>
+      </ul>
+        <b>AccessError</b> when any of:<ul><li>The authorised user is not a member of the channel or DM that the message is within</li>
+          <li>The authorised user is not an owner of the channel or DM</li>
+        </ul>
+      </td>
+  </tr>
+  <tr>
+    <td><code>message/unpin/v1</code><br /><br />Given a message within a channel or DM, remove it's mark as unpinned</td>
+    <td style="font-weight: bold; color: blue;">POST</td>
+    <td><b>Parameters:</b><br /><code>(token, message_id)</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
+    <td>
+      <b>InputError</b> when any of:
+      <ul>
+        <li>message_id is not a valid message</li>
+        <li>Message with ID message_id is already unpinned</li>
+      </ul>
+        <b>AccessError</b> when any of:<ul><li>The authorised user is not a member of the channel or DM that the message is within</li>
+          <li>The authorised user is not an owner of the channel or DM</li>
+        </ul>
+      </td>
+  </tr>
 </table>
 
 ### 6.3. Errors for all functions
@@ -863,13 +1258,51 @@ A valid email should match the following regular expression:
 The python `re` (regular expression) module allows you to determine whether a string matches a regular expression. You do not need to understand regular expressions to effectively utilise the `re` module to check if the email is correct.
 
 
+### 6.11. Reacts
+
+The only React ID currently associated with the frontend is React ID 1, which is a thumbs up. You are welcome to add more (this will require some frontend work)
+
+### 6.12. Standups
+
+Once standups are finished, all of the messages sent to standup/send are packaged together in *one single message* posted by *the user who started the standup* and sent as a message to the channel the standup was started in, timestamped at the moment the standup finished.
+
+The structure of the packaged message is like this:
+
+[message_sender1_handle]: [message1]
+
+[message_sender2_handle]: [message2]
+
+[message_sender3_handle]: [message3]
+
+[message_sender4_handle]: [message4]
+
+For example:
+
+```txt
+hayden: I ate a catfish
+rob: I went to kmart
+michelle: I ate a toaster
+isaac: my catfish ate a toaster
+```
+
+Standups can be started on the frontend by typing "/standup X", where X is the number of seconds that the standup lasts for, into the message input and clicking send.
+
+### 6.13. profile_img_url & image uploads
+
+For outputs with data pertaining to a user, a profile_img_url is present. When images are uploaded for a user profile, after processing them you should store them on the server such that your server now locally has a copy of the cropped image of the original file linked. Then, the profile_img_url should be a URL to the server, such as http://localhost:5001/imgurl/adfnajnerkn23k4234.jpg (a unique url you generate).
+
+For any given user, if they have yet to upload an image, there should be a site-wide default image used.
+
+Note: This is most likely the most challenging part of the project. Don't get lost in this, we would strongly recommend most teams complete this capability *last*.
+
+
 ## 7. Due Dates and Weightings
 
 |Iteration|Due date                             |Demonstration to tutor(s)      |Assessment weighting of project (%)|
 |---------|-------------------------------------|-------------------------------|-----------------------------------|
 |   1     |10am Monday 8th March (**week 4**)   |In YOUR **week 4** laboratory  |30%                                |
 |   2     |10am Tuesday 6th April (**week 8**)   |In YOUR **week 8** laboratory  |40%                                |
-|   3     |10am Monday 19th April (**week 10**)   |In YOUR **week 10** laboratory |30%                                |
+|   3     |10am Tuesday 20th April (**week 10**)   |In YOUR **week 10** laboratory |30%                                |
 
 ### 7.1. Late Penalties
 
@@ -971,5 +1404,3 @@ Relevant scholarship authorities will be informed if students holding scholarshi
 Do not provide or show your project work to any other person, except for your group and the teaching staff of COMP1531. If you knowingly provide or show your assignment work to another person for any reason, and work derived from it is submitted you may be penalized, even if the work was submitted without your knowledge or consent. This may apply even if your work is submitted by a third party unknown to you.
 
 Note, you will not be penalized if your work has the potential to be taken without your consent or knowledge.
-
-
