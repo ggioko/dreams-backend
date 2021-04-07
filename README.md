@@ -253,7 +253,7 @@ Depending on how you and your team have structured your project, your current me
 
 ![](docs/deploy9.png)
 
-6. Scroll down and change "Application path" to `/www/cs1531deploy/src/server.py:app` and change the Python version to `3.9.2`. Click submit.
+6. Scroll down and change "Application path" to `/www/cs1531deploy/src/server.py:APP` and change the Python version to `3.9.2`. Click submit.
 
 ![](docs/deploy10.png)
 
