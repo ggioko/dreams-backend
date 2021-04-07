@@ -17,7 +17,7 @@
 
 ## 0. Change Log
 
-N/A
+* 07/04: Added `v1` to `auth/passwordreset/reset/` route name
 
 ## 1. Aims:
 
@@ -1034,7 +1034,7 @@ These interface specifications come from Andrea and Andrew, who are building the
     <td>N/A</td>
   </tr>
   <tr>
-    <td><code>auth/passwordreset/reset</code><br /><br />Given a reset code for a user, set that user's new password to the password provided</td>
+    <td><code>auth/passwordreset/reset/v1</code><br /><br />Given a reset code for a user, set that user's new password to the password provided</td>
     <td style="font-weight: bold; color: blue;">POST</td>
     <td><b>Parameters:</b><br /><code>(reset_code, new_password)</code><br /><br /><b>Return Type:</b><br /><code>{}</code></td>
     <td>
