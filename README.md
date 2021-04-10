@@ -18,6 +18,7 @@
 ## 0. Change Log
 
 * 07/04: Added `v1` to `auth/passwordreset/reset/` route name
+* 10/04: Clarified tracking of utilization and involvement
 
 ## 1. Aims:
 
@@ -218,9 +219,9 @@ For the Dream workspace:
   * The number of channels that exist currently
   * The number of DMs that exist currently
   * The number of messages that exist currently
-  * The workspace's utilization, which is a ratio of the number of users who have joined at least one channel/DM to the total number of channels and DMs, as defined by this pseudocode: `num_users_who_have_joined_at_least_one_channel_or_dm / total_num_users`
+  * The workspace's utilization, which is a ratio of the number of users who have joined at least one channel/DM to the total number of users, as defined by this pseudocode: `num_users_who_have_joined_at_least_one_channel_or_dm / total_num_users`
 
-As UNSW is very interested in its users' engagement, the analytics must be **time-series data**. This means every change to the above metrics must be timestamped and archived, rather than just the most recent change.
+As UNSW is very interested in its users' engagement, all analytics **except for utilization and involvement** must be tracked as **time-series data**. This means every change must be timestamped and archived, rather than just the most recent change. Only the **latest** utilization and involvement rates are required to be tracked.
 
 In addition to keeping track of these metrics, you are required to implement two new endpoints, the details of which can be found in Section `6.2`.
 
