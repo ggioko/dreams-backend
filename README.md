@@ -182,8 +182,6 @@ Find 2-3 people to interview as target users. Target users are people who curren
 
 Develop a series of questions to ask these target users to understand what *problems* they might have with teamwork-driven communication tools that are currently unsolved by **Dreams**. Give these questions to your target users and record their answers.
 
-Once you have done this, think about how you would solve the following problem and write down a brief description of a proposed solution.
-
 #### [Requirements] Analysis & Specification - Use Cases
 
 Once you've elicited this information, it's time to consolidate it.
