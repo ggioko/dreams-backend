@@ -19,6 +19,7 @@
 
 * 07/04: Added `v1` to `auth/passwordreset/reset/` route name
 * 10/04: Clarified tracking of utilization and involvement
+* 13/04: Removed the rest of a paragraph in requirements & design section that was taken out
 
 ## 1. Aims:
 
