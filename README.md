@@ -19,6 +19,7 @@
 
 * 07/04: Added `v1` to `auth/passwordreset/reset/` route name
 * 10/04: Clarified tracking of utilization and involvement
+* 13/04: Removed the rest of a paragraph in requirements & design section that was taken out
 
 ## 1. Aims:
 
@@ -181,8 +182,6 @@ N.B. If you don't know how to produce a PDF, you can easily make one in google d
 Find 2-3 people to interview as target users. Target users are people who currently use a tool like **Dreams**, or intend to. Collect their name and email address.
 
 Develop a series of questions to ask these target users to understand what *problems* they might have with teamwork-driven communication tools that are currently unsolved by **Dreams**. Give these questions to your target users and record their answers.
-
-Once you have done this, think about how you would solve the following problem and write down a brief description of a proposed solution.
 
 #### [Requirements] Analysis & Specification - Use Cases
 
