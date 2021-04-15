@@ -308,3 +308,24 @@ def message_senddm_v1(token, dm_id, message):
             })
        
     return {'message_id': message_id}
+
+def message_react_v1(token, message_id, react_id):
+    """
+    Given a message within a channel or DM the authorised user is part of, add a "react" to that particular message
+
+    Arguments:
+        token (string)    - Token
+        message_id (integer)    - id of the message to react to
+        react_id (integer)     - id of dm to share to (-1 if share location isnt a dm)
+
+    Exceptions:
+        InputError  - message_id is not a valid message within a channel or DM that the authorised user has joined
+                    - react_id is not a valid React ID. The only valid react ID the frontend has is 1
+                    - Message with ID message_id already contains an active React with ID react_id from the authorised user
+        AccesError  - The authorised user is not a member of the channel or DM that the message is within
+
+    Return Value:
+        Returns {} on success
+    """
+    
+    pass
