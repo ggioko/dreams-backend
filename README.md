@@ -456,10 +456,6 @@ These interface specifications come from Andrea and Andrew, who are building the
     <td>integer (unix timestamp), [check this out](https://www.tutorialspoint.com/How-to-convert-Python-date-to-Unix-timestamp)</td>
   </tr>
   <tr>
-    <td>(outputs only) named exactly <b>messages</b></td>
-    <td>List of dictionaries, where each dictionary contains types { message_id, u_id, message, time_created }</td>
-  </tr>
-  <tr>
     <td>(outputs only) named exactly <b>channels</b></td>
     <td>List of dictionaries, where each dictionary contains types { channel_id, name }</td>
   </tr>
@@ -474,10 +470,6 @@ These interface specifications come from Andrea and Andrew, who are building the
   <tr>
     <td>(outputs only) name ends in <b>members</b></td>
     <td>List of dictionaries, where each dictionary contains types of <b>user</b></td>
-  </tr>
-  <tr>
-    <td>(outputs only) named exactly <b>user</b></td>
-    <td>Dictionary containing u_id, email, name_first, name_last, handle_str</td>
   </tr>
   <tr>
     <td>(outputs only) named exactly <b>users</b></td>
@@ -545,11 +537,11 @@ These interface specifications come from Andrea and Andrew, who are building the
     <td>List of dictionaries, where each dictionary contains types { react_id, u_ids, is_this_user_reacted } where react_id is the id of a react, and u_ids is a list of user id's of people who've reacted for that react. is_this_user_reacted is whether or not the authorised user has been one of the reacts to this post</td>
   </tr>
   <tr>
-    <td>(V2) (outputs only) named exactly <b>user</b></td>
+    <td>(outputs only) named exactly <b>user</b></td>
     <td>Dictionary containing u_id, email, name_first, name_last, handle_str, profile_img_url</td>
   </tr>
   <tr>
-    <td>(V2) (outputs only) named exactly <b>messages</b></td>
+    <td>(outputs only) named exactly <b>messages</b></td>
     <td>List of dictionaries, where each dictionary contains types { message_id, u_id, message, time_created, reacts, is_pinned  }</td>
   </tr>
 </table>
