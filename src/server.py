@@ -287,9 +287,8 @@ def user_profile():
     the user_profile_v2 function
     Returns {user} on success
     """
-    data = request.get_json()
-    token = data['token']
-    u_id = data['u_id']
+    token = request.args.get('token')
+    u_id = int(request.args.get('u_id'))
     data = user_profile_v2(token, u_id)
 
     save_data()
@@ -322,8 +321,7 @@ def users_all():
 
     Returns {users} - an list of dictionaries of individual user details
     """
-    data = request.get_json()
-    token = data['token']
+    token = request.args.get('token')
     
     user_list = users_all_v1(token)
 
@@ -341,8 +339,7 @@ def channels_list():
     Returns {channels:[]} on success
     """
     
-    data = request.get_json()
-    token = data['token']
+    token = request.args.get('token')
     data = channels_list_v2(token)
 
     save_data()
