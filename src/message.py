@@ -316,7 +316,6 @@ def message_react_v1(token, message_id, react_id):
     Arguments:
         token (string)    - Token
         message_id (integer)    - id of the message to react to
-        #################################################################################### FIX THIS LINE
         react_id (integer)     - id of a react (currently the only react id is 1 (thunbs up))
 
     Exceptions:
