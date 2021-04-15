@@ -20,6 +20,7 @@
 * 07/04: Added `v1` to `auth/passwordreset/reset/` route name
 * 10/04: Clarified tracking of utilization and involvement
 * 13/04: Removed the rest of a paragraph in requirements & design section that was taken out
+* 16/04: Removed duplicates of `user` and `messages` data type. To be clear, in iteration 2 `user` has had properties `reacts` and `is_pinned` added to it, and `messages` has had properties `profile_img_url` added to it.
 
 ## 1. Aims:
 
