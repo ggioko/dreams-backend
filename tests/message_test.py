@@ -662,7 +662,7 @@ def test_message_unpin_channel():
     message_pin_v1(id_1['token'], result1['messages'][0]['message_id']) == {}
     assert message_unpin_v1(id_1['token'], result1['messages'][0]['message_id']) == {}
 
-def test_message_pin_invalid_message_dm():
+def test_message_unpin_invalid_message_dm():
     '''
     User is owner of the DM that they are trying to umpin a message in. But message id is invalid.
     '''
