@@ -739,6 +739,7 @@ def test_message_unpin_invalid_message_dm():
     user_2 = r.json()
     u_id2 = user_2['auth_user_id']
     r = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [u_id2]})
+    new_dm = r.json()
     r = requests.post(config.url + 'message/senddm/v1', json={'token': user_1['token'],'dm_id': new_dm['dm_id'], 'message': 'test message'})
     message = r.json()
     r = requests.post(config.url + 'message/pin/v1', json={'token': user_1['token'], \
