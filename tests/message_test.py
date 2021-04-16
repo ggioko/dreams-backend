@@ -614,3 +614,20 @@ def test_message_pin_channel_not_owner():
     assert result1['messages'][0]['message'] == message
     with pytest.raises(AccessError):
         assert message_pin_v1(id_2['token'], result1['messages'][0]['message_id'])
+
+def test_message_pin_invalid_token():
+    '''
+    Tests that an AccessError is raised on invalid token
+    '''
+    # Create users
+    clear_v1()
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    u_id2 = user_2['auth_user_id']
+    # Create a dm, which will return {dm_id, dm_name}
+    new_dm = dm_create_v1(user_1['token'], [u_id2])
+    # Send a dm from user 1 to user 2
+    message_1 = message_senddm_v1(user_1['token'], new_dm['dm_id'], 'Hello this is a test')
+    auth_logout_v1(user_1['token'])
+    with pytest.raises(AccessError):
+        assert message_pin_v1(user_1['token'], message_1['message_id']) == {}

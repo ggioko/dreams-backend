@@ -660,3 +660,24 @@ def test_message_pin_channel_not_owner():
     r = requests.post(config.url + 'message/pin/v1', json={'token': id_2['token'], \
         'message_id' : message_id['message_id']})
     assert r.status_code == AccessError().code
+
+def test_message_pin_invalid_token():
+    '''
+    Given a token and message id, checks if an AccessError is raised when an invalid token is given 
+    '''
+    r = requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user_1 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'secondemail@gmail.com',
+    'password' : '321cba#@!', 'name_first':'Fred', 'name_last':'Smith'})
+    user_2 = r.json()
+    u_id2 = user_2['auth_user_id']
+    r = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [u_id2]})
+    new_dm = r.json()
+    r = requests.post(config.url + 'message/senddm/v1', json={'token': user_1['token'],'dm_id': new_dm['dm_id'], 'message': 'test message'})
+    message = r.json()
+    r = requests.post(config.url + 'auth/logout/v1', json={'token': user_1['token']})
+    r = requests.post(config.url + 'message/pin/v1', json={'token': user_1['token'], \
+        'message_id' : message['message_id']})
+    assert r.status_code == AccessError().code
