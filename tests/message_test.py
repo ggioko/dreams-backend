@@ -516,7 +516,6 @@ def test_message_pin_channel():
     id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     channel_1 = channels_create_v2(id_1['token'], "MyChannel", True)
     message = "hello this is my new channel"
-    optional = "a"
     message_send_v2(id_1['token'], channel_1['channel_id'], message)
     result1 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
     assert result1['messages'][0]['message'] == message
@@ -534,7 +533,7 @@ def test_message_pin_invalid_message_dm():
     # Create a dm, which will return {dm_id, dm_name}
     new_dm = dm_create_v1(user_1['token'], [u_id2])
     # Send a dm from user 1 to user 2
-    message_1 = message_senddm_v1(user_1['token'], new_dm['dm_id'], 'Hello this is a test')
+    message_senddm_v1(user_1['token'], new_dm['dm_id'], 'Hello this is a test')
     with pytest.raises(InputError):
         assert message_pin_v1(user_1['token'], 40)
 
@@ -546,7 +545,6 @@ def test_message_pin_invalid_message_channel():
     id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     channel_1 = channels_create_v2(id_1['token'], "MyChannel", True)
     message = "hello this is my new channel"
-    optional = "a"
     message_send_v2(id_1['token'], channel_1['channel_id'], message)
     result1 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
     assert result1['messages'][0]['message'] == message
@@ -578,7 +576,6 @@ def test_message_pin_channel_already_pinned():
     id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     channel_1 = channels_create_v2(id_1['token'], "MyChannel", True)
     message = "hello this is my new channel"
-    optional = "a"
     message_send_v2(id_1['token'], channel_1['channel_id'], message)
     result1 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
     assert result1['messages'][0]['message'] == message
@@ -612,7 +609,6 @@ def test_message_pin_channel_not_owner():
     id_2 = auth_register_v2('validemail2@gmail.com', '123abcd!@#', 'Haydenn', 'Everestt')
     channel_1 = channels_create_v2(id_1['token'], "MyChannel", True)
     message = "hello this is my new channel"
-    optional = "a"
     message_send_v2(id_1['token'], channel_1['channel_id'], message)
     result1 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
     assert result1['messages'][0]['message'] == message
