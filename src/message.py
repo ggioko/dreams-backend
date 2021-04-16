@@ -43,6 +43,7 @@ def message_send_v2(token, channel_id, message):
                 'u_id': u_id,
                 'message': message,
                 'time_created': int(time()),
+                'is_pinned' : False,
             })
 
     return {
@@ -305,6 +306,7 @@ def message_senddm_v1(token, dm_id, message):
                 'u_id': u_id,
                 'message': message,
                 'time_created': int(time()),
+                'is_pinned' : False,
             })
        
     return {'message_id': message_id}
@@ -326,3 +328,60 @@ def message_pin_v1(token, message_id):
     Return Value:
         Returns {} - (empty dict) on success
     """
+
+    # Checks if token is valid
+    if check_token_valid(token) == False:
+        raise AccessError(description="Not a valid token")
+    
+    user_id = get_token_user_id(token)
+
+    message_found = False
+    auth = False
+
+    # Loop through channels looking for message
+    # and to check if user is in the channel
+    for channel in data['channels']:
+        for messages in channel['messages']:
+            if message_id == messages['message_id']:
+                message_found = True
+                # Based on AccessError, the user has to be an owner to pin a message
+                members = channel['owner_members']
+                for member in members:
+                    if user_id == member['u_id']:
+                        auth = True
+                if auth == True:
+                    # Check if message is already pinned
+                    if messages['is_pinned'] == True:
+                        raise InputError(description="This message is already pinned")
+                    # Pins the message
+                    else:
+                        messages['is_pinned'] = True
+    
+    # If the message was not found check dm messages with same process
+    if message_found == False:
+        for dms in data['dms']:
+            for messages in dms['messages']:
+                if message_id == messages['message_id']:
+                    message_found = True
+                    members = dms['owner_members']
+                    # Check if the user trying to share is in the channel
+                    for member in members:
+                        if user_id == member['u_id']:
+                            auth = True
+                    if auth == True:
+                        # Check if message is already pinned
+                        if messages['is_pinned'] == True:
+                            raise InputError(description="This message is already pinned")
+                        # Pins the message
+                        else:
+                            messages['is_pinned'] = True
+
+    # If message is not found either channels or dms raises InputError
+    # If message is found but user is not in chat, raises AccessError
+    if message_found == False:
+        raise InputError(description="Message was not found")
+    
+    if auth == False:
+        raise AccessError(description="You are not allowed to pin this message")
+
+    return {}
