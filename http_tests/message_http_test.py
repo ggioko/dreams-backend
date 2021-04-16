@@ -491,10 +491,6 @@ def test_message_share_long_optional_message():
     'message': optional, 'channel_id': channel['channel_id'], 'dm_id': -1})
     assert r.status_code == InputError().code
 
-
-
-
-
 def test_message_pin_dm():
     '''
     Given a token and message id, checks if the message with message_id is pinned
