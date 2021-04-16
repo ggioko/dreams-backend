@@ -3,7 +3,7 @@ import pytest
 from src.auth import auth_register_v2, auth_logout_v1
 from src.channels import channels_create_v2
 from src.channel import channel_messages_v2, channel_join_v2
-from src.message import message_send_v2, message_remove_v1, message_edit_v2, message_share_v1, message_senddm_v1, message_pin_v1
+from src.message import message_send_v2, message_remove_v1, message_edit_v2, message_share_v1, message_senddm_v1, message_pin_v1, message_unpin_v1
 from src.other import clear_v1
 from src.error import InputError, AccessError
 from src.helper import generate_token
@@ -631,3 +631,150 @@ def test_message_pin_invalid_token():
     auth_logout_v1(user_1['token'])
     with pytest.raises(AccessError):
         assert message_pin_v1(user_1['token'], message_1['message_id'])
+
+def test_message_unpin_dm():
+    '''
+    User is owner of the DM that they are trying to unpin a message in.
+    '''
+    # Create users
+    clear_v1()
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    u_id2 = user_2['auth_user_id']
+    # Create a dm, which will return {dm_id, dm_name}
+    new_dm = dm_create_v1(user_1['token'], [u_id2])
+    # Send a dm from user 1 to user 2
+    message_1 = message_senddm_v1(user_1['token'], new_dm['dm_id'], 'Hello this is a test')
+    message_pin_v1(user_1['token'], message_1['message_id'])
+    assert message_unpin_v1(user_1['token'], message_1['message_id']) == {}
+
+def test_message_unpin_channel():
+    '''
+    User is owner of the channel that they are trying to unpin a message in.
+    '''
+    clear_v1()
+    id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    channel_1 = channels_create_v2(id_1['token'], "MyChannel", True)
+    message = "hello this is my new channel"
+    message_send_v2(id_1['token'], channel_1['channel_id'], message)
+    result1 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
+    assert result1['messages'][0]['message'] == message
+    message_pin_v1(id_1['token'], result1['messages'][0]['message_id']) == {}
+    assert message_unpin_v1(id_1['token'], result1['messages'][0]['message_id']) == {}
+
+def test_message_pin_invalid_message_dm():
+    '''
+    User is owner of the DM that they are trying to umpin a message in. But message id is invalid.
+    '''
+    clear_v1()
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    u_id2 = user_2['auth_user_id']
+    # Create a dm, which will return {dm_id, dm_name}
+    new_dm = dm_create_v1(user_1['token'], [u_id2])
+    # Send a dm from user 1 to user 2
+    message_1 = message_senddm_v1(user_1['token'], new_dm['dm_id'], 'Hello this is a test')
+    message_pin_v1(user_1['token'], message_1['message_id'])
+    with pytest.raises(InputError):
+        assert message_unpin_v1(user_1['token'], 40)
+
+def test_message_unpin_invalid_message_channel():
+    '''
+    User is owner of the channel that they are trying to unpin a message in. But message id is invalid.
+    '''
+    clear_v1()
+    id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    channel_1 = channels_create_v2(id_1['token'], "MyChannel", True)
+    message = "hello this is my new channel"
+    message_send_v2(id_1['token'], channel_1['channel_id'], message)
+    result1 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
+    assert result1['messages'][0]['message'] == message
+    message_pin_v1(id_1['token'], result1['messages'][0]['message_id']) == {}
+    with pytest.raises(InputError):
+        assert message_unpin_v1(id_1['token'], 40)
+
+def test_message_unpin_dm_already_unpinned():
+    '''
+    User is owner of the DM that they are trying to unpin a message in. But message is already unpinned.
+    '''
+    # Create users
+    clear_v1()
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    u_id2 = user_2['auth_user_id']
+    # Create a dm, which will return {dm_id, dm_name}
+    new_dm = dm_create_v1(user_1['token'], [u_id2])
+    # Send a dm from user 1 to user 2
+    message_1 = message_senddm_v1(user_1['token'], new_dm['dm_id'], 'Hello this is a test')
+    message_pin_v1(user_1['token'], message_1['message_id'])
+    message_unpin_v1(user_1['token'], message_1['message_id'])
+    with pytest.raises(InputError):
+        assert message_unpin_v1(user_1['token'], message_1['message_id'])
+
+def test_message_unpin_channel_already_unpinned():
+    '''
+    User is owner of the channel that they are trying to unpin a message in. But message is already unpinned.
+    '''
+    clear_v1()
+    id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    channel_1 = channels_create_v2(id_1['token'], "MyChannel", True)
+    message = "hello this is my new channel"
+    message_send_v2(id_1['token'], channel_1['channel_id'], message)
+    result1 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
+    assert result1['messages'][0]['message'] == message
+    message_pin_v1(id_1['token'], result1['messages'][0]['message_id'])
+    message_unpin_v1(id_1['token'], result1['messages'][0]['message_id'])
+    with pytest.raises(InputError):
+        assert message_unpin_v1(id_1['token'], result1['messages'][0]['message_id'])
+
+def test_message_unpin_dm_not_owner():
+    '''
+    User is not owner of the DM that they are trying to unpin a message in.
+    '''
+    # Create users
+    clear_v1()
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    user_3 = auth_register_v2('secondemail2@gmail.com', '54321cba#@!', 'Freddy', 'Smitth')
+    u_id2 = user_2['auth_user_id']
+    # Create a dm, which will return {dm_id, dm_name}
+    new_dm = dm_create_v1(user_1['token'], [u_id2])
+    # Send a dm from user 1 to user 2
+    message_1 = message_senddm_v1(user_1['token'], new_dm['dm_id'], 'Hello this is a test')
+    message_pin_v1(user_1['token'], message_1['message_id'])
+    with pytest.raises(AccessError):
+        assert message_unpin_v1(user_3['token'], message_1['message_id'])
+
+def test_message_unpin_channel_not_owner():
+    '''
+    User is not owner of the channel that they are trying to unpin a message in.
+    '''
+    clear_v1()
+    id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    id_2 = auth_register_v2('validemail2@gmail.com', '123abcd!@#', 'Haydenn', 'Everestt')
+    channel_1 = channels_create_v2(id_1['token'], "MyChannel", True)
+    message = "hello this is my new channel"
+    message_send_v2(id_1['token'], channel_1['channel_id'], message)
+    result1 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
+    assert result1['messages'][0]['message'] == message
+    message_pin_v1(id_1['token'], result1['messages'][0]['message_id'])
+    with pytest.raises(AccessError):
+        assert message_unpin_v1(id_2['token'], result1['messages'][0]['message_id'])
+
+def test_message_unpin_invalid_token():
+    '''
+    Tests that an AccessError is raised on invalid token
+    '''
+    # Create users
+    clear_v1()
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    u_id2 = user_2['auth_user_id']
+    # Create a dm, which will return {dm_id, dm_name}
+    new_dm = dm_create_v1(user_1['token'], [u_id2])
+    # Send a dm from user 1 to user 2
+    message_1 = message_senddm_v1(user_1['token'], new_dm['dm_id'], 'Hello this is a test')
+    message_pin_v1(user_1['token'], message_1['message_id'])
+    auth_logout_v1(user_1['token'])
+    with pytest.raises(AccessError):
+        assert message_unpin_v1(user_1['token'], message_1['message_id'])
