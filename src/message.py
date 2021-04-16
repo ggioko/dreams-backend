@@ -308,3 +308,21 @@ def message_senddm_v1(token, dm_id, message):
             })
        
     return {'message_id': message_id}
+
+def message_pin_v1(token, message_id):
+    """
+    Given a message within a channel or DM, mark it as "pinned" to be given special display treatment by the frontend
+
+    Arguments:
+        token (string)    - Token
+        message_id (int)    - Messages id
+
+    Exceptions:
+        InputError  - Message_id is not a valid message
+                    - Message with ID message_id is already pinned
+        AccesError  - The authorised user is not a member of the channel or DM that the message is within
+                    - The authorised user is not an owner of the channel or DM
+
+    Return Value:
+        Returns {} - (empty dict) on success
+    """
