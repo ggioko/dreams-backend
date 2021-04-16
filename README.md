@@ -1295,7 +1295,7 @@ Note: This is most likely the most challenging part of the project. Don't get lo
 |---------|-------------------------------------|-------------------------------|-----------------------------------|
 |   1     |10am Monday 8th March (**week 4**)   |In YOUR **week 4** laboratory  |30%                                |
 |   2     |10am Tuesday 6th April (**week 8**)   |In YOUR **week 8** laboratory  |40%                                |
-|   3     |10am Tuesday 20th April (**week 10**)   |In YOUR **week 10** laboratory |30%                                |
+|   3     |1pm Tuesday 20th April (**week 10**)   |In YOUR **week 10** laboratory |30%                                |
 
 ### 7.1. Late Penalties
 
