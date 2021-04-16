@@ -550,7 +550,6 @@ def test_message_pin_invalid_message_dm():
     r = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [u_id2]})
     new_dm = r.json()
     r = requests.post(config.url + 'message/senddm/v1', json={'token': user_1['token'],'dm_id': new_dm['dm_id'], 'message': 'test message'})
-    message = r.json()
     r = requests.post(config.url + 'message/pin/v1', json={'token': user_1['token'], \
         'message_id' : 40})
     assert r.status_code == InputError().code
@@ -570,7 +569,6 @@ def test_message_pin_invalid_message_channel():
     message = "hello this is my new channel"
     r = requests.post(config.url + 'message/send/v2', json={'token': id_1['token'], \
         'channel_id' : channel['channel_id'], 'message' : message})
-    message_id = r.json()
     r = requests.post(config.url + 'message/pin/v1', json={'token': id_1['token'], \
         'message_id' : 40})
     assert r.status_code == InputError().code
