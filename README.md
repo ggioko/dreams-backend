@@ -20,7 +20,8 @@
 * 07/04: Added `v1` to `auth/passwordreset/reset/` route name
 * 10/04: Clarified tracking of utilization and involvement
 * 13/04: Removed the rest of a paragraph in requirements & design section that was taken out
-* 16/04: Removed duplicates of `user` and `messages` data type. To be clear, in iteration 2 `user` has had properties `reacts` and `is_pinned` added to it, and `messages` has had properties `profile_img_url` added to it.
+* 16/04: Removed duplicates of `user` and `messages` data type. To be clear, in iteration 2 `messages` has had properties `reacts` and `is_pinned` added to it, and `user` has had properties `profile_img_url` added to it.
+* 16/04: Extend due date back by 3 hours (new date: Tuesday 20th April @ 1pm)
 
 ## 1. Aims:
 
@@ -1295,7 +1296,7 @@ Note: This is most likely the most challenging part of the project. Don't get lo
 |---------|-------------------------------------|-------------------------------|-----------------------------------|
 |   1     |10am Monday 8th March (**week 4**)   |In YOUR **week 4** laboratory  |30%                                |
 |   2     |10am Tuesday 6th April (**week 8**)   |In YOUR **week 8** laboratory  |40%                                |
-|   3     |10am Tuesday 20th April (**week 10**)   |In YOUR **week 10** laboratory |30%                                |
+|   3     |1pm Tuesday 20th April (**week 10**)   |In YOUR **week 10** laboratory |30%                                |
 
 ### 7.1. Late Penalties
 
