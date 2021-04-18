@@ -3,7 +3,7 @@ import pytest
 from src.auth import auth_register_v2, auth_logout_v1
 from src.channels import channels_create_v2
 from src.channel import channel_messages_v2, channel_join_v2
-from src.message import message_send_v2, message_remove_v1, message_edit_v2, message_share_v1, message_senddm_v1, message_pin_v1, message_unpin_v1
+from src.message import message_send_v2, message_remove_v1, message_edit_v2, message_share_v1, message_senddm_v1, message_pin_v1, message_unpin_v1, message_react_v1
 from src.other import clear_v1
 from src.error import InputError, AccessError
 from src.helper import generate_token
@@ -299,7 +299,6 @@ def test_message_send_dm_not_member():
     with pytest.raises(AccessError):
         assert message_senddm_v1(user_3['token'], new_dm['dm_id'], 'hello, I am not part of this channel')
     
-    
 def test_message_send_dm_one_message():
     '''
     Pass in valid token, dm_id and message to message_senddm_v1.
@@ -346,7 +345,6 @@ def test_message_send_dm_different_message_ids():
     message_2 = message_senddm_v1(user_1['token'], new_dm_2['dm_id'], string_1)
     
     assert message_1['message_id'] != message_2['message_id']
-
 
 def test_message_send_dm_multiple_messages():
     '''
@@ -778,3 +776,173 @@ def test_message_unpin_invalid_token():
     auth_logout_v1(user_1['token'])
     with pytest.raises(AccessError):
         assert message_unpin_v1(user_1['token'], message_1['message_id'])
+
+def test_message_react_dm():
+    '''
+    User is a member of the DM that they are trying to react a message in.
+    '''
+    # Create users
+    clear_v1()
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    u_id2 = user_2['auth_user_id']
+    # Create a dm, which will return {dm_id, dm_name}
+    new_dm = dm_create_v1(user_1['token'], [u_id2])
+    # Send a dm from user 1 to user 2
+    message_1 = message_senddm_v1(user_1['token'], new_dm['dm_id'], 'Hello this is a test')
+    # react to message
+    assert message_react_v1(user_1['token'], message_1['message_id'], int(1)) == {}
+
+def test_message_react_channel():
+    '''
+    User is a member of the channel that they are trying to react a message in.
+    '''
+    clear_v1()
+    id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    channel_1 = channels_create_v2(id_1['token'], "MyChannel", True)
+    message = "hello this is my new channel"
+    message_send_v2(id_1['token'], channel_1['channel_id'], message)
+    result1 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
+    assert result1['messages'][0]['message'] == message
+    assert message_react_v1(id_1['token'], result1['messages'][0]['message_id'], int(1)) == {}
+
+def test_message_react_invalid_message_dm():
+    '''
+    User is a member of the DM that they are trying to react a message in. But message id is invalid.
+    '''
+    # Create users
+    clear_v1()
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    u_id2 = user_2['auth_user_id']
+    # Create a dm, which will return {dm_id, dm_name}
+    new_dm = dm_create_v1(user_1['token'], [u_id2])
+    # Send a dm from user 1 to user 2
+    message_senddm_v1(user_1['token'], new_dm['dm_id'], 'Hello this is a test')
+    with pytest.raises(InputError):
+        assert message_react_v1(user_1['token'], int(40), int(1))
+
+def test_message_react_invalid_message_channel():
+    '''
+    User is member of the channel that they are trying to react a message in. But message id is invalid.
+    '''
+    clear_v1()
+    id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    channel_1 = channels_create_v2(id_1['token'], "MyChannel", True)
+    message = "hello this is my new channel"
+    message_send_v2(id_1['token'], channel_1['channel_id'], message)
+    result1 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
+    assert result1['messages'][0]['message'] == message
+    with pytest.raises(InputError):
+        assert message_react_v1(id_1['token'], int(40), int(1))
+
+def test_message_react_dm_already_reacted():
+    '''
+    User is a member of the DM that they are trying to react a message in. But the user has already reacted to the message.
+    '''
+    # Create users
+    clear_v1()
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    u_id2 = user_2['auth_user_id']
+    # Create a dm, which will return {dm_id, dm_name}
+    new_dm = dm_create_v1(user_1['token'], [u_id2])
+    # Send a dm from user 1 to user 2
+    message_1 = message_senddm_v1(user_1['token'], new_dm['dm_id'], 'Hello this is a test')
+    message_react_v1(user_1['token'], message_1['message_id'], int(1))
+    with pytest.raises(InputError):
+        assert message_react_v1(user_1['token'], message_1['message_id'], 1)
+
+def test_message_react_channel_already_reacted():
+    '''
+    User is a member of the channel that they are trying to react a message in. But the user has already reacted to the message.
+    '''
+    clear_v1()
+    id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    channel_1 = channels_create_v2(id_1['token'], "MyChannel", True)
+    message = "hello this is my new channel"
+    message_send_v2(id_1['token'], channel_1['channel_id'], message)
+    result1 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
+    assert result1['messages'][0]['message'] == message
+    message_react_v1(id_1['token'], result1['messages'][0]['message_id'], int(1))
+    with pytest.raises(InputError):
+        assert message_react_v1(id_1['token'], result1['messages'][0]['message_id'], 1)
+
+def test_message_react_dm_invalid_react_id():
+    '''
+    User is a member of the DM that they are trying to react a message in. But the react_id is invalid.
+    '''
+    # Create users
+    clear_v1()
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    u_id2 = user_2['auth_user_id']
+    # Create a dm, which will return {dm_id, dm_name}
+    new_dm = dm_create_v1(user_1['token'], [u_id2])
+    # Send a dm from user 1 to user 2
+    message_1 = message_senddm_v1(user_1['token'], new_dm['dm_id'], 'Hello this is a test')
+    with pytest.raises(InputError):
+        assert message_react_v1(user_1['token'], message_1['message_id'], int(-99))
+
+def test_message_react_channel_invalid_react_id():
+    '''
+    User is a member of the channel that they are trying to react a message in. But the react_id is invalid
+    '''
+    clear_v1()
+    id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    channel_1 = channels_create_v2(id_1['token'], "MyChannel", True)
+    message = "hello this is my new channel"
+    message_send_v2(id_1['token'], channel_1['channel_id'], message)
+    result1 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
+    assert result1['messages'][0]['message'] == message
+    with pytest.raises(InputError):
+        assert message_react_v1(id_1['token'], result1['messages'][0]['message_id'], int(-99))
+
+def test_message_react_dm_not_member():
+    '''
+    User is not a member of the DM that they are trying to react a message in.
+    '''
+    # Create users
+    clear_v1()
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    user_3 = auth_register_v2('secondemail2@gmail.com', '54321cba#@!', 'Freddy', 'Smitth')
+    u_id2 = user_2['auth_user_id']
+    # Create a dm, which will return {dm_id, dm_name}
+    new_dm = dm_create_v1(user_1['token'], [u_id2])
+    # Send a dm from user 1 to user 2
+    message_1 = message_senddm_v1(user_1['token'], new_dm['dm_id'], 'Hello this is a test')
+    with pytest.raises(AccessError):
+        assert message_react_v1(user_3['token'], message_1['message_id'], int(1))
+
+def test_message_react_channel_not_member():
+    '''
+    User is not a member of the channel that they are trying to react a message in.
+    '''
+    clear_v1()
+    id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    id_2 = auth_register_v2('validemail2@gmail.com', '123abcd!@#', 'Haydenn', 'Everestt')
+    channel_1 = channels_create_v2(id_1['token'], "MyChannel", True)
+    message = "hello this is my new channel"
+    message_send_v2(id_1['token'], channel_1['channel_id'], message)
+    result1 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
+    assert result1['messages'][0]['message'] == message
+    with pytest.raises(AccessError):
+        assert message_react_v1(id_2['token'], result1['messages'][0]['message_id'], int(1))
+
+def test_message_react_invalid_token():
+    '''
+    Tests that an AccessError is raised on invalid token
+    '''
+    # Create users
+    clear_v1()
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    u_id2 = user_2['auth_user_id']
+    # Create a dm, which will return {dm_id, dm_name}
+    new_dm = dm_create_v1(user_1['token'], [u_id2])
+    # Send a dm from user 1 to user 2
+    message_1 = message_senddm_v1(user_1['token'], new_dm['dm_id'], 'Hello this is a test')
+    auth_logout_v1(user_1['token'])
+    with pytest.raises(AccessError):
+        assert message_react_v1(user_1['token'], message_1['message_id'], int(1))

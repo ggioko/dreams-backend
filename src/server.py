@@ -11,7 +11,7 @@ from src.dm import dm_create_v1, dm_details_v1, dm_remove_v1, dm_invite_v1, dm_l
 from src.channel import channel_addowner_v1, channel_removeowner_v1, channel_leave_v1
 from src.other import clear_v1
 from src.user import users_all_v1, user_profile_v2, user_profile_setemail_v2, user_profile_setname_v2, user_profile_sethandle_v1
-from src.message import message_send_v2, message_remove_v1, message_edit_v2, message_share_v1, message_senddm_v1, message_pin_v1, message_unpin_v1
+from src.message import message_send_v2, message_remove_v1, message_edit_v2, message_share_v1, message_senddm_v1, message_pin_v1, message_unpin_v1, message_react_v1
 from src.helper import save_data, load_data
 from src.admin import userpermission_change_v1
 
@@ -643,6 +643,26 @@ def unpin():
     save_data()
 
     return dumps({})
+
+@APP.route("/message/react/v1", methods=["POST"])
+def react():
+    """ 
+    Gets user token, message_id and react_id from http json and passes 
+    it to the message_react_v1 function
+    Returns {} on success.
+    """
+    data = request.get_json()
+
+    token = data['token']
+    react_id = int(data['react_id'])
+    message_id = int(data['message_id'])
+
+    message_react_v1(token, message_id, react_id)
+
+    save_data()
+    
+    return dumps({})
+
 
 load_data()  # Gets data from previous server run
 
