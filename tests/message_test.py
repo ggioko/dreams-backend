@@ -3,7 +3,11 @@ import pytest
 from src.auth import auth_register_v2, auth_logout_v1
 from src.channels import channels_create_v2
 from src.channel import channel_messages_v2, channel_join_v2
+<<<<<<< HEAD
 from src.message import message_send_v2, message_remove_v1, message_edit_v2, message_share_v1, message_senddm_v1, message_react_v1
+=======
+from src.message import message_send_v2, message_remove_v1, message_edit_v2, message_share_v1, message_senddm_v1, message_pin_v1, message_unpin_v1
+>>>>>>> master
 from src.other import clear_v1
 from src.error import InputError, AccessError
 from src.helper import generate_token
@@ -493,9 +497,15 @@ def test_message_share_authorised_user_channel():
     assert result1['messages'][0]['message'] == message
     assert message_share_v1(id_1['token'], result1['messages'][0]['message_id'], optional, channel_1['channel_id'], -1)
 
+<<<<<<< HEAD
 def test_message_react_dm():
     '''
     User is a member of the DM that they are trying to react a message in.
+=======
+def test_message_pin_dm():
+    '''
+    User is owner of the DM that they are trying to pin a message in.
+>>>>>>> master
     '''
     # Create users
     clear_v1()
@@ -506,12 +516,20 @@ def test_message_react_dm():
     new_dm = dm_create_v1(user_1['token'], [u_id2])
     # Send a dm from user 1 to user 2
     message_1 = message_senddm_v1(user_1['token'], new_dm['dm_id'], 'Hello this is a test')
+<<<<<<< HEAD
     # react to message
     assert message_react_v1(user_1['token'], message_1['message_id'], int(1)) == {}
 
 def test_message_react_channel():
     '''
     User is a member of the channel that they are trying to react a message in.
+=======
+    assert message_pin_v1(user_1['token'], message_1['message_id']) == {}
+
+def test_message_pin_channel():
+    '''
+    User is owner of the channel that they are trying to pin a message in.
+>>>>>>> master
     '''
     clear_v1()
     id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
@@ -520,11 +538,19 @@ def test_message_react_channel():
     message_send_v2(id_1['token'], channel_1['channel_id'], message)
     result1 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
     assert result1['messages'][0]['message'] == message
+<<<<<<< HEAD
     assert message_react_v1(id_1['token'], result1['messages'][0]['message_id'], int(1)) == {}
 
 def test_message_react_invalid_message_dm():
     '''
     User is a member of the DM that they are trying to react a message in. But message id is invalid.
+=======
+    assert message_pin_v1(id_1['token'], result1['messages'][0]['message_id']) == {}
+
+def test_message_pin_invalid_message_dm():
+    '''
+    User is owner of the DM that they are trying to pin a message in. But message id is invalid,
+>>>>>>> master
     '''
     # Create users
     clear_v1()
@@ -536,11 +562,19 @@ def test_message_react_invalid_message_dm():
     # Send a dm from user 1 to user 2
     message_senddm_v1(user_1['token'], new_dm['dm_id'], 'Hello this is a test')
     with pytest.raises(InputError):
+<<<<<<< HEAD
         assert message_react_v1(user_1['token'], int(40), int(1))
 
 def test_message_react_invalid_message_channel():
     '''
     User is member of the channel that they are trying to react a message in. But message id is invalid.
+=======
+        assert message_pin_v1(user_1['token'], 40)
+
+def test_message_pin_invalid_message_channel():
+    '''
+    User is owner of the channel that they are trying to pin a message in. But message id is invalid.
+>>>>>>> master
     '''
     clear_v1()
     id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
@@ -550,11 +584,19 @@ def test_message_react_invalid_message_channel():
     result1 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
     assert result1['messages'][0]['message'] == message
     with pytest.raises(InputError):
+<<<<<<< HEAD
         assert message_react_v1(id_1['token'], int(40), int(1))
 
 def test_message_react_dm_already_reacted():
     '''
     User is a member of the DM that they are trying to react a message in. But the user has already reacted to the message.
+=======
+        assert message_pin_v1(id_1['token'], 40)
+
+def test_message_pin_dm_already_pinned():
+    '''
+    User is owner of the DM that they are trying to pin a message in. But message is already pinned.
+>>>>>>> master
     '''
     # Create users
     clear_v1()
@@ -565,6 +607,7 @@ def test_message_react_dm_already_reacted():
     new_dm = dm_create_v1(user_1['token'], [u_id2])
     # Send a dm from user 1 to user 2
     message_1 = message_senddm_v1(user_1['token'], new_dm['dm_id'], 'Hello this is a test')
+<<<<<<< HEAD
     message_react_v1(user_1['token'], message_1['message_id'], int(1))
     with pytest.raises(InputError):
         assert message_react_v1(user_1['token'], message_1['message_id'], 1)
@@ -572,6 +615,15 @@ def test_message_react_dm_already_reacted():
 def test_message_react_channel_already_reacted():
     '''
     User is a member of the channel that they are trying to react a message in. But the user has already reacted to the message.
+=======
+    message_pin_v1(user_1['token'], message_1['message_id'])
+    with pytest.raises(InputError):
+        assert message_pin_v1(user_1['token'], message_1['message_id'])
+
+def test_message_pin_channel_already_pinned():
+    '''
+    User is owner of the channel that they are trying to pin a message in. But message is already pinned.
+>>>>>>> master
     '''
     clear_v1()
     id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
@@ -580,6 +632,7 @@ def test_message_react_channel_already_reacted():
     message_send_v2(id_1['token'], channel_1['channel_id'], message)
     result1 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
     assert result1['messages'][0]['message'] == message
+<<<<<<< HEAD
     message_react_v1(id_1['token'], result1['messages'][0]['message_id'], int(1))
     with pytest.raises(InputError):
         assert message_react_v1(id_1['token'], result1['messages'][0]['message_id'], 1)
@@ -587,36 +640,14 @@ def test_message_react_channel_already_reacted():
 def test_message_react_dm_invalid_react_id():
     '''
     User is a member of the DM that they are trying to react a message in. But the react_id is invalid.
-    '''
-    # Create users
-    clear_v1()
-    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
-    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
-    u_id2 = user_2['auth_user_id']
-    # Create a dm, which will return {dm_id, dm_name}
-    new_dm = dm_create_v1(user_1['token'], [u_id2])
-    # Send a dm from user 1 to user 2
-    message_1 = message_senddm_v1(user_1['token'], new_dm['dm_id'], 'Hello this is a test')
+=======
+    message_pin_v1(id_1['token'], result1['messages'][0]['message_id'])
     with pytest.raises(InputError):
-        assert message_react_v1(user_1['token'], message_1['message_id'], int(-99))
+        assert message_pin_v1(id_1['token'], result1['messages'][0]['message_id'])
 
-def test_message_react_channel_invalid_react_id():
+def test_message_pin_dm_not_owner():
     '''
-    User is a member of the channel that they are trying to react a message in. But the react_id is invalid
-    '''
-    clear_v1()
-    id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
-    channel_1 = channels_create_v2(id_1['token'], "MyChannel", True)
-    message = "hello this is my new channel"
-    message_send_v2(id_1['token'], channel_1['channel_id'], message)
-    result1 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
-    assert result1['messages'][0]['message'] == message
-    with pytest.raises(InputError):
-        assert message_react_v1(id_1['token'], result1['messages'][0]['message_id'], int(-99))
-
-def test_message_react_dm_not_member():
-    '''
-    User is not a member of the DM that they are trying to react a message in.
+    User is not owner of the DM that they are trying to pin a message in.
     '''
     # Create users
     clear_v1()
@@ -629,11 +660,11 @@ def test_message_react_dm_not_member():
     # Send a dm from user 1 to user 2
     message_1 = message_senddm_v1(user_1['token'], new_dm['dm_id'], 'Hello this is a test')
     with pytest.raises(AccessError):
-        assert message_react_v1(user_3['token'], message_1['message_id'], int(1))
+        assert message_pin_v1(user_3['token'], message_1['message_id'])
 
-def test_message_react_channel_not_member():
+def test_message_pin_channel_not_owner():
     '''
-    User is not a member of the channel that they are trying to react a message in.
+    User is not owner of the channel that they are trying to pin a message in.
     '''
     clear_v1()
     id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
@@ -644,9 +675,9 @@ def test_message_react_channel_not_member():
     result1 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
     assert result1['messages'][0]['message'] == message
     with pytest.raises(AccessError):
-        assert message_react_v1(id_2['token'], result1['messages'][0]['message_id'], int(1))
+        assert message_pin_v1(id_2['token'], result1['messages'][0]['message_id'])
 
-def test_message_react_invalid_token():
+def test_message_pin_invalid_token():
     '''
     Tests that an AccessError is raised on invalid token
     '''
@@ -661,4 +692,192 @@ def test_message_react_invalid_token():
     message_1 = message_senddm_v1(user_1['token'], new_dm['dm_id'], 'Hello this is a test')
     auth_logout_v1(user_1['token'])
     with pytest.raises(AccessError):
+        assert message_pin_v1(user_1['token'], message_1['message_id'])
+
+def test_message_unpin_dm():
+    '''
+    User is owner of the DM that they are trying to unpin a message in.
+    '''
+    # Create users
+    clear_v1()
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    u_id2 = user_2['auth_user_id']
+    # Create a dm, which will return {dm_id, dm_name}
+    new_dm = dm_create_v1(user_1['token'], [u_id2])
+    # Send a dm from user 1 to user 2
+    message_1 = message_senddm_v1(user_1['token'], new_dm['dm_id'], 'Hello this is a test')
+    message_pin_v1(user_1['token'], message_1['message_id'])
+    assert message_unpin_v1(user_1['token'], message_1['message_id']) == {}
+
+def test_message_unpin_channel():
+    '''
+    User is owner of the channel that they are trying to unpin a message in.
+    '''
+    clear_v1()
+    id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    channel_1 = channels_create_v2(id_1['token'], "MyChannel", True)
+    message = "hello this is my new channel"
+    message_send_v2(id_1['token'], channel_1['channel_id'], message)
+    result1 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
+    assert result1['messages'][0]['message'] == message
+    message_pin_v1(id_1['token'], result1['messages'][0]['message_id']) == {}
+    assert message_unpin_v1(id_1['token'], result1['messages'][0]['message_id']) == {}
+
+def test_message_unpin_invalid_message_dm():
+    '''
+    User is owner of the DM that they are trying to umpin a message in. But message id is invalid.
+    '''
+    clear_v1()
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    u_id2 = user_2['auth_user_id']
+    # Create a dm, which will return {dm_id, dm_name}
+    new_dm = dm_create_v1(user_1['token'], [u_id2])
+    # Send a dm from user 1 to user 2
+    message_1 = message_senddm_v1(user_1['token'], new_dm['dm_id'], 'Hello this is a test')
+    message_pin_v1(user_1['token'], message_1['message_id'])
+    with pytest.raises(InputError):
+        assert message_unpin_v1(user_1['token'], 40)
+
+def test_message_unpin_invalid_message_channel():
+    '''
+    User is owner of the channel that they are trying to unpin a message in. But message id is invalid.
+    '''
+    clear_v1()
+    id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    channel_1 = channels_create_v2(id_1['token'], "MyChannel", True)
+    message = "hello this is my new channel"
+    message_send_v2(id_1['token'], channel_1['channel_id'], message)
+    result1 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
+    assert result1['messages'][0]['message'] == message
+    message_pin_v1(id_1['token'], result1['messages'][0]['message_id']) == {}
+    with pytest.raises(InputError):
+        assert message_unpin_v1(id_1['token'], 40)
+
+def test_message_unpin_dm_already_unpinned():
+    '''
+    User is owner of the DM that they are trying to unpin a message in. But message is already unpinned.
+>>>>>>> master
+    '''
+    # Create users
+    clear_v1()
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    u_id2 = user_2['auth_user_id']
+    # Create a dm, which will return {dm_id, dm_name}
+    new_dm = dm_create_v1(user_1['token'], [u_id2])
+    # Send a dm from user 1 to user 2
+    message_1 = message_senddm_v1(user_1['token'], new_dm['dm_id'], 'Hello this is a test')
+<<<<<<< HEAD
+    with pytest.raises(InputError):
+        assert message_react_v1(user_1['token'], message_1['message_id'], int(-99))
+
+def test_message_react_channel_invalid_react_id():
+    '''
+    User is a member of the channel that they are trying to react a message in. But the react_id is invalid
+=======
+    message_pin_v1(user_1['token'], message_1['message_id'])
+    message_unpin_v1(user_1['token'], message_1['message_id'])
+    with pytest.raises(InputError):
+        assert message_unpin_v1(user_1['token'], message_1['message_id'])
+
+def test_message_unpin_channel_already_unpinned():
+    '''
+    User is owner of the channel that they are trying to unpin a message in. But message is already unpinned.
+>>>>>>> master
+    '''
+    clear_v1()
+    id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    channel_1 = channels_create_v2(id_1['token'], "MyChannel", True)
+    message = "hello this is my new channel"
+    message_send_v2(id_1['token'], channel_1['channel_id'], message)
+    result1 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
+    assert result1['messages'][0]['message'] == message
+<<<<<<< HEAD
+    with pytest.raises(InputError):
+        assert message_react_v1(id_1['token'], result1['messages'][0]['message_id'], int(-99))
+
+def test_message_react_dm_not_member():
+    '''
+    User is not a member of the DM that they are trying to react a message in.
+=======
+    message_pin_v1(id_1['token'], result1['messages'][0]['message_id'])
+    message_unpin_v1(id_1['token'], result1['messages'][0]['message_id'])
+    with pytest.raises(InputError):
+        assert message_unpin_v1(id_1['token'], result1['messages'][0]['message_id'])
+
+def test_message_unpin_dm_not_owner():
+    '''
+    User is not owner of the DM that they are trying to unpin a message in.
+>>>>>>> master
+    '''
+    # Create users
+    clear_v1()
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    user_3 = auth_register_v2('secondemail2@gmail.com', '54321cba#@!', 'Freddy', 'Smitth')
+    u_id2 = user_2['auth_user_id']
+    # Create a dm, which will return {dm_id, dm_name}
+    new_dm = dm_create_v1(user_1['token'], [u_id2])
+    # Send a dm from user 1 to user 2
+    message_1 = message_senddm_v1(user_1['token'], new_dm['dm_id'], 'Hello this is a test')
+<<<<<<< HEAD
+    with pytest.raises(AccessError):
+        assert message_react_v1(user_3['token'], message_1['message_id'], int(1))
+
+def test_message_react_channel_not_member():
+    '''
+    User is not a member of the channel that they are trying to react a message in.
+=======
+    message_pin_v1(user_1['token'], message_1['message_id'])
+    with pytest.raises(AccessError):
+        assert message_unpin_v1(user_3['token'], message_1['message_id'])
+
+def test_message_unpin_channel_not_owner():
+    '''
+    User is not owner of the channel that they are trying to unpin a message in.
+>>>>>>> master
+    '''
+    clear_v1()
+    id_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    id_2 = auth_register_v2('validemail2@gmail.com', '123abcd!@#', 'Haydenn', 'Everestt')
+    channel_1 = channels_create_v2(id_1['token'], "MyChannel", True)
+    message = "hello this is my new channel"
+    message_send_v2(id_1['token'], channel_1['channel_id'], message)
+    result1 = channel_messages_v2(id_1['token'], channel_1['channel_id'], 0)
+    assert result1['messages'][0]['message'] == message
+<<<<<<< HEAD
+    with pytest.raises(AccessError):
+        assert message_react_v1(id_2['token'], result1['messages'][0]['message_id'], int(1))
+
+def test_message_react_invalid_token():
+=======
+    message_pin_v1(id_1['token'], result1['messages'][0]['message_id'])
+    with pytest.raises(AccessError):
+        assert message_unpin_v1(id_2['token'], result1['messages'][0]['message_id'])
+
+def test_message_unpin_invalid_token():
+>>>>>>> master
+    '''
+    Tests that an AccessError is raised on invalid token
+    '''
+    # Create users
+    clear_v1()
+    user_1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user_2 = auth_register_v2('secondemail@gmail.com', '321cba#@!', 'Fred', 'Smith')
+    u_id2 = user_2['auth_user_id']
+    # Create a dm, which will return {dm_id, dm_name}
+    new_dm = dm_create_v1(user_1['token'], [u_id2])
+    # Send a dm from user 1 to user 2
+    message_1 = message_senddm_v1(user_1['token'], new_dm['dm_id'], 'Hello this is a test')
+<<<<<<< HEAD
+    auth_logout_v1(user_1['token'])
+    with pytest.raises(AccessError):
         assert message_react_v1(user_1['token'], message_1['message_id'], int(1))
+=======
+    message_pin_v1(user_1['token'], message_1['message_id'])
+    auth_logout_v1(user_1['token'])
+    with pytest.raises(AccessError):
+        assert message_unpin_v1(user_1['token'], message_1['message_id'])
+>>>>>>> master

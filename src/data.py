@@ -46,6 +46,7 @@ data = {
                             #'is_this_user_reacted': Boolean
                         },
                     ],
+                    #'is_pinned' : Boolean,
                 },
             ],
         },
@@ -82,9 +83,10 @@ data = {
                         {
                             #'react_id' : 1,
                             #'u_ids': [list of reacted u_id]
-                            #'is_this_user_reacted': Boolean
+                            #'is_this_user_reacted': Booleanß
                         },
                     ],
+                    #'is_pinned' : Boolean,
                 },
             ],
         },
