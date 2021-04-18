@@ -1,6 +1,7 @@
 # Data storage global variable
 data = {
     'users': [
+        '''
         {
             #'u_id': 1,
             #'email': 'cs1531@cse.unsw.edu.au',
@@ -9,8 +10,10 @@ data = {
             #'name_last': 'Jacobs',
             #'handle_str': 'haydenjacobs',
         },
+        '''
     ],
     'channels': [
+        
         {
             #'id': 1,
             #'name' : 'channel1',
@@ -92,5 +95,6 @@ data = {
         },
     ],
     'active_tokens' : [],
+    'active_reset_codes' : [], #JWT containing User ID as 'u_id'
     'message_count' : 0,
 }
