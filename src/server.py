@@ -622,6 +622,8 @@ def pin():
 
     message_pin_v1(token, message_id)
 
+    save_data()
+
     return dumps({})
 
 @APP.route("/message/unpin/v1", methods=["POST"])
@@ -637,6 +639,8 @@ def unpin():
     message_id = int(data['message_id'])
 
     message_unpin_v1(token, message_id)
+
+    save_data()
 
     return dumps({})
 
