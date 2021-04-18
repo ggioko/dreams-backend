@@ -580,3 +580,113 @@ def message_react_v1(token, message_id, react_id):
         raise AccessError(description="You are not allowed to react to this message")
 
     return {}
+
+def message_unreact_v1(token, message_id, react_id):
+    """
+    Given a message within a channel or DM the authorised user is part of, remove a "react" to that particular message
+
+    Arguments:
+        token (string)    - Token
+        message_id (integer)    - id of the message to react to
+        react_id (integer)     - id of a react (currently the only react id is 1 (thunbs up))
+
+    Exceptions:
+        InputError  - message_id is not a valid message within a channel or DM that the authorised user has joined
+                    - react_id is not a valid React ID. The only valid react ID the frontend has is 1
+                    - Message with ID message_id already contains an active React with ID react_id from the authorised user
+        AccesError  - The authorised user is not a member of the channel or DM that the message is within
+
+    Return Value:
+        Returns {} on success
+    """
+
+    # Checks if token is valid
+    if check_token_valid(token) == False:
+        raise AccessError(description="Not a valid token")
+    
+    # Check react_id is valid
+    # Currently the front end only has one reaction which is a thumbsup
+    # This list can be changed to add in new react ids, 
+    # the code below is setup so that nothing needs to be changed if the list is edited
+    list_of_reacts = [1]
+    if react_id not in list_of_reacts:
+        raise InputError(description="Invalid react_id detected")
+    
+    user_id = get_token_user_id(token)
+    message_found = False
+    auth = False
+    
+    # Loop through channels looking for message
+    # and to check if user is in the channel
+    for channel in data['channels']:
+        for messages in channel['messages']:
+            if message_id == messages['message_id']:
+                message_found = True
+                # Raise auth flag if user is a member of the channel
+                members = channel['all_members']
+                for member in members:
+                    if user_id == member['u_id']:
+                        auth = True
+                if auth == True:
+                    # Check if there is an active react from the user with react_id
+                    for react in messages['reacts']:
+                        if react['react_id'] == react_id:
+                            if user_id not in react['u_ids']:
+                                raise InputError(description="You have not reacted to this message before")
+                    # If user has reacted, unreact to message
+                    flag = 0
+                    for react in messages['reacts']:
+                        if react['react_id'] == react_id:
+                            react['u_ids'].remove(user_id)
+                            react['is_this_user_reacted'] = False
+                            if len(react['u_ids']) == 0:
+                                flag = 1
+                    # If list of u_ids for that react is now 0, it removes that react from the list of reacts entirely
+                    if flag == 1:
+                        for react in messages['reacts']:
+                            if react['react_id'] == react_id:
+                                break
+                        messages['reacts'].remove(react)
+
+    # If message not found, check dm messages with same process
+    if message_found == False:
+        for dms in data['channels']:
+            for messages in dms['messages']:
+                if message_id == messages['message_id']:
+                    message_found = True
+                    # Raise auth flag if user is a member of the channel
+                    members = dms['all_members']
+                    for member in members:
+                        if user_id == member['u_id']:
+                            auth = True
+                    if auth == True:
+                        # Check if there is an active react from the user with react_id
+                        for react in messages['reacts']:
+                            if react['react_id'] == react_id:
+                                if user_id not in react['u_ids']:
+                                    raise InputError(description="You have not reacted to this message before")
+                        # If user has reacted, unreact to message
+                        flag = 0
+                        for react in messages['reacts']:
+                            if react['react_id'] == react_id:
+                                react['u_ids'].remove(user_id)
+                                react['is_this_user_reacted'] = False
+                                if len(react['u_ids']) == 0:
+                                    flag = 1
+                        # If list of u_ids for that react is now 0, it removes that react from the list of reacts entirely
+                        if flag == 1:
+                            for react in messages['reacts']:
+                                if react['react_id'] == react_id:
+                                    break
+                            messages['reacts'].remove(react)
+
+
+    # If message is not found either channels or dms raises InputError
+    # If message is found but user is not in chat, raises AccessError
+    if message_found == False:
+        raise InputError(description="Message was not found")
+    
+    if auth == False:
+        raise AccessError(description="You are not allowed to unreact to this message")
+
+    return {}
