@@ -14,6 +14,7 @@ from src.user import users_all_v1, user_profile_v2, user_profile_setemail_v2, us
 from src.message import message_send_v2, message_remove_v1, message_edit_v2, message_share_v1, message_senddm_v1
 from src.helper import save_data, load_data
 from src.admin import userpermission_change_v1
+from src.standup import standup_start_v1
 
 def defaultHandler(err):
     response = err.get_response()
@@ -603,6 +604,24 @@ def send_dm():
     message = data['message']
 
     response = message_senddm_v1(token, dm_id, message)
+
+    save_data()
+    
+    return dumps (response)
+
+@APP.route("/standup/start/v1", methods=['POST'])
+def standup_start():
+    """
+    Gets user token, channel_id and length from http json and passes 
+    it to the standup_start_v1 function
+    Returns {time_finish} on success.
+    """ 
+    data = request.get_json()
+    token = data['token']
+    channel_id = data['channel_id']
+    length = data['length']
+
+    response = standup_start_v1(token, channel_id, length)
 
     save_data()
     
