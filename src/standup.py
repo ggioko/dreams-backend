@@ -5,6 +5,25 @@ from src.data import data
 from src.helper import check_token_valid, check_channel_id_exists, get_token_user_id
 
 def standup_start_v1(token, channel_id, length):
+    '''    
+    For a given channel, start the standup period whereby for the next "length" seconds 
+    if someone calls "standup_send" with a message, it is buffered during the X second window 
+    then at the end of the X second window a message will be added to the message queue in the channel.
+    
+    Arguments: 
+        token (string) - Users session token
+        channel_id (int)    - channel id
+        length (int)    - length of the standup in seconds
+        
+    Exception: 
+        InputError  - Channel id is not a valid channel.
+        InputError  - An active standup is currently running in this channel
+        AccessError - Occurs when token passed in is not a valid token.
+        AccessError - Occurs when authorised user is not a a member of the channel.
+        
+    Return value: 
+        {time_finish} on success
+    ''' 
     # Check if token is valid using helper
     if check_token_valid(token) == False:
         raise AccessError(description='Error Invalid token')
