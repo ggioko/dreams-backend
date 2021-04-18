@@ -14,7 +14,6 @@ def test_standup_start_invalid_channel_id():
     """
     clear_v1()
     user_1 = auth_register_v2('validemail0@gmail.com', '123abc!@#', 'Hayden', 'Everest')
-    channel_1 = channels_create_v2(user_1['token'], 'channel1', True)
 
     with pytest.raises(InputError):
         assert standup_start_v1(user_1['token'], 5, 60)
