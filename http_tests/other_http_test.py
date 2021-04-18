@@ -23,13 +23,23 @@ def test_search():
     new_channel = r.json()
     requests.post(config.url + 'channel/invite/v2', json={'token': rego_1['token'],\
     'channel_id': new_channel['channel_id'] + 1, 'u_id':rego_2['auth_user_id']})
-    r = requests.post(config.url + 'dm/create/v1',  json={'token': rego_1['token'], 'u_ids': [user_2['auth_user_id']]})
     
+    messagecontent1 = "hello this is my new channel"
+
+    r = requests.post(config.url + 'message/send/v2', json={'token': id_1['token'], \
+        'channel_id' : channel['channel_id'], 'message' : messagecontent1})
+    message = r.json()
+
+    # Query found
+    assert requests.get(config.url + 'search/v2', params={'token': rego_1['token'],\
+        'query_str': "my new"})['messages'][0]['message_id'] == message['message_id']
     
-    # user 3 dm
-    assert requests.get(config.url + 'channel/messages/v2', params={'token': register1['token'], 'channel_id': channel1['channel_id'], 'start': 0})
-    # user 3 channel
-    
-    # too long thingo
-    
-    # workingg
+    # Too long search query
+    requests.get(config.url + 'search/v2', params={'token': rego_1['token'],\
+        'query_str': "a" * 1100})
+    assert r.status_code == InputError().code
+
+    # Matching string, but wrong user
+    assert requests.get(config.url + 'search/v2', params={'token': rego_3['token'],\
+        'query_str': "my new"})['messages'] == []
+
