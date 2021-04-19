@@ -38,9 +38,8 @@ def standup_start_v1(token, channel_id, length):
             standup = channel['standup']
     
     # Check if standup is active
-    if 'is_active' in standup.keys():
-        if standup['is_active'] == True:
-            raise InputError(description='Error standup is already active')
+    if standup['is_active'] == True:
+        raise InputError(description='Error standup is already active')
 
     auth_user_id = get_token_user_id(token)    
 
@@ -154,15 +153,15 @@ def standup_send_v1(token, channel_id, message):
             standup_message = standup['queue']
 
     # Check if active standup is running in channel
-    if 'is_active' in standup.keys():
-        if standup['is_active'] == False:
-            raise InputError(description='Error active standup is not running in channel')
+    if standup['is_active'] == False:
+        raise InputError(description='Error active standup is not running in channel')
     
     # Find users first name using auth_user_id
     for user in data['users']:
         if user['u_id'] == auth_user_id:
             user_name = user['name_first']
-
+    
+    # Append message to queue
     standup_message += user_name+": "+message+"\n"
 
     standup['queue'] = standup_message
