@@ -4,6 +4,8 @@ from src.helper import get_token, get_user_data, email_in_use
 import re
 import jwt
 import hashlib
+import smtplib
+import uuid
 
 def auth_login_v2(email, password):
     """
@@ -168,3 +170,45 @@ def auth_logout_v1(token):
             active_tokens.remove(x)
             return True
     return False
+
+def passwordreset_request(email):
+    """
+    Given an email address, sends the user an email with a password reset string
+    that can be given to passwordreset_reset.
+    Arguments:
+        email (string)    - email to look through
+
+    Exceptions:
+        N/A
+
+    Return Value:
+        Returns { }
+    """
+    reset_code = uuid.uuid4().hex
+
+    email_found = False
+    if len(data['users']) != 0:
+        for user in data['users']:
+            if user['email'] == email:
+                email_found = True
+                data['active_reset_codes'].append(reset_code)
+                break
+    if not email_found:
+        return {}
+    
+    email_cred_username = 'f11bdorito@gmail.com'
+    email_cred_password = 'd0ritostastegood!'
+    subject = 'Your Dreams password reset code'
+    body = f'Your password reset link is as follows: f{reset_code}'
+
+    email_content = f"From: {email_cred_username}"
+    email_content += f"\nTo: {email}"
+    email_content += f"\nSubject: {subject}"
+    email_content += f"\n{body}"
+    server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+    server.ehlo()
+    server.login(email_cred_username, email_cred_password)
+    server.sendmail(email_cred_username, [email], email_content)
+    server.close()
+
+
