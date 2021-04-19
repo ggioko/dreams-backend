@@ -959,17 +959,6 @@ def test_message_react_invalid_token():
 
 
 
-
-
-
-
-
-
-
-
-
-
-
 def test_message_unreact_dm():
     '''
     User is a member of the DM that they are trying to unreact a message in.
@@ -1049,7 +1038,7 @@ def test_message_unreact_dm_already_unreacted():
     message_react_v1(user_1['token'], message_1['message_id'], int(1))
     message_unreact_v1(user_1['token'], message_1['message_id'], int(1))
     with pytest.raises(InputError):
-        assert message_unreact_v1(user_1['token'], message_1['message_id'], 1)
+        assert message_unreact_v1(user_1['token'], message_1['message_id'], int(1))
 
 def test_message_unreact_channel_already_unreacted():
     '''
