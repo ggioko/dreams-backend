@@ -15,6 +15,7 @@ from src.message import message_send_v2, message_remove_v1, message_edit_v2, mes
 from src.helper import save_data, load_data
 from src.admin import userpermission_change_v1, user_remove_v1
 from src.standup import standup_start_v1, standup_active_v1
+from src.notifications import notifications_get_v1
 
 
 def defaultHandler(err):
@@ -749,6 +750,23 @@ def search():
     return dumps(
         data
     )
+    
+@APP.route("/notifications/get/v1", methods=['GET'])
+def notifications():
+    """
+    Gets user token from http args and passes it to
+    notifications/get/v1 function
+
+    Returns {notifications} on success
+    """
+    token = request.args.get('token')
+    data = notifications_get_v1(token)
+
+    save_data()
+    return dumps(
+        data
+    )
+
 
 clear_v1()
 

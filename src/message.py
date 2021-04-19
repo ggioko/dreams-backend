@@ -62,7 +62,7 @@ def message_send_v2(token, channel_id, message):
                             user['notifications'].append({
                                                     'channel_id': channel_id,
                                                     'dm_id': -1,
-                                                    'notification_message': "{sender_handle} tagged you in {channel_name}: {snippet}",
+                                                    'notification_message': f"{sender_handle} tagged you in {channel_name}: {snippet}",
                                                     })
 
     return {
