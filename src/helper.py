@@ -30,6 +30,16 @@ def get_token_user_id(token):
     u_id = int(decoded_token['u_id'])
     return u_id
 
+def get_user_handle(u_id):
+    """
+    Takes in a u_id and returns the corresponding user's handle
+    """
+    for user in data['users']:
+        if user['u_id'] == u_id:
+            handle = user['handle_str']
+            break
+    return handle
+
 def generate_token(u_id):
     """
     Takes in a u_id and on success returns a token on success

@@ -3,6 +3,18 @@ from src.data import data
 
 
 def notifications_get_v1(token):
+    """
+    Returns the user's 20 most recent notifications.
+
+    Arguments:
+        token (string)    - Token
+
+    Exceptions:
+        AccessError  - Invalid token
+
+    Return Value:
+        Returns {notifications} on success.
+    """
     u_id = get_token_user_id(token)
     
     for user in data['users']:

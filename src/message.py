@@ -1,6 +1,6 @@
 from src.error import InputError, AccessError
 from src.data import data
-from src.helper import get_token_user_id, check_token_valid, is_dreams_owner
+from src.helper import get_token_user_id, check_token_valid, is_dreams_owner, get_user_handle
 from time import time
 
 def message_send_v2(token, channel_id, message):
@@ -29,7 +29,8 @@ def message_send_v2(token, channel_id, message):
         raise InputError(description="Message is more than 1000 characters")
 
     u_id = get_token_user_id(token)
-
+    sender_handle = get_user_handle 
+    
     data['message_count'] += 1
 
     for channel in data['channels']:
@@ -38,6 +39,7 @@ def message_send_v2(token, channel_id, message):
             if u_id not in user_ids:
                 raise AccessError(description="The authorised user has not joined the channel \
                     they are trying to post to")
+            channel_name = channel['name']
             channel['messages'].append({
                 'message_id': data['message_count'],
                 'u_id': u_id,
@@ -46,6 +48,23 @@ def message_send_v2(token, channel_id, message):
                 'reacts' : [],
                 'is_pinned' : False,
             })
+            if len(message) >= 20:
+                snippet = message[0:20]
+            else:
+                snippet = message
+                
+            for member in channel['all_members']:
+                user_id = member['u_id']
+                handle = get_user_handle(user_id)
+                if f"@{handle}" in message:
+                    for user in data['users']:
+                        if user_id == user['u_id']:
+                            user['notifications'].append({
+                                                    'channel_id': channel_id,
+                                                    'dm_id': -1,
+                                                    'notification_message': \
+                                                    f"{sender_handle} tagged you in {channel_name}: {snippet}",
+                                                    })
 
     return {
         'message_id': data['message_count'],
@@ -277,16 +296,7 @@ def message_senddm_v1(token, dm_id, message):
         raise AccessError(description="Not a valid token")
         
     u_id = get_token_user_id(token)
-    # Check if user is a member of the dm
-#    membership = 0
-#    for dm in data['dms']:
-#        if dm['dm_id'] == dm_id:
-#            for member in dm['all_members']:
-#                if u_id == member['u_id']:
-#                    membership = 1 
-#    if membership == 0:
-#        raise AccessError(description="Not a member of this dm")
-        
+    sender_handle = get_user_handle  
     # Check size of message
     if len(message) > 1000:
         raise InputError(description="Message must be 1000 characters or less")
@@ -298,6 +308,7 @@ def message_senddm_v1(token, dm_id, message):
     
     for dm in data['dms']:
         if dm_id == dm['dm_id']:
+            dm_name = dm['name']
             user_ids = [dm['all_members'][c]['u_id'] for c in range(len(dm['all_members']))]
             if u_id not in user_ids:
                 raise AccessError(description="Not a member of this dm")
@@ -310,6 +321,23 @@ def message_senddm_v1(token, dm_id, message):
                 'reacts' : [],
                 'is_pinned' : False,
             })
+            if len(message) >= 20:
+                snippet = message[0:20]
+            else:
+                snippet = message
+                
+            for member in dm['all_members']:
+                user_id = member['u_id']
+                handle = get_user_handle(user_id)
+                if f"@{handle}" in message:
+                    for user in data['users']:
+                        if user_id == user['u_id']:
+                            user['notifications'].append({
+                                                    'channel_id': -1,
+                                                    'dm_id': dm_id,
+                                                    'notification_message': \
+                                                    f"{sender_handle} tagged you in {dm_name}: {snippet}",
+                                                    })
        
     return {'message_id': message_id}
 

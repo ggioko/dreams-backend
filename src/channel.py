@@ -1,7 +1,7 @@
 from src.error import InputError, AccessError
 from src.data import data
 from src.channels import channels_list_v2
-from src.helper import get_token_user_id, check_token_valid, SECRET, is_dreams_owner
+from src.helper import get_token_user_id, check_token_valid, SECRET, is_dreams_owner, get_user_handle
 import jwt
 import hashlib
 
@@ -55,7 +55,7 @@ def channel_invite_v2(token, channel_id, u_id):
     # Gets ID of inviter
     decoded_token = jwt.decode(token, SECRET, algorithms=['HS256'])
     auth_user_id = decoded_token['u_id']
-
+    user_handle = get_user_handle(auth_user_id)
     # Checks that inviter is authorised to invite new member
     userMatch = False
     for user in channel['all_members']:
@@ -79,6 +79,11 @@ def channel_invite_v2(token, channel_id, u_id):
                 'handle_str': user['handle_str'],
                 'permission_id': user['permission_id'],
             }
+            user['notifications'].append({
+                                        'channel_id': channel_id,
+                                        'dm_id': -1,
+                                        'notification_message': f"{user_handle} added you to {channel['name']}"
+                                        })
 
     # Added user to all members for channel
     channel['all_members'].append(reuser)
