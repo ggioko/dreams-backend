@@ -93,4 +93,9 @@ data = {
     ],
     'active_tokens' : [],
     'message_count' : 0,
+    'dreams_stats' : {
+        'channels_exist': [], 
+        'dms_exist': [], 
+        'messages_exist': []
+    }
 }

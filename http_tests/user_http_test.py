@@ -254,7 +254,7 @@ def test_user_http_stats_dreams():
     # Access Error
     r = requests.get(config.url + '/user/stats/v1', params ={'token': user['token']})
     stats = r.json()
-    assert stats['channels_exist'][0]['num_channels_exist'] == 1
-    assert stats['dms_exist'][0]['num_dms_exist'] == 0
-    assert stats['messages_exist'][0]['num_messages_exist'] == 0
+    assert stats['channels_exist']['num_channels_exist'] == 1
+    assert stats['dms_exist']['num_dms_exist'] == 0
+    assert stats['messages_exist']['num_messages_exist'] == 0
     assert stats['utilization_rate'] == 0.5

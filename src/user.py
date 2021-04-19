@@ -194,19 +194,23 @@ def user_stats_dreams_v1(token):
             if user['u_id'] not in num_users:
                 num_users.append(user['u_id'])
 
+    data['dreams_stats']['channels_exist'].append({
+        'num_channels_exist' : num_channels_exist, 
+        'time_stamp' : time_stamp
+    })
+    data['dreams_stats']['dms_exist'].append({
+        'num_dms_exist' : num_dms_exist, 
+        'time_stamp' : time_stamp
+    })
+    data['dreams_stats']['messages_exist'].append({
+        'num_messages_exist' : num_messages_exist, 
+        'time_stamp' : time_stamp
+    })
+
     return {
-        'channels_exist': [{
-            'num_channels_exist' : num_channels_exist, 
-            'time_stamp' : time_stamp
-        }], 
-        'dms_exist': [{
-            'num_dms_exist' : num_dms_exist,
-            'time_stamp' : time_stamp
-        }], 
-        'messages_exist': [{
-            'num_messages_exist' : num_messages_exist,
-            'time_stamp' : time_stamp
-        }], 
+        'channels_exist': data['dreams_stats']['channels_exist'][-1], 
+        'dms_exist': data['dreams_stats']['dms_exist'][-1], 
+        'messages_exist': data['dreams_stats']['messages_exist'][-1], 
         'utilization_rate' : len(num_users) / total_num_users
     }
     
