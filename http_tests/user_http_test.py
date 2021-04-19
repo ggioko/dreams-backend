@@ -252,7 +252,7 @@ def test_user_http_stats_dreams():
     requests.post(config.url + 'channels/create/v2', json = {'token': user['token'], 'name': 'Channel1', 'is_public': True})
 
     # Access Error
-    r = requests.get(config.url + '/user/stats/v1', params ={'token': user['token']})
+    r = requests.get(config.url + 'user/stats/v1', params ={'token': user['token']})
     stats = r.json()
     assert stats['channels_exist']['num_channels_exist'] == 1
     assert stats['dms_exist']['num_dms_exist'] == 0
