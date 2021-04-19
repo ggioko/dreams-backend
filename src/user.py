@@ -184,17 +184,29 @@ def user_stats_dreams_v1(token):
     num_users = []
     channel_users = [data['channels'][c]['all_members'] for c in range(len(data['channels']))]
     dm_users = [data['dms'][c]['all_members'] for c in range(len(data['dms']))]
-    for user in channel_users:
-        if user['u_id'] not in num_users:
-            num_users.append(user['u_id'])
-    for user in dm_users:
-        if user['u_id'] not in num_users:
-            num_users.append(user['u_id'])
+    print(channel_users)
+    if len(channel_users) != 0:
+        for user in channel_users[0]:
+            if user['u_id'] not in num_users:
+                num_users.append(user['u_id'])
+    if len(dm_users) != 0:
+        for user in dm_users[0]:
+            if user['u_id'] not in num_users:
+                num_users.append(user['u_id'])
 
     return {
-        'channels_exist': [{num_channels_exist, time_stamp}], 
-        'dms_exist': [{num_dms_exist, time_stamp}], 
-        'messages_exist': [{num_messages_exist, time_stamp}], 
+        'channels_exist': [{
+            'num_channels_exist' : num_channels_exist, 
+            'time_stamp' : time_stamp
+        }], 
+        'dms_exist': [{
+            'num_dms_exist' : num_dms_exist,
+            'time_stamp' : time_stamp
+        }], 
+        'messages_exist': [{
+            'num_messages_exist' : num_messages_exist,
+            'time_stamp' : time_stamp
+        }], 
         'utilization_rate' : len(num_users) / total_num_users
     }
     

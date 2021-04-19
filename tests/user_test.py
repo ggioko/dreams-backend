@@ -314,7 +314,10 @@ def test_sethandle_already_used():
         assert user_profile_sethandle_v1(user_1['token'], 'fredsmith')
     
 def test_user_stats_invalidtoken():
+    """
+    Checks if user stats raises AccessError if invalid token is passed
+    """
     clear_v1()
-    user = auth_register_v2('validemail0@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    auth_register_v2('validemail0@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     with pytest.raises(AccessError):
-        assert user_stats_dreams_v1(user['token'])
+        assert user_stats_dreams_v1(3)
