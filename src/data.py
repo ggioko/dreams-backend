@@ -103,4 +103,5 @@ data = {
     ],
     'active_tokens' : [],
     'message_count' : 0,
+    'removed_u_ids': [],
 }
