@@ -105,3 +105,13 @@ def is_dreams_owner(u_id):
                 return True
             return False
     return False
+
+def check_channel_id_exists(channel_id):
+    """
+    Helper function to check if a channel exists.
+    Takes in a channel_id and outputs True if valid, False otherwise
+    """
+    for channel in data['channels']:
+        if channel['id'] == channel_id:
+            return True
+    return False
