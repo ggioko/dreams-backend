@@ -202,19 +202,23 @@ def passwordreset_request(email):
     
     email_cred_username = 'f11bdorito@gmail.com'
     email_cred_password = 'd0ritostastegood!'
-    subject = 'Your Dreams password reset code'
-    body = f'Your password reset link is as follows: f{reset_code}'
 
-    email_content = f"From: {email_cred_username}"
-    email_content += f"\nTo: {email}"
-    email_content += f"\nSubject: {subject}"
-    email_content += f"\n{body}"
+    subject = 'Dreams Password Reset Code'
+    body = "Your password reset code is as follows: " + reset_code
+
+    email_content = f"From: {email_cred_username}\n"
+    email_content += f"To: {email}\n"
+    email_content += f"Subject: {subject}\n"
+    email_content += f"\n{body}\n"
+
     server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
     server.ehlo()
     server.login(email_cred_username, email_cred_password)
     server.sendmail(email_cred_username, [email], email_content)
     server.close()
-    
+
+    return {}
+
 def auth_passwordreset_reset(reset_code, new_password):
     """
     Given a reset code for a user, set that user's new 
