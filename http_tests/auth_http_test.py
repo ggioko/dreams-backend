@@ -71,11 +71,14 @@ def test_auth_passwordreset_request():
     Tests to see if no errors are raised in general operaiton
     '''
     r = requests.delete(config.url + 'clear/v1')
-    assert requests.post(config.url + 'auth/passwordreset/request/v1', \
-        json={'email':'benr31415@gmail.com'}) == {}
+    r = requests.post(config.url + 'auth/passwordreset/request/v1', \
+        json={'email':'benr31415@gmail.com'})
+    assert r.status_code == 200
+
     r = requests.post(config.url + 'auth/register/v2', json={'email':'benr31415@gmail.com',\
     'password':'123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
     rego_1 = r.json()
     r = requests.post(config.url + 'auth/logout/v1', json={'token':rego_1['token']})
-    assert requests.post(config.url + 'auth/passwordreset/request/v1', \
-        json={'email':'benr31415@gmail.com'}) == {}
+    r = requests.post(config.url + 'auth/passwordreset/request/v1', \
+        json={'email':'benr31415@gmail.com'})
+    assert r.status_code == 200

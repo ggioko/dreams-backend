@@ -1,6 +1,6 @@
 import pytest
 
-from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1, passwordreset_request, auth_passwordreset_reset
+from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1, auth_passwordreset_request, auth_passwordreset_reset
 from src.other import clear_v1
 from src.error import InputError, AccessError
 
@@ -163,14 +163,15 @@ def test_auth_passwordreset_request_valid():
     clear_v1()
     rego = auth_register_v2('benr31415@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     auth_logout_v1(rego['token'])
-    assert passwordreset_request('benr31415@gmail.com') == {}
+    assert auth_passwordreset_request('benr31415@gmail.com') == {}
 
 def test_auth_passwordreset_request_empty():
     '''
     Tests a passwordreset case with an incorrect email address
     '''
     clear_v1()
-    assert passwordreset_request('benr31415@gmail.com') == {}
+    assert auth_passwordreset_request('benr31415@gmail.com') == {}
+
 def test_auth_passwordreset_reset_invalid_code():
     '''
     Given an incorrect reset code raises InputError

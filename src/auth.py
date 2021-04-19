@@ -175,7 +175,7 @@ def auth_logout_v1(token):
             return True
     return False
 
-def passwordreset_request(email):
+def auth_passwordreset_request(email):
     """
     Given an email address, sends the user an email with a password reset string
     that can be given to passwordreset_reset.
