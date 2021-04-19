@@ -1,6 +1,6 @@
 import pytest
 
-from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
+from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1, passwordreset_request
 from src.other import clear_v1
 from src.error import InputError, AccessError
 
@@ -152,3 +152,15 @@ def test_auth_logout_invalid_token():
     invalid_token = -1
     with pytest.raises(AccessError):
         assert auth_logout_v1(invalid_token)
+
+def test_auth_passwordreset_request_valid():
+    '''
+    Tests a valid passwordreset case
+    Note that this only checks the output of the function, the email account needs to be
+    manually checked to see if the email is delivered as needed
+    '''
+    clear_v1()
+    rego = auth_register_v2('benr31415@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    auth_logout_v1(rego['token'])
+    assert passwordreset_request('benr31415@gmail.com') == {}
+

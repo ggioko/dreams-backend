@@ -15,6 +15,9 @@
 ### auth_logout
 * It is assumed that the false case is never returned as any invalid tokens will raise an AccessError
 
+### auth_passwordreset_request
+* It is assumed that no errors for bad input will be raised, to prevent non-users to see which email accounts are registered with Dreams
+
 ## channels
 * In testing Auth_register is working correctly to store user with id 1
 
