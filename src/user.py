@@ -196,7 +196,6 @@ def user_stats_dreams_v1(token):
     num_users = []
     channel_users = [data['channels'][c]['all_members'] for c in range(len(data['channels']))]
     dm_users = [data['dms'][c]['all_members'] for c in range(len(data['dms']))]
-    print(channel_users)
     if len(channel_users) != 0:
         for user in channel_users[0]:
             if user['u_id'] not in num_users:

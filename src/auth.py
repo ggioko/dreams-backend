@@ -206,7 +206,6 @@ def auth_passwordreset_reset(reset_code, new_password):
     # Replaces old password with new password
     if len(data['users']) != 0:
         for user in data['users']:
-            print(f"tpre {type(id)} and other {type(user['u_id'])} ")
             if id == user['u_id']:
                 data['active_reset_codes'].remove(reset_code)
                 user['password'] = password
