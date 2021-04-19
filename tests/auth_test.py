@@ -1,8 +1,9 @@
 import pytest
 
-from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
+from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1, auth_passwordreset_request, auth_passwordreset_reset
 from src.other import clear_v1
 from src.error import InputError, AccessError
+
 
 def test_auth_register_valid():
     '''
@@ -152,3 +153,37 @@ def test_auth_logout_invalid_token():
     invalid_token = -1
     with pytest.raises(AccessError):
         assert auth_logout_v1(invalid_token)
+
+def test_auth_passwordreset_request_valid():
+    '''
+    Tests a valid passwordreset case
+    Note that this only checks the output of the function, the email account needs to be
+    manually checked to see if the email is delivered as needed
+    '''
+    clear_v1()
+    rego = auth_register_v2('benr31415@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    auth_logout_v1(rego['token'])
+    assert auth_passwordreset_request('benr31415@gmail.com') == {}
+
+def test_auth_passwordreset_request_empty():
+    '''
+    Tests a passwordreset case with an incorrect email address
+    '''
+    clear_v1()
+    assert auth_passwordreset_request('benr31415@gmail.com') == {}
+
+def test_auth_passwordreset_reset_invalid_code():
+    '''
+    Given an incorrect reset code raises InputError
+    '''
+    clear_v1()
+    with pytest.raises(InputError):
+        auth_passwordreset_reset('abcd', '1234abc!@#')
+
+def test_auth_passwordreset_reset_invalid_password():
+    '''
+    Given an incorrect password raises InputError
+    '''
+    clear_v1()
+    with pytest.raises(InputError):
+        auth_passwordreset_reset('abcd', '1')
