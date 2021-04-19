@@ -11,6 +11,7 @@ data = {
         },
     ],
     'channels': [
+        
         {
             #'id': 1,
             #'name' : 'channel1',
@@ -92,5 +93,6 @@ data = {
         },
     ],
     'active_tokens' : [],
+    'active_reset_codes' : [], #JWT containing User ID as 'u_id'
     'message_count' : 0,
 }
