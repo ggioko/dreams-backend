@@ -70,7 +70,7 @@ def user_remove_v1(token, u_id):
     if user_exists == False:
         raise InputError(description='Selected user does not exist')
         
-    # Gets ID of existing **Dreams** owner
+    # Gets ID of function user
     decoded_token = jwt.decode(token, SECRET, algorithms=['HS256'])
     auth_user_id = decoded_token['u_id']
     # Check to see if the function user is an Owner.
@@ -88,14 +88,22 @@ def user_remove_v1(token, u_id):
     for user in data['users']:
         if user['permission_id'] == 1:
             owner_count += 1
-    if owner_count == 1:
+    if owner_count == 1 and u_id == auth_user_id:
         raise InputError(description="Selected user is currently the only owner")
         
     # Carry out functionality
     for user in data['users']:
         if user['u_id'] == u_id:
-            data['removed_users'].append(user)
+            data['removed_users'].append({
+                                            'u_id': user['u_id'], 
+                                            'email': user['email'],
+                                            'name_first': user['name_first'], 
+                                            'name_last': user['name_last'], 
+                                            'handle_str': user['handle_str'],
+                                        })
             data['users'].remove(user)
+            data['removed_u_ids'].append(u_id)
+            break
     # Remove user from channel members, and make changes to messages they are part of.
     for channel in data['channels']:
         for member in channel['owner_members']:
