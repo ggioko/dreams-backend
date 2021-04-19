@@ -83,11 +83,13 @@ def auth_register_v2(email, password, name_first, name_last):
 
         # Gets a new id
         ids = get_user_data('u_id')
+        
         for i in range(1,len(data['users']) + 2):
-            if i not in ids:
+            if i not in ids:# and i not in data['removed_u_ids']:
                 id = i
                 break
-
+            
+        permission_id = 0
         # Creates a new handle
         handle = name_first + name_last
         handle = handle[0:20]
@@ -104,6 +106,7 @@ def auth_register_v2(email, password, name_first, name_last):
         id = 1
         handle = name_first + name_last
         handle = handle[0:20]
+        permission_id = 1
 
     # Password size check
     if len(password) < 6:
@@ -121,7 +124,8 @@ def auth_register_v2(email, password, name_first, name_last):
 
     # Change handle to all lowercase
     handle = handle.lower()
-
+    
+    
     # Saves user data
     user = {
         'u_id': id,
@@ -130,7 +134,7 @@ def auth_register_v2(email, password, name_first, name_last):
         'name_first': name_first,
         'name_last': name_last,
         'handle_str': handle,
-        'permission_id': 0,
+        'permission_id': permission_id,
     }
     data['users'].append(user)
     token = get_token(user)

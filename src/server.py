@@ -13,8 +13,9 @@ from src.other import clear_v1, search_v2
 from src.user import users_all_v1, user_profile_v2, user_profile_setemail_v2, user_profile_setname_v2, user_profile_sethandle_v1
 from src.message import message_send_v2, message_remove_v1, message_edit_v2, message_share_v1, message_senddm_v1, message_pin_v1, message_unpin_v1, message_react_v1
 from src.helper import save_data, load_data
-from src.admin import userpermission_change_v1
+from src.admin import userpermission_change_v1, user_remove_v1
 from src.standup import standup_start_v1, standup_active_v1
+
 
 def defaultHandler(err):
     response = err.get_response()
@@ -716,6 +717,22 @@ def react():
     
     return dumps({})
 
+@APP.route("/admin/user/remove/v1", methods=["DELETE"])
+def user_remove():
+    """ 
+    Gets user token, and user_id from http json and passes 
+    it to the user_remove_v1 function
+    Returns {} on success.
+    """
+    data = request.get_json()
+    token = data['token']
+    u_id = data['u_id']
+    user_remove_v1(token, u_id)
+    
+    save_data()
+    
+    return dumps({})
+
 @APP.route("/search/v2", methods=['GET'])
 def search():
     """
@@ -734,6 +751,8 @@ def search():
     )
 
 clear_v1()
+
+
 load_data()  # Gets data from previous server run
 
 if __name__ == "__main__":

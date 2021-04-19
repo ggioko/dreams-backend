@@ -10,6 +10,16 @@ data = {
             #'handle_str': 'haydenjacobs',
         },
     ],
+    'removed_users': [
+        {
+            #'u_id': 1,
+            #'email': 'cs1531@cse.unsw.edu.au',
+            #'password': 'abc1234',
+            #'name_first': 'Hayden',
+            #'name_last': 'Jacobs',
+            #'handle_str': 'haydenjacobs',
+        },        
+    ],
     'channels': [
         
         {
@@ -95,4 +105,5 @@ data = {
     'active_tokens' : [],
     'active_reset_codes' : [], #JWT containing User ID as 'u_id'
     'message_count' : 0,
+    'removed_u_ids': [],
 }
