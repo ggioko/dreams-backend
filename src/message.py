@@ -29,7 +29,7 @@ def message_send_v2(token, channel_id, message):
         raise InputError(description="Message is more than 1000 characters")
 
     u_id = get_token_user_id(token)
-    sender_handle = get_user_handle 
+    sender_handle = get_user_handle(u_id)
     
     data['message_count'] += 1
 
@@ -62,8 +62,7 @@ def message_send_v2(token, channel_id, message):
                             user['notifications'].append({
                                                     'channel_id': channel_id,
                                                     'dm_id': -1,
-                                                    'notification_message': \
-                                                    f"{sender_handle} tagged you in {channel_name}: {snippet}",
+                                                    'notification_message': "{sender_handle} tagged you in {channel_name}: {snippet}",
                                                     })
 
     return {
@@ -296,7 +295,7 @@ def message_senddm_v1(token, dm_id, message):
         raise AccessError(description="Not a valid token")
         
     u_id = get_token_user_id(token)
-    sender_handle = get_user_handle  
+    sender_handle = get_user_handle(u_id)  
     # Check size of message
     if len(message) > 1000:
         raise InputError(description="Message must be 1000 characters or less")
@@ -335,8 +334,7 @@ def message_senddm_v1(token, dm_id, message):
                             user['notifications'].append({
                                                     'channel_id': -1,
                                                     'dm_id': dm_id,
-                                                    'notification_message': \
-                                                    f"{sender_handle} tagged you in {dm_name}: {snippet}",
+                                                    'notification_message': f"{sender_handle} tagged you in {dm_name}: {snippet}"
                                                     })
        
     return {'message_id': message_id}

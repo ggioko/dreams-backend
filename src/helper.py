@@ -37,7 +37,6 @@ def get_user_handle(u_id):
     for user in data['users']:
         if user['u_id'] == u_id:
             handle = user['handle_str']
-            break
     return handle
 
 def generate_token(u_id):

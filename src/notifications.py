@@ -27,8 +27,9 @@ def notifications_get_v1(token):
         if user['u_id'] == u_id:
             notifs_list = user['notifications']
             
-        if len(notifs_list) >= 20:
-            notifications = notifs_list[::-1][0:20]
-        else:
-            notifications = notifs_list[::-1]
-        return notifications
+            if len(notifs_list) >= 20:
+                notifications = notifs_list[::-1][0:20]
+            else:
+                notifications = notifs_list[::-1]
+                
+            return notifications

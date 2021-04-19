@@ -15,6 +15,7 @@ def clear_v1():
     data['dms'].clear()
     data['removed_u_ids'].clear()
 
+
 def search_v2(token, query_str):
     """
     Given a query string, return a collection of messages in all of the channels/DMs

@@ -82,7 +82,7 @@ def channel_invite_v2(token, channel_id, u_id):
             user['notifications'].append({
                                         'channel_id': channel_id,
                                         'dm_id': -1,
-                                        'notification_message': f"{user_handle} added you to {channel['name']}"
+                                        'notification_message': f"{user_handle} added you to {channel['name']}",
                                         })
 
     # Added user to all members for channel

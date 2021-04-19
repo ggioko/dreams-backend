@@ -36,7 +36,7 @@ def test_notifications_works():
     message_send_v2(user1['token'], channel1['channel_id'], 'Hello @fredsmith, this is a channel')
     # Have user1 create a dm and invite user2 to it.
     dm1 = dm_create_v1(user1['token'], [user1['auth_user_id']])
-    dm_invite_v1(user1['token'], dm1['dm_id'], user2['u_id'])
+    dm_invite_v1(user1['token'], dm1['dm_id'], user2['auth_user_id'])
     # Have user1 send a message in dm1 and tag user2 in it.
     message_senddm_v1(user1['token'], dm1['dm_id'], 'Hi, this is a dm tagging @fredsmith')
     
@@ -44,15 +44,15 @@ def test_notifications_works():
     notifs = notifications_get_v1(user2['token'])
     assert type(notifs) == list                     
     assert len(notifs) == 4
-    # Most recent notification, this will also only show the first 20 characters of the message.
-    assert notifs[0] == {'channel_id': -1,
-                         'dm_id': dm1['dm_id'],
-                         'notification_message': f"haydeneverest tagged you in {dm1['dm_name']}: Hi, this is a dm tag"
-                        }
     # First notification                       
     assert notifs[3] ==  {'channel_id': channel1['channel_id'],
                          'dm_id': -1,
                          'notification_message': "haydeneverest added you to Channel1"
+                        }
+    # Most recent notification, this will also only show the first 20 characters of the message.
+    assert notifs[0] == {'channel_id': -1,
+                         'dm_id': dm1['dm_id'],
+                         'notification_message': "haydeneverest tagged you in haydeneverest, haydeneverest: Hi, this is a dm tag"
                         }
     
 
