@@ -1110,7 +1110,7 @@ def test_message_unreact_channel_not_member():
     with pytest.raises(AccessError):
         assert message_unreact_v1(id_2['token'], result1['messages'][0]['message_id'], int(1))
 
-def test_message_react_invalid_token():
+def test_message_unreact_invalid_token():
     '''
     Tests that an AccessError is raised on invalid token
     '''
