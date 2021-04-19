@@ -1123,9 +1123,254 @@ def test_message_react_invalid_token():
     r = requests.post(config.url + 'message/react/v1', json={'token': user_1['token'], 'message_id' : message['message_id'], 'react_id' : int(1)})
     assert r.status_code == AccessError().code
 
+def test_message_unreact_dm():
+    '''
+    Given a token, message id and react_id checks if the message with message_id is unreacted with react_id
+    Test for message in dms
+    '''
+    r = requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user_1 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'secondemail@gmail.com',
+    'password' : '321cba#@!', 'name_first':'Fred', 'name_last':'Smith'})
+    user_2 = r.json()
+    u_id2 = user_2['auth_user_id']
+    r = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [u_id2]})
+    new_dm = r.json()
+    r = requests.post(config.url + 'message/senddm/v1', json={'token': user_1['token'],'dm_id': new_dm['dm_id'], 'message': 'test message'})
+    message = r.json()
+    requests.post(config.url + 'message/react/v1', json={'token': user_1['token'], \
+        'message_id' : message['message_id'], 'react_id' : int(1)})
+    assert requests.post(config.url + 'message/unreact/v1', json={'token': user_1['token'], \
+        'message_id' : message['message_id'], 'react_id' : int(1)})
 
+def test_message_unreact_channel():
+    '''
+    Given a token, message id and react_id checks if the message with message_id is unreacted with react_id
+    Test for message in channels
+    '''
+    requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com', \
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    id_1 = r.json()
+    r = requests.post(config.url + 'channels/create/v2', json={'token': id_1['token'], \
+        'name' : "My Channel", 'is_public' : True})
+    channel = r.json()
+    message = "hello this is my new channel"
+    r = requests.post(config.url + 'message/send/v2', json={'token': id_1['token'], \
+        'channel_id' : channel['channel_id'], 'message' : message})
+    message_id = r.json()
+    requests.post(config.url + 'message/react/v1', json={'token': id_1['token'], \
+        'message_id' : message_id['message_id'], 'react_id' : int(1)})
+    assert requests.post(config.url + 'message/unreact/v1', json={'token': id_1['token'], \
+        'message_id' : message_id['message_id'], 'react_id' : int(1)})
 
+def test_message_unreact_invalid_message_dm():
+    '''
+    Given a token, message id and react_id, checks if the inputerror is raised due to invalid message id
+    Test for message in dms
+    '''
+    r = requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user_1 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'secondemail@gmail.com',
+    'password' : '321cba#@!', 'name_first':'Fred', 'name_last':'Smith'})
+    user_2 = r.json()
+    u_id2 = user_2['auth_user_id']
+    r = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [u_id2]})
+    new_dm = r.json()
+    r = requests.post(config.url + 'message/senddm/v1', json={'token': user_1['token'],'dm_id': new_dm['dm_id'], 'message': 'test message'})
+    message = r.json()
+    r = requests.post(config.url + 'message/react/v1', json={'token': user_1['token'], 'message_id' : message['message_id'], 'react_id' : int(1)})
+    r = requests.post(config.url + 'message/unreact/v1', json={'token': user_1['token'], 'message_id' : int(40), 'react_id' : int(1)})
+    assert r.status_code == InputError().code
 
+def test_message_unreact_invalid_message_channel():
+    '''
+    Given a token, message id and react_id, checks if the inputerror is raised due to invalid message id
+    Test for message in channels
+    '''
+    requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com', \
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    id_1 = r.json()
+    r = requests.post(config.url + 'channels/create/v2', json={'token': id_1['token'], \
+        'name' : "My Channel", 'is_public' : True})
+    channel = r.json()
+    message = "hello this is my new channel"
+    r = requests.post(config.url + 'message/send/v2', json={'token': id_1['token'], \
+        'channel_id' : channel['channel_id'], 'message' : message})
+    message_id = r.json()
+    requests.post(config.url + 'message/react/v1', json={'token': id_1['token'], \
+        'message_id' : message_id['message_id'], 'react_id' : int(1)})
+    r = requests.post(config.url + 'message/unreact/v1', json={'token': id_1['token'], \
+        'message_id' : int(40), 'react_id' : int(1)})
+    assert r.status_code == InputError().code
 
+def test_message_unreact_dm_already_unreacted():
+    '''
+    Given a token, message id and react_id, raises an InputError as the message is already unreacetd to
+    Test for message in dms
+    '''
+    r = requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user_1 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'secondemail@gmail.com',
+    'password' : '321cba#@!', 'name_first':'Fred', 'name_last':'Smith'})
+    user_2 = r.json()
+    u_id2 = user_2['auth_user_id']
+    r = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [u_id2]})
+    new_dm = r.json()
+    r = requests.post(config.url + 'message/senddm/v1', json={'token': user_1['token'],'dm_id': new_dm['dm_id'], 'message': 'test message'})
+    message = r.json()
+    r = requests.post(config.url + 'message/react/v1', json={'token': user_1['token'], \
+        'message_id' : message['message_id'], 'react_id' : int(1)})
+    r = requests.post(config.url + 'message/unreact/v1', json={'token': user_1['token'], \
+        'message_id' : message['message_id'], 'react_id' : int(1)})
+    r = requests.post(config.url + 'message/unreact/v1', json={'token': user_1['token'], \
+        'message_id' : message['message_id'], 'react_id' : int(1)})
+    assert r.status_code == InputError().code
 
+def test_message_unreact_channel_already_unreacted():
+    '''
+    Given a token, message id and react_id, raises an InputError as the message is already unreacetd to
+    Test for message in channels
+    '''
+    requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com', \
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    id_1 = r.json()
+    r = requests.post(config.url + 'channels/create/v2', json={'token': id_1['token'], \
+        'name' : "My Channel", 'is_public' : True})
+    channel = r.json()
+    message = "hello this is my new channel"
+    r = requests.post(config.url + 'message/send/v2', json={'token': id_1['token'], \
+        'channel_id' : channel['channel_id'], 'message' : message})
+    message_id = r.json()
+    requests.post(config.url + 'message/react/v1', json={'token': id_1['token'], \
+        'message_id' : message_id['message_id'], 'react_id' : int(1)})
+    r = requests.post(config.url + 'message/unreact/v1', json={'token': id_1['token'], \
+        'message_id' : message_id['message_id'], 'react_id' : int(1)})
+    r = requests.post(config.url + 'message/unreact/v1', json={'token': id_1['token'], \
+        'message_id' : message_id['message_id'], 'react_id' : int(1)})
+    assert r.status_code == InputError().code
 
+def test_message_unreact_dm_invalid_react_id():
+    '''
+    Given a token, message id and react_id, raises an InputError as the react_id is invalid
+    Test for message in dms
+    '''
+    r = requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user_1 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'secondemail@gmail.com',
+    'password' : '321cba#@!', 'name_first':'Fred', 'name_last':'Smith'})
+    user_2 = r.json()
+    u_id2 = user_2['auth_user_id']
+    r = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [u_id2]})
+    new_dm = r.json()
+    r = requests.post(config.url + 'message/senddm/v1', json={'token': user_1['token'],'dm_id': new_dm['dm_id'], 'message': 'test message'})
+    message = r.json()
+    r =  requests.post(config.url + 'message/react/v1', json={'token': user_1['token'], \
+        'message_id' : message['message_id'], 'react_id' : int(1)})
+    r =  requests.post(config.url + 'message/unreact/v1', json={'token': user_1['token'], \
+        'message_id' : message['message_id'], 'react_id' : int(-99)})
+    assert r.status_code == InputError().code
+
+def test_message_unreact_channel_invalid_react_id():
+    '''
+    Given a token, message id and react_id, raises an InputError as the react_id is invalid
+    Test for message in channels
+    '''
+    requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com', \
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    id_1 = r.json()
+    r = requests.post(config.url + 'channels/create/v2', json={'token': id_1['token'], \
+        'name' : "My Channel", 'is_public' : True})
+    channel = r.json()
+    message = "hello this is my new channel"
+    r = requests.post(config.url + 'message/send/v2', json={'token': id_1['token'], \
+        'channel_id' : channel['channel_id'], 'message' : message})
+    message_id = r.json()
+    r = requests.post(config.url + 'message/react/v1', json={'token': id_1['token'], \
+        'message_id' : message_id['message_id'], 'react_id' : int(1)})
+    r = requests.post(config.url + 'message/unreact/v1', json={'token': id_1['token'], \
+        'message_id' : message_id['message_id'], 'react_id' : int(-99)})
+    assert r.status_code == InputError().code
+
+def test_message_unreact_dm_not_a_member():
+    '''
+    Given a token, message id and react_id, raises AccessError at the user is not a dm member
+    Test for message in dms
+    '''
+    r = requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user_1 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'secondemail@gmail.com',
+    'password' : '321cba#@!', 'name_first':'Fred', 'name_last':'Smith'})
+    user_2 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'secondemail33@gmail.com',
+    'password' : '32331cba#@!', 'name_first':'Freddy', 'name_last':'Smitthh'})
+    user_3 = r.json()
+    u_id2 = user_2['auth_user_id']
+    r = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [u_id2]})
+    new_dm = r.json()
+    r = requests.post(config.url + 'message/senddm/v1', json={'token': user_1['token'],'dm_id': new_dm['dm_id'], 'message': 'test message'})
+    message = r.json()
+    r = requests.post(config.url + 'message/react/v1', json={'token': user_1['token'], \
+        'message_id' : message['message_id'], 'react_id' : int(1)})
+    r = requests.post(config.url + 'message/unreact/v1', json={'token': user_3['token'], \
+        'message_id' : message['message_id'], 'react_id' : int(1)})
+    assert r.status_code == AccessError().code
+
+def test_message_unreact_channel_not_a_member():
+    '''
+    Given a token, message id and react_id, raises AccessError at the user is not a channel member
+    Test for message in channels
+    '''
+    requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com', \
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    id_1 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail2@gmail.com', \
+    'password' : '1234abc!@#', 'name_first':'Haydenn', 'name_last':'Everestt'})
+    id_2 = r.json()
+    r = requests.post(config.url + 'channels/create/v2', json={'token': id_1['token'], \
+        'name' : "My Channel", 'is_public' : True})
+    channel = r.json()
+    message = "hello this is my new channel"
+    r = requests.post(config.url + 'message/send/v2', json={'token': id_1['token'], \
+        'channel_id' : channel['channel_id'], 'message' : message})
+    message_id = r.json()
+    r = requests.post(config.url + 'message/react/v1', json={'token': id_1['token'], \
+        'message_id' : message_id['message_id'], 'react_id' : int(1)})
+    r = requests.post(config.url + 'message/unreact/v1', json={'token': id_2['token'], \
+        'message_id' : message_id['message_id'], 'react_id' : int(1)})
+    assert r.status_code == AccessError().code
+
+def test_message_unreact_invalid_token():
+    '''
+    Given a token, message id and react_id, checks if an AccessError is raised when an invalid token is given 
+    '''
+    r = requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user_1 = r.json()
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'secondemail@gmail.com',
+    'password' : '321cba#@!', 'name_first':'Fred', 'name_last':'Smith'})
+    user_2 = r.json()
+    u_id2 = user_2['auth_user_id']
+    r = requests.post(config.url + 'dm/create/v1',  json={'token': user_1['token'], 'u_ids': [u_id2]})
+    new_dm = r.json()
+    r = requests.post(config.url + 'message/senddm/v1', json={'token': user_1['token'],'dm_id': new_dm['dm_id'], 'message': 'test message'})
+    message = r.json()
+    r = requests.post(config.url + 'message/react/v1', json={'token': user_1['token'], 'message_id' : message['message_id'], 'react_id' : int(1)})
+    r = requests.post(config.url + 'auth/logout/v1', json={'token': user_1['token']})
+    r = requests.post(config.url + 'message/unreact/v1', json={'token': user_1['token'], 'message_id' : message['message_id'], 'react_id' : int(1)})
+    assert r.status_code == AccessError().code

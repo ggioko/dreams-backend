@@ -16,6 +16,13 @@
 ### auth_logout
 * It is assumed that the false case is never returned as any invalid tokens will raise an AccessError
 
+### auth_passwordreset_request
+* It is assumed that no errors for bad input will be raised, to prevent non-users to see which email accounts are registered with Dreams
+* Reset codes do not expire
+
+### auth_passwordreset_reset
+* No checks need to be made about when the reset code was generated.
+
 ## channels
 * In testing Auth_register is working correctly to store user with id 1
 
@@ -52,6 +59,7 @@
 ### message_share_v1
 * Assume that the optional message is also less than 1000 characters
 * Raise input error is og_message_id is invalid
+
 * Raise an AccessError if the user_id is not in the same channel/dm as og_message_id
 
 ## admin
@@ -59,4 +67,6 @@
 ### admin_remove_user_v1
 * The 'contents' of DM and channel messages being set to 'Removed User' will be the u_id of the sender (the sender being the removed user), and the u_ids of removed users reacting to any message. This way other members of a channel or dm can still view messages that they are part of, without the entire message being deleted.
 * Removed users will be removed from channels or dms regardless of whether they are owners  of that feature or not.
+
+* Raise an AccessError if the user_id is not in the same channel/dm as og_message_id
 

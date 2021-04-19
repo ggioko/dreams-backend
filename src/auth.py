@@ -4,6 +4,8 @@ from src.helper import get_token, get_user_data, email_in_use, get_token_user_id
 import re
 import jwt
 import hashlib
+import smtplib
+import uuid
 
 def auth_login_v2(email, password):
     """
@@ -174,6 +176,50 @@ def auth_logout_v1(token):
             return True
     return False
 
+def auth_passwordreset_request(email):
+    """
+    Given an email address, sends the user an email with a password reset string
+    that can be given to passwordreset_reset.
+    Arguments:
+        email (string)    - email to look through
+
+    Exceptions:
+        N/A
+
+    Return Value:
+        Returns { }
+    """
+    reset_code = uuid.uuid4().hex
+
+    email_found = False
+    if len(data['users']) != 0:
+        for user in data['users']:
+            if user['email'] == email:
+                email_found = True
+                data['active_reset_codes'].append(reset_code)
+                break
+    if not email_found:
+        return {}
+    
+    email_cred_username = 'f11bdorito@gmail.com'
+    email_cred_password = 'd0ritostastegood!'
+
+    subject = 'Dreams Password Reset Code'
+    body = "Your password reset code is as follows: " + reset_code
+
+    email_content = f"From: {email_cred_username}\n"
+    email_content += f"To: {email}\n"
+    email_content += f"Subject: {subject}\n"
+    email_content += f"\n{body}\n"
+
+    server = smtplib.SMTP_SSL('smtp.gmail.com', 465)
+    server.ehlo()
+    server.login(email_cred_username, email_cred_password)
+    server.sendmail(email_cred_username, [email], email_content)
+    server.close()
+
+    return {}
+
 def auth_passwordreset_reset(reset_code, new_password):
     """
     Given a reset code for a user, set that user's new 
@@ -207,7 +253,6 @@ def auth_passwordreset_reset(reset_code, new_password):
     # Replaces old password with new password
     if len(data['users']) != 0:
         for user in data['users']:
-            print(f"tpre {type(id)} and other {type(user['u_id'])} ")
             if id == user['u_id']:
                 data['active_reset_codes'].remove(reset_code)
                 user['password'] = password

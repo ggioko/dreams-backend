@@ -3,10 +3,12 @@ import pytest
 from src.error import InputError, AccessError
 from src.auth import auth_register_v2
 from src.other import clear_v1
-from src.user import users_all_v1, user_profile_v2, user_profile_setemail_v2, user_profile_setname_v2, user_profile_sethandle_v1
+from src.user import users_all_v1, user_profile_v2, user_profile_setemail_v2, \
+    user_profile_setname_v2, user_profile_sethandle_v1, user_stats_dreams_v1
 from src.helper import generate_token
 from src.channels import channels_create_v2
 from src.channel import channel_details_v2
+from src.dm import dm_create_v1
 from src.admin import user_remove_v1
 
 def test_users_all_v1_successful():
@@ -348,3 +350,11 @@ def test_sethandle_already_used():
     with pytest.raises(InputError):                        
         assert user_profile_sethandle_v1(user_1['token'], 'fredsmith')
     
+def test_user_stats_invalidtoken():
+    """
+    Checks if user stats raises AccessError if invalid token is passed
+    """
+    clear_v1()
+    auth_register_v2('validemail0@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    with pytest.raises(AccessError):
+        assert user_stats_dreams_v1(3)
