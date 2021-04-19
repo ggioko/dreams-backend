@@ -93,6 +93,6 @@ data = {
         },
     ],
     'active_tokens' : [],
-    'active_reset_codes' : ['eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1X2lkIjoiMSJ9.Y-J-CEJmBI2rGlMdWVBbFBzh8N48t9EchmDC5LuzTbk'], #JWT containing User ID as 'u_id'
+    'active_reset_codes' : [], #JWT containing User ID as 'u_id'
     'message_count' : 0,
 }
