@@ -11,6 +11,7 @@
 ### auth_register
 * User ids start at index 1
 * New user id is the lowest integer value not in use that is greater than or equal to 1
+* The first registered user is an owner of Dreams (user_permission_id = 1)
 
 ### auth_logout
 * It is assumed that the false case is never returned as any invalid tokens will raise an AccessError
@@ -52,3 +53,10 @@
 * Assume that the optional message is also less than 1000 characters
 * Raise input error is og_message_id is invalid
 * Raise an AccessError if the user_id is not in the same channel/dm as og_message_id
+
+## admin
+
+### admin_remove_user_v1
+* The 'contents' of DM and channel messages being set to 'Removed User' will be the u_id of the sender (the sender being the removed user), and the u_ids of removed users reacting to any message. This way other members of a channel or dm can still view messages that they are part of, without the entire message being deleted.
+* Removed users will be removed from channels or dms regardless of whether they are owners  of that feature or not.
+
