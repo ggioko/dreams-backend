@@ -30,7 +30,7 @@ def test_search():
         'channel_id' : new_channel['channel_id'], 'message' : messagecontent1})
 
     # Query found
-    test1 = requests.get(config.url + 'search/v2', params={'token': rego_1['token'],\
+    r = requests.get(config.url + 'search/v2', params={'token': rego_1['token'],\
         'query_str': "my new"})
     assert r.status_code == 200
 

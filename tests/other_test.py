@@ -25,7 +25,7 @@ def test_search_channel_messages_v2_valid():
     messagecontent2 = "lennahc wen ym si siht olleh"
 
     message_1 = message_send_v2(user1['token'], channel_1['channel_id'], messagecontent1)
-    message_2 = message_send_v2(user1['token'], channel_1['channel_id'], messagecontent2)
+    message_send_v2(user1['token'], channel_1['channel_id'], messagecontent2)
     
     matching = search_v2(user1['token'], "my new")
     print(matching)
@@ -81,7 +81,7 @@ def test_search_dms_v2_valid():
     print(new_dm)
 
     dm_1 = message_senddm_v1(user1['token'], new_dm['dm_id'], messagecontent1)
-    dm_2 = message_senddm_v1(user1['token'], new_dm['dm_id'], messagecontent2)
+    message_senddm_v1(user1['token'], new_dm['dm_id'], messagecontent2)
     
     matching = search_v2(user1['token'], "my new")
     assert matching['messages'][0]['message_id'] == dm_1['message_id']
@@ -102,8 +102,8 @@ def test_search_dms_v2_invaliduser():
 
     new_dm = dm_create_v1(user1['token'], [user2['auth_user_id']])
 
-    dm_1 = message_senddm_v1(user1['token'], new_dm['dm_id'], messagecontent1)
-    dm_2 = message_senddm_v1(user1['token'], new_dm['dm_id'], messagecontent2)
+    message_senddm_v1(user1['token'], new_dm['dm_id'], messagecontent1)
+    message_senddm_v1(user1['token'], new_dm['dm_id'], messagecontent2)
     
     matching = search_v2(user3['token'], "my new")
     assert matching['messages'] == []
