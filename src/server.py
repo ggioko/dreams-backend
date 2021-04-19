@@ -9,7 +9,7 @@ from src.channels import channels_create_v2, channels_listall_v2, channels_list_
 from src.channel import channel_join_v2, channel_invite_v2, channel_messages_v2, channel_details_v2
 from src.dm import dm_create_v1, dm_details_v1, dm_remove_v1, dm_invite_v1, dm_leave_v1, dm_list_v1, dm_messages_v1
 from src.channel import channel_addowner_v1, channel_removeowner_v1, channel_leave_v1
-from src.other import clear_v1
+from src.other import clear_v1, search_v2
 from src.user import users_all_v1, user_profile_v2, user_profile_setemail_v2, user_profile_setname_v2, user_profile_sethandle_v1
 from src.message import message_send_v2, message_remove_v1, message_edit_v2, message_share_v1, message_senddm_v1, message_pin_v1, message_unpin_v1, message_react_v1
 from src.helper import save_data, load_data
@@ -681,6 +681,23 @@ def react():
     save_data()
     
     return dumps({})
+
+@APP.route("/search/v2", methods=['GET'])
+def search():
+    """
+    Gets search data from http args and passes it to
+    search_v2 function
+
+    Returns { 'messages': [...]} on success
+    """
+    token = request.args.get('token')
+    query_str = request.args.get('query_str')
+    data = search_v2(token, query_str)
+    
+    save_data()
+    return dumps(
+        data
+    )
 
 
 load_data()  # Gets data from previous server run
