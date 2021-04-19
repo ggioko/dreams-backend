@@ -9,11 +9,13 @@ from src.channels import channels_create_v2, channels_listall_v2, channels_list_
 from src.channel import channel_join_v2, channel_invite_v2, channel_messages_v2, channel_details_v2
 from src.dm import dm_create_v1, dm_details_v1, dm_remove_v1, dm_invite_v1, dm_leave_v1, dm_list_v1, dm_messages_v1
 from src.channel import channel_addowner_v1, channel_removeowner_v1, channel_leave_v1
-from src.other import clear_v1
+from src.other import clear_v1, search_v2
 from src.user import users_all_v1, user_profile_v2, user_profile_setemail_v2, user_profile_setname_v2, user_profile_sethandle_v1
 from src.message import message_send_v2, message_remove_v1, message_edit_v2, message_share_v1, message_senddm_v1, message_pin_v1, message_unpin_v1, message_react_v1
 from src.helper import save_data, load_data
 from src.admin import userpermission_change_v1, user_remove_v1
+from src.standup import standup_start_v1, standup_active_v1
+
 
 def defaultHandler(err):
     response = err.get_response()
@@ -608,6 +610,40 @@ def send_dm():
     
     return dumps (response)
 
+@APP.route("/standup/start/v1", methods=['POST'])
+def standup_start():
+    """
+    Gets user token, channel_id and length from http json and passes 
+    it to the standup_start_v1 function
+    Returns {time_finish} on success.
+    """ 
+    data = request.get_json()
+    token = data['token']
+    channel_id = data['channel_id']
+    length = data['length']
+
+    response = standup_start_v1(token, channel_id, length)
+
+    save_data()
+    
+    return dumps (response)
+
+@APP.route("/standup/active/v1", methods=['GET'])
+def standup_active():
+    """
+    Gets user token, channel_id and passes 
+    it to the standup_active_v1 function
+    Returns { is_active, time_finish } on success.
+    """ 
+    token = request.args.get('token')
+    channel_id = int(request.args.get('channel_id'))
+
+    data = standup_active_v1(token, channel_id)
+
+    save_data()
+    
+    return dumps (data)
+    
 @APP.route("/message/pin/v1", methods=["POST"])
 def pin():
     """ 
@@ -678,6 +714,24 @@ def user_remove():
     save_data()
     
     return dumps({})
+
+@APP.route("/search/v2", methods=['GET'])
+def search():
+    """
+    Gets search data from http args and passes it to
+    search_v2 function
+
+    Returns { 'messages': [...]} on success
+    """
+    token = request.args.get('token')
+    query_str = request.args.get('query_str')
+    data = search_v2(token, query_str)
+    
+    save_data()
+    return dumps(
+        data
+    )
+
 
     
 load_data()  # Gets data from previous server run
