@@ -13,6 +13,7 @@ def clear_v1():
     data['active_tokens'].clear()
     data['message_count'] = 0
     data['dms'].clear()
+    data['removed_u_ids'].clear()
 
 def search_v2(token, query_str):
     """
