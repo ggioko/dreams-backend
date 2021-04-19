@@ -197,3 +197,18 @@ def test_standup_send_active_not_running():
 
     with pytest.raises(InputError):
         assert standup_send_v1(user_1['token'], channel_1['channel_id'], "hello")
+    
+def test_standup_send_working():
+    """
+    Testing standup_send is working given valid data
+    """
+    # clear data and register members
+    clear_v1()
+    user_1 = auth_register_v2('validemail0@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    channel_1 = channels_create_v2(user_1['token'], 'channel1', True)
+
+    standup_start_v1(user_1['token'], channel_1['channel_id'], 60)
+
+    assert standup_send_v1(user_1['token'], channel_1['channel_id'], "hello") == {}
+    assert standup_send_v1(user_1['token'], channel_1['channel_id'], "bye") == {}
+    assert standup_send_v1(user_1['token'], channel_1['channel_id'], "hi") == {}
