@@ -3,8 +3,8 @@ import pytest
 from src.other import clear_v1, search_v2
 from src.error import InputError, AccessError
 from src.channels import channels_create_v2
-from src.channel import channel_messages_v2, channel_invite_v2
-from src.auth import auth_register_v2, auth_logout_v1
+from src.channel import channel_invite_v2
+from src.auth import auth_register_v2
 from src.message import message_send_v2, message_senddm_v1
 from src.dm import dm_create_v1
 
@@ -29,7 +29,6 @@ def test_search_channel_messages_v2_valid():
     
     matching = search_v2(user1['token'], "my new")
     print(matching)
-    # assert 1 == 1
     assert matching['messages'][0]['message_id'] == message_1['message_id']
 
 
@@ -41,7 +40,6 @@ def test_search_channel_v2_too_long_input():
     clear_v1()
 
     user1 = auth_register_v2('madladadmin@gmail.com', '123abc!@#', 'Hayden', 'Everest')
-    # channels_create_v2(user1['token'], 'dankmemechannel', False)
     
     with pytest.raises(InputError):
         search_v2(user1['token'], "a" * 1100)
@@ -80,14 +78,13 @@ def test_search_dms_v2_valid():
     messagecontent2 = "lennahc wen ym si siht olleh"
 
     new_dm = dm_create_v1(user1['token'], [user2['auth_user_id']])
+    print(new_dm)
 
-    dm_1 = message_send_v2(user1['token'], new_dm['dm_id'], messagecontent1)
-    dm_2 = message_send_v2(user1['token'], new_dm['dm_id'], messagecontent2)
+    dm_1 = message_senddm_v1(user1['token'], new_dm['dm_id'], messagecontent1)
+    dm_2 = message_senddm_v1(user1['token'], new_dm['dm_id'], messagecontent2)
     
     matching = search_v2(user1['token'], "my new")
-    # print(matching)
-    assert 1 == 1
-    # assert matching['messages'][0]['message_id'] == dm_1['message_id']
+    assert matching['messages'][0]['message_id'] == dm_1['message_id']
 
 def test_search_dms_v2_invaliduser():
     """
@@ -105,8 +102,8 @@ def test_search_dms_v2_invaliduser():
 
     new_dm = dm_create_v1(user1['token'], [user2['auth_user_id']])
 
-    dm_1 = message_send_v2(user1['token'], new_dm['dm_id'], messagecontent1)
-    dm_2 = message_send_v2(user1['token'], new_dm['dm_id'], messagecontent2)
+    dm_1 = message_senddm_v1(user1['token'], new_dm['dm_id'], messagecontent1)
+    dm_2 = message_senddm_v1(user1['token'], new_dm['dm_id'], messagecontent2)
     
     matching = search_v2(user3['token'], "my new")
     assert matching['messages'] == []

@@ -63,9 +63,11 @@ def search_v2(token, query_str):
                     return_dict['messages'].append(message)
     
     for dm in data['dms']:
+        print(dm)
         indm = False
         for member in dm['all_members']:
             if member['u_id'] == user_id:
+
                 indm = True
                 break
         if indm:
