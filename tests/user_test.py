@@ -4,7 +4,7 @@ from src.error import InputError, AccessError
 from src.auth import auth_register_v2
 from src.other import clear_v1
 from src.user import users_all_v1, user_profile_v2, user_profile_setemail_v2, \
-    user_profile_setname_v2, user_profile_sethandle_v1, user_stats_v1
+    user_profile_setname_v2, user_profile_sethandle_v1, user_stats_dreams_v1
 from src.helper import generate_token
 from src.channels import channels_create_v2
 from src.channel import channel_details_v2
