@@ -7,6 +7,7 @@ from src.user import users_all_v1, user_profile_v2, user_profile_setemail_v2, us
 from src.helper import generate_token
 from src.channels import channels_create_v2
 from src.channel import channel_details_v2
+from src.admin import user_remove_v1
 
 def test_users_all_v1_successful():
     '''
@@ -67,6 +68,42 @@ def test_user_profile():
                              'name_last': 'Everest',
                              'handle_str': 'haydeneverest'          
     }}
+    
+def test_user_profile_other_user():
+    """
+    Pass in a user with valid token and other user's u_id.
+    Output should have the other user's correct info in a dictionary.
+    """
+    clear_v1()
+    user1 = auth_register_v2('validemail0@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user2 = auth_register_v2('validemail1@gmail.com', '123abc!@#', 'Fred', 'Smith')
+    user_info  = user_profile_v2(user1['token'], user2['auth_user_id'])
+    assert user_info == {'user': {
+                             'u_id': user2['auth_user_id'],
+                             'email': 'validemail1@gmail.com',
+                             'name_first': 'Fred',
+                             'name_last': 'Smith',
+                             'handle_str': 'fredsmith'          
+    }}
+    
+def test_user_profile_removed_user():
+    """
+    Pass in a user with valid token and u_id.
+    Output should have the removed user's correct info in a dictionary.
+    """
+    clear_v1()
+    user1 = auth_register_v2('validemail0@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user2 = auth_register_v2('validemail1@gmail.com', '123abc!@#', 'Fred', 'Smith')
+    user_remove_v1(user1['token'], user2['auth_user_id'])
+    user_info  = user_profile_v2(user1['token'], user2['auth_user_id'])
+    assert user_info == {'user': {
+                             'u_id': user2['auth_user_id'],
+                             'email': 'validemail1@gmail.com',
+                             'name_first': 'Removed',
+                             'name_last': 'user',
+                             'handle_str': 'fredsmith'          
+    }}
+    
     
 def test_setemail():
     """

@@ -4,7 +4,7 @@ from flask import Flask, request
 from flask_cors import CORS
 from src.error import InputError
 from src import config
-from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
+from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1, auth_passwordreset_reset
 from src.channels import channels_create_v2, channels_listall_v2, channels_list_v2
 from src.channel import channel_join_v2, channel_invite_v2, channel_messages_v2, channel_details_v2
 from src.dm import dm_create_v1, dm_details_v1, dm_remove_v1, dm_invite_v1, dm_leave_v1, dm_list_v1, dm_messages_v1
@@ -13,8 +13,9 @@ from src.other import clear_v1, search_v2
 from src.user import users_all_v1, user_profile_v2, user_profile_setemail_v2, user_profile_setname_v2, user_profile_sethandle_v1
 from src.message import message_send_v2, message_remove_v1, message_edit_v2, message_share_v1, message_senddm_v1, message_pin_v1, message_unpin_v1, message_react_v1
 from src.helper import save_data, load_data
-from src.admin import userpermission_change_v1
+from src.admin import userpermission_change_v1, user_remove_v1
 from src.standup import standup_start_v1, standup_active_v1
+
 
 def defaultHandler(err):
     response = err.get_response()
@@ -84,6 +85,24 @@ def login_user():
         'token' : data['token'],
         'auth_user_id' : data['auth_user_id']
     })
+
+@APP.route("/auth/passwordreset/reset/v1", methods=["POST"])
+def passwordreset_reset():
+    """
+    Gets user data from http json and passes it to the
+    auth_passwordreset_reset function
+
+    Returns {} on success
+    """
+    data = request.get_json()
+    reset_code = data["reset_code"]
+    new_password = data["new_password"]
+   
+    auth_passwordreset_reset(reset_code, new_password)
+
+    save_data()
+
+    return dumps({})
 
 @APP.route("/clear/v1", methods=['DELETE'])
 def clear():
@@ -698,6 +717,22 @@ def react():
     
     return dumps({})
 
+@APP.route("/admin/user/remove/v1", methods=["DELETE"])
+def user_remove():
+    """ 
+    Gets user token, and user_id from http json and passes 
+    it to the user_remove_v1 function
+    Returns {} on success.
+    """
+    data = request.get_json()
+    token = data['token']
+    u_id = data['u_id']
+    user_remove_v1(token, u_id)
+    
+    save_data()
+    
+    return dumps({})
+
 @APP.route("/search/v2", methods=['GET'])
 def search():
     """
@@ -714,6 +749,8 @@ def search():
     return dumps(
         data
     )
+
+clear_v1()
 
 
 load_data()  # Gets data from previous server run
