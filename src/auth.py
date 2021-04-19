@@ -1,6 +1,6 @@
 from src.error import InputError, AccessError
 from src.data import data
-from src.helper import get_token, get_user_data, email_in_use
+from src.helper import get_token, get_user_data, email_in_use, get_token_user_id
 import re
 import jwt
 import hashlib
@@ -172,3 +172,46 @@ def auth_logout_v1(token):
             active_tokens.remove(x)
             return True
     return False
+
+def auth_passwordreset_reset(reset_code, new_password):
+    """
+    Given a reset code for a user, set that user's new 
+    password to the password provided
+
+    Arguments:
+        reset_code (string)      - JWT code to validate user
+        new_password (string)    - Users new password
+
+    Exceptions:
+        InputError  - Password shorter than 6 characters
+        InputError  - reset_code not valid
+
+    Return Value:
+        Returns {} on success
+    """
+    # Check for password length
+    if len(new_password) < 6:
+        raise InputError(description='Password needs to be longer than 6 characters')
+
+    # Check for valid reset code
+    if reset_code not in data['active_reset_codes']:
+        raise InputError(description='Reset code is not a valid reset code')
+    
+    # Gets user id from reset code
+    id = get_token_user_id(reset_code)
+
+    # Hashes new password in prepartion for saving
+    password = hashlib.sha256(new_password.encode()).hexdigest()
+
+    # Replaces old password with new password
+    if len(data['users']) != 0:
+        for user in data['users']:
+            print(f"tpre {type(id)} and other {type(user['u_id'])} ")
+            if id == user['u_id']:
+                data['active_reset_codes'].remove(reset_code)
+                user['password'] = password
+    
+    return {}
+
+
+

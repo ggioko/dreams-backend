@@ -4,7 +4,7 @@ from flask import Flask, request
 from flask_cors import CORS
 from src.error import InputError
 from src import config
-from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1
+from src.auth import auth_login_v2, auth_register_v2, auth_logout_v1, auth_passwordreset_reset
 from src.channels import channels_create_v2, channels_listall_v2, channels_list_v2
 from src.channel import channel_join_v2, channel_invite_v2, channel_messages_v2, channel_details_v2
 from src.dm import dm_create_v1, dm_details_v1, dm_remove_v1, dm_invite_v1, dm_leave_v1, dm_list_v1, dm_messages_v1
@@ -85,6 +85,24 @@ def login_user():
         'token' : data['token'],
         'auth_user_id' : data['auth_user_id']
     })
+
+@APP.route("/auth/passwordreset/reset/v1", methods=["POST"])
+def passwordreset_reset():
+    """
+    Gets user data from http json and passes it to the
+    auth_passwordreset_reset function
+
+    Returns {} on success
+    """
+    data = request.get_json()
+    reset_code = data["reset_code"]
+    new_password = data["new_password"]
+   
+    auth_passwordreset_reset(reset_code, new_password)
+
+    save_data()
+
+    return dumps({})
 
 @APP.route("/clear/v1", methods=['DELETE'])
 def clear():
@@ -732,8 +750,9 @@ def search():
         data
     )
 
+clear_v1()
 
-    
+
 load_data()  # Gets data from previous server run
 
 if __name__ == "__main__":

@@ -27,7 +27,7 @@ def get_token_user_id(token):
     Takes in a token and on success returns a u_id on success
     """
     decoded_token = jwt.decode(token, SECRET, algorithms=['HS256'])
-    u_id = decoded_token['u_id']
+    u_id = int(decoded_token['u_id'])
     return u_id
 
 def generate_token(u_id):
