@@ -1,3 +1,5 @@
+import jwt
+from src.error import InputError, AccessError
 from src.data import data
 from src.helper import check_token_valid, SECRET
 
@@ -56,7 +58,8 @@ def search_v2(token, query_str):
                 break
         if inchannel:
             for message in channel['messages']:
-                if query_str in message:
+                print(message)
+                if query_str in message['message']:
                     return_dict['messages'].append(message)
     
     for dm in data['dms']:
@@ -67,9 +70,7 @@ def search_v2(token, query_str):
                 break
         if indm:
             for message in dm['messages']:
-                if query_str in message:
+                if query_str in message['message']:
                     return_dict['messages'].append(message)
 
     return return_dict
-
-
