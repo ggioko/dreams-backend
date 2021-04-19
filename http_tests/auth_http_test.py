@@ -50,7 +50,7 @@ def test_auth_register_errors():
     'password' : '123', 'name_first':'Bob', 'name_last':'Jones'})
     assert r.status_code == InputError().code
 
-def test_auth_passwordreset_reset_erros():
+def test_auth_passwordreset_reset_errors():
     '''
     Testing for input erros in password reset
     '''    
@@ -58,10 +58,10 @@ def test_auth_passwordreset_reset_erros():
 
     # Test for if password is less than 6 characters
     r = requests.post(config.url + 'auth/passwordreset/reset/v1', json={'reset_code':'abcd', \
-    'password' : '123',}) 
+    'new_password' : '123',}) 
     assert r.status_code == InputError().code
 
     # Test for if reset_code is invalid
     r = requests.post(config.url + 'auth/passwordreset/reset/v1', json={'reset_code':'abcd', \
-    'password' : '123absdhjj',}) 
+    'new_password' : '123absdhjj',}) 
     assert r.status_code == InputError().code

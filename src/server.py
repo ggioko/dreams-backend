@@ -84,7 +84,7 @@ def login_user():
         'auth_user_id' : data['auth_user_id']
     })
 
-@APP.route("auth/passwordreset/reset/v1", methods=["POST"])
+@APP.route("/auth/passwordreset/reset/v1", methods=["POST"])
 def passwordreset_reset():
     """
     Gets user data from http json and passes it to the
@@ -681,7 +681,7 @@ def react():
     
     return dumps({})
 
-
+clear_v1()
 load_data()  # Gets data from previous server run
 
 if __name__ == "__main__":
