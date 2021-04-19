@@ -218,3 +218,15 @@ def test_user_profile_sethandle_errors():
     # Taken handle - Input Error
     r = requests.put(config.url + 'user/profile/sethandle/v1', json ={'token': user_1['token'], 'handle_str': 'fredsmith'})
     assert r.status_code == InputError().code
+
+def test_user_stats_invalidtoken():
+    # Clear data first.
+    requests.delete(config.url + 'clear/v1')
+
+    # Register some users
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com', \
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+
+    # Access Error
+    r = requests.get(config.url + '/user/stats/v1', params ={'token': 2})
+    assert r.status_code == AccessError().code

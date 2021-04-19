@@ -191,7 +191,6 @@ def user_stats_dreams_v1(token):
         if user['u_id'] not in num_users:
             num_users.append(user['u_id'])
 
-
     return {
         'channels_exist': [{num_channels_exist, time_stamp}], 
         'dms_exist': [{num_dms_exist, time_stamp}], 

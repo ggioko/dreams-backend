@@ -317,4 +317,4 @@ def test_user_stats_invalidtoken():
     clear_v1()
     user = auth_register_v2('validemail0@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     with pytest.raises(AccessError):
-        assert user_stats_v1(user['token'])
+        assert user_stats_dreams_v1(user['token'])
