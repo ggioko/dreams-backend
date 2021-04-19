@@ -629,28 +629,31 @@ def message_unreact_v1(token, message_id, react_id):
                         auth = True
                 if auth == True:
                     # Check if there is an active react from the user with react_id
+                    existing_react = False
                     for react in messages['reacts']:
                         if react['react_id'] == react_id:
+                            existing_react = True
                             if user_id not in react['u_ids']:
                                 raise InputError(description="You have not reacted to this message before")
+                    if existing_react == False:
+                        raise InputError(description="You have not reacted to this message before")
                     # If user has reacted, unreact to message
                     flag = 0
-                    for react in messages['reacts']:
-                        if react['react_id'] == react_id:
-                            react['u_ids'].remove(user_id)
-                            react['is_this_user_reacted'] = False
-                            if len(react['u_ids']) == 0:
+                    for reacts in messages['reacts']:
+                        if reacts['react_id'] == react_id:
+                            reacts['u_ids'].remove(user_id)
+                            reacts['is_this_user_reacted'] = False
+                            if len(reacts['u_ids']) == 0:
                                 flag = 1
                     # If list of u_ids for that react is now 0, it removes that react from the list of reacts entirely
                     if flag == 1:
                         for react in messages['reacts']:
                             if react['react_id'] == react_id:
-                                break
-                        messages['reacts'].remove(react)
+                                messages['reacts'].remove(react)
 
     # If message not found, check dm messages with same process
     if message_found == False:
-        for dms in data['channels']:
+        for dms in data['dms']:
             for messages in dms['messages']:
                 if message_id == messages['message_id']:
                     message_found = True
@@ -661,10 +664,14 @@ def message_unreact_v1(token, message_id, react_id):
                             auth = True
                     if auth == True:
                         # Check if there is an active react from the user with react_id
+                        existing_react = False
                         for react in messages['reacts']:
                             if react['react_id'] == react_id:
+                                existing_react = True
                                 if user_id not in react['u_ids']:
                                     raise InputError(description="You have not reacted to this message before")
+                        if existing_react == False:
+                            raise InputError(description="You have not reacted to this message before")
                         # If user has reacted, unreact to message
                         flag = 0
                         for react in messages['reacts']:
@@ -677,11 +684,9 @@ def message_unreact_v1(token, message_id, react_id):
                         if flag == 1:
                             for react in messages['reacts']:
                                 if react['react_id'] == react_id:
-                                    break
-                            messages['reacts'].remove(react)
+                                    messages['reacts'].remove(react)
 
-
-    # If message is not found either channels or dms raises InputError
+    # If message is not found either channels or dms raises InputErrors
     # If message is found but user is not in chat, raises AccessError
     if message_found == False:
         raise InputError(description="Message was not found")
