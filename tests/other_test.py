@@ -42,7 +42,7 @@ def test_search_channel_v2_too_long_input():
     user1 = auth_register_v2('madladadmin@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     
     with pytest.raises(InputError):
-        search_v2(user1['token'], "a" * 1100)
+        assert search_v2(user1['token'], "a" * 1100)
 
 def test_search_channel_messages_v2_not_in_channel():
     """
