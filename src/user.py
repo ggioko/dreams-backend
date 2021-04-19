@@ -55,6 +55,9 @@ def user_profile_v2(token, u_id):
     for user in data['users']:
         if user['u_id'] == u_id:
             user_valid = 1
+    for user in data['removed_users']:
+        if user in data['u_id'] == u_id:
+            user_valid = 2
     if user_valid == 0:
         raise InputError(description = "InputError - invalid u_id")
 
@@ -64,14 +67,23 @@ def user_profile_v2(token, u_id):
     # Create empty dictionary with key 'user'
     user_info = {}
     user_info['user'] = {}
-    # Return info about user.
-    for user in data['users']:
-        if user['u_id'] == u_id:
-            user_info['user']['u_id'] = user['u_id']
-            user_info['user']['email'] = user['email']
-            user_info['user']['name_first'] = user['name_first']
-            user_info['user']['name_last'] = user['name_last']
-            user_info['user']['handle_str'] = user['handle_str']
+    # Return info about user
+    if user_valid == 1: # Get user info from data['users']
+        for user in data['users']:
+            if user['u_id'] == u_id:
+                user_info['user']['u_id'] = user['u_id']
+                user_info['user']['email'] = user['email']
+                user_info['user']['name_first'] = user['name_first']
+                user_info['user']['name_last'] = user['name_last']
+                user_info['user']['handle_str'] = user['handle_str']
+    elif user_valid == 2: # Get user info from data['removed_users']
+        for user in data['removed_users']:
+            if user['u_id'] == u_id:
+                user_info['user']['u_id'] = user['u_id']
+                user_info['user']['email'] = user['email']
+                user_info['user']['name_first'] = 'Removed'
+                user_info['user']['name_last'] = 'user'
+                user_info['user']['handle_str'] = user['handle_str']
             
     return user_info
 

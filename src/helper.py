@@ -59,6 +59,13 @@ def get_user_data(data_type):
     """
     return [data['users'][c][data_type] for c in range(len(data['users']))]
 
+def get_removed_user_data(data_type):
+    """
+    Helper function that returns a list of removed_user data for a specific 
+    parameter. Eg. argument 'email' returns a list of removed_user emails
+    """
+    return [data['removed_users'][c][data_type] for c in range(len(data['removed_users']))]
+
 def email_in_use(email):
     """
     Helper function that check if email is in use

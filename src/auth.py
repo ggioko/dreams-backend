@@ -1,6 +1,6 @@
 from src.error import InputError, AccessError
 from src.data import data
-from src.helper import get_token, get_user_data, email_in_use
+from src.helper import get_token, get_user_data, email_in_use, get_removed_user_data
 import re
 import jwt
 import hashlib
@@ -83,8 +83,9 @@ def auth_register_v2(email, password, name_first, name_last):
 
         # Gets a new id
         ids = get_user_data('u_id')
+        removed_ids = get_removed_user_data('u_id')
         for i in range(1,len(data['users']) + 2):
-            if i not in ids:
+            if i not in ids and i not in removed_ids:
                 id = i
                 break
 
