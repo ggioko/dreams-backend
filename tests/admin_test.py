@@ -7,6 +7,17 @@ from src.user import user_profile_v2
 from src.error import InputError, AccessError
 from src.other import clear_v1
 
+def test_admin_userpermission_invalid_token():
+    '''
+    Passes in an invalid token and valid u_id to admin_userpermission_change
+    Should return AccessError
+    '''
+    clear_v1()
+    auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    user2 = auth_register_v2('validemail2@gmail.com', '1234abc!@#', 'Haydenn', 'Everestt')
+    with pytest.raises(AccessError):
+        assert userpermission_change_v1('invalid_token', user2['auth_user_id'], 1)
+        
 def test_admin_userpermission_change_success():
     '''
     Tests userpermission_change_v1() with all correct information
