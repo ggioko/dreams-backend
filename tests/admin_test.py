@@ -64,11 +64,12 @@ def test_admin_userpermission_change_nonowner_request():
     Tests userpermission_change_v1() with the request being added by a nonowner of **dreams**
     '''
     clear_v1()
-    user1 = auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
+    auth_register_v2('validemail@gmail.com', '123abc!@#', 'Hayden', 'Everest')
     user2 = auth_register_v2('validemail2@gmail.com', '1234abc!@#', 'Haydenn', 'Everestt')
-
+    user3 = auth_register_v2('validemail3@gmail.com', '1234abc!@#', 'Fred', 'Smith')
+    
     with pytest.raises(AccessError):
-        userpermission_change_v1(user1['token'], user2['auth_user_id'], 1)
+        userpermission_change_v1(user2['token'], user3['auth_user_id'], 1)
 
 def test_admin_user_remove_invalid_token():
     '''
@@ -129,7 +130,7 @@ def test_admin_user_remove_works():
                              'email': 'validemail2@gmail.com',
                              'name_first': 'Removed',
                              'name_last': 'user',
-                             'handle_str': 'haydeneverest'          
+                             'handle_str': 'haydenneverestt'          
     }}
     with pytest.raises(InputError):
         assert auth_login_v2('validemail2@gmail.com', '1234abc!@#')
