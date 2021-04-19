@@ -1,6 +1,7 @@
 from src.helper import get_token_user_id
 from src.data import data
-
+from src.helper import check_token_valid
+from src.error import AccessError
 
 def notifications_get_v1(token):
     """
@@ -15,8 +16,13 @@ def notifications_get_v1(token):
     Return Value:
         Returns {notifications} on success.
     """
-    u_id = get_token_user_id(token)
     
+    # Check if token is valid
+    if check_token_valid(token) == False:
+        raise AccessError(description='invalid token')
+    
+    # Otherwise, run function.
+    u_id = get_token_user_id(token)
     for user in data['users']:
         if user['u_id'] == u_id:
             notifs_list = user['notifications']
