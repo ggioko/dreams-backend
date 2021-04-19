@@ -682,7 +682,6 @@ def unreact():
     
     return dumps({})
 
-
 load_data()  # Gets data from previous server run
 
 if __name__ == "__main__":
