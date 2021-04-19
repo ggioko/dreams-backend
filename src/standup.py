@@ -2,7 +2,8 @@ from datetime import datetime, timedelta
 
 from src.error import InputError, AccessError
 from src.data import data
-from src.helper import check_token_valid, check_channel_id_exists, get_token_user_id
+from src.helper import check_token_valid, check_channel_id_exists, get_token_user_id, generate_token
+from src.message import message_send_v2
 
 def standup_start_v1(token, channel_id, length):
     '''    
@@ -58,8 +59,48 @@ def standup_start_v1(token, channel_id, length):
         if channel_id == channel['id']:
             channel['standup'] = {
                 'finish' : finish,
+                'token' : token,
                 'user' : auth_user_id,
                 'is_active' : True,
+                'queue' : '',
             }
 
     return {'time_finish': finish}
+
+def standup_active_v1(token, channel_id):
+    '''    
+    For a given channel, return whether a standup is active in it, and what time the standup finishes. 
+    If no standup is active, then time_finish returns None
+    
+    Arguments: 
+        token (string) - Users session token 
+        channel_id (int)  - channel id
+        
+    Exception: 
+        InputError  - Channel id is not a valid channel.
+        AccessError - Occurs when token passed in is not a valid token.
+        
+    Return value: 
+        { is_active, time_finish } on success
+    ''' 
+
+    # Check if token is valid using helper
+    if check_token_valid(token) == False:
+        raise AccessError(description='Error Invalid token')
+
+    # Check if channel_id exists
+    if check_channel_id_exists(channel_id) == False:
+        raise InputError(description='Error channel id does not exist')
+    
+    current_time = datetime.now().timestamp()
+
+    for channel in data['channels']:
+        if channel_id == channel['id']:
+            standup = channel['standup']
+            # If standup is finished
+            if standup['finish'] < current_time:
+                if standup['is_active'] == True:
+                    standup['is_active'] = False
+                    message_send_v2(standup['token'], channel_id, standup['queue'])
+                return {'is_active' : False, 'time_finish' : None}
+            return {'is_active' : True, 'time_finish' : standup['finish']}
