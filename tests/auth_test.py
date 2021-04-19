@@ -164,3 +164,9 @@ def test_auth_passwordreset_request_valid():
     auth_logout_v1(rego['token'])
     assert passwordreset_request('benr31415@gmail.com') == {}
 
+def test_auth_passwordreset_request_empty():
+    '''
+    Tests a passwordreset case with an incorrect email address
+    '''
+    clear_v1()
+    assert passwordreset_request('benr31415@gmail.com') == {}
