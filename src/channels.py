@@ -131,7 +131,13 @@ def channels_create_v2(token, name, is_public):
                     'owner_members' : [reuser],
                     'all_members' : [reuser],
                     'messages': [],
-                    'standup' : {}
+                    'standup' : {
+                                'finish' : None,
+                                'token' : None,
+                                'user' : None,
+                                'is_active' : None,
+                                'queue' : '',
+                                }
     })
 
     # returns channel id
