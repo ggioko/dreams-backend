@@ -128,9 +128,6 @@ def test_standup_send_errors():
     """
     Testings for input and access errors 
     """
-    """
-    Testings for input and access errors 
-    """
     # Clear data first
     # Register members
     r = requests.delete(config.url + 'clear/v1')
@@ -182,4 +179,27 @@ def test_standup_send_errors():
     'channel_id' : channel_1['channel_id'], 'message' : 'hello'})
     assert r.status_code == InputError().code
 
+def test_standup_send():
+    """
+    Testing standup_send is working given valid data
+    """
+    # Clear data first
+    # Register members
+    r = requests.delete(config.url + 'clear/v1')
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com',
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user_1 = r.json()
 
+    r = requests.post(config.url + 'channels/create/v2', json={'token': user_1['token'], 'name': 'Channel1', 'is_public': True})
+    channel_1 = r.json()
+
+    requests.post(config.url + 'standup/start/v1', json={'token': user_1['token'],
+    'channel_id' : channel_1['channel_id'], 'length' : 60})
+
+    r = requests.post(config.url + 'standup/send/v1', json={'token': user_1['token'],
+    'channel_id' : channel_1['channel_id'], 'message' : 'hello'})
+    assert r.json() == {}
+
+    r = requests.post(config.url + 'standup/send/v1', json={'token': user_1['token'],
+    'channel_id' : channel_1['channel_id'], 'message' : 'bye'})
+    assert r.json() == {}
