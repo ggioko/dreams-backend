@@ -732,9 +732,6 @@ def react():
     
     return dumps({})
 
-<<<<<<< HEAD
-clear_v1()
-=======
 @APP.route("/admin/user/remove/v1", methods=["DELETE"])
 def user_remove():
     """ 
@@ -770,8 +767,6 @@ def search():
 
 clear_v1()
 
-
->>>>>>> master
 load_data()  # Gets data from previous server run
 
 if __name__ == "__main__":
