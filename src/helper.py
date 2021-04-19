@@ -27,7 +27,7 @@ def get_token_user_id(token):
     Takes in a token and on success returns a u_id on success
     """
     decoded_token = jwt.decode(token, SECRET, algorithms=['HS256'])
-    u_id = decoded_token['u_id']
+    u_id = int(decoded_token['u_id'])
     return u_id
 
 def generate_token(u_id):
@@ -58,6 +58,13 @@ def get_user_data(data_type):
     parameter. E.g. argument 'email' returns a list of user emails
     """
     return [data['users'][c][data_type] for c in range(len(data['users']))]
+
+def get_removed_user_data(data_type):
+    """
+    Helper function that returns a list of removed_user data for a specific 
+    parameter. Eg. argument 'email' returns a list of removed_user emails
+    """
+    return [data['removed_users'][c][data_type] for c in range(len(data['removed_users']))]
 
 def email_in_use(email):
     """

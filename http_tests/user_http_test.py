@@ -218,3 +218,43 @@ def test_user_profile_sethandle_errors():
     # Taken handle - Input Error
     r = requests.put(config.url + 'user/profile/sethandle/v1', json ={'token': user_1['token'], 'handle_str': 'fredsmith'})
     assert r.status_code == InputError().code
+
+def test_user_http_stats_invalidtoken():
+    '''
+    Check if access error is raised for invalid token
+    '''
+    # Clear data first.
+    requests.delete(config.url + 'clear/v1')
+
+    # Register some users
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com', \
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+
+    # Access Error
+    r = requests.get(config.url + '/user/stats/v1', params ={'token': 2})
+    assert r.status_code == AccessError().code
+
+def test_user_http_stats_dreams():
+    '''
+    Check if stats dreams works correctly
+    '''
+    # Clear data first.
+    requests.delete(config.url + 'clear/v1')
+
+    # Register users
+    r = requests.post(config.url + 'auth/register/v2', json={'email':'validemail@gmail.com', \
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    user = r.json()
+    requests.post(config.url + 'auth/register/v2', json={'email':'validemail2@gmail.com', \
+    'password' : '123abc!@#', 'name_first':'Hayden', 'name_last':'Everest'})
+    
+    # Create a channel
+    requests.post(config.url + 'channels/create/v2', json = {'token': user['token'], 'name': 'Channel1', 'is_public': True})
+
+    # Access Error
+    r = requests.get(config.url + '/user/stats/v1', params ={'token': user['token']})
+    stats = r.json()
+    assert stats['channels_exist']['num_channels_exist'] == 1
+    assert stats['dms_exist']['num_dms_exist'] == 0
+    assert stats['messages_exist']['num_messages_exist'] == 0
+    assert stats['utilization_rate'] == 0.5

@@ -10,7 +10,18 @@ data = {
             #'handle_str': 'haydenjacobs',
         },
     ],
+    'removed_users': [
+        {
+            #'u_id': 1,
+            #'email': 'cs1531@cse.unsw.edu.au',
+            #'password': 'abc1234',
+            #'name_first': 'Hayden',
+            #'name_last': 'Jacobs',
+            #'handle_str': 'haydenjacobs',
+        },        
+    ],
     'channels': [
+        
         {
             #'id': 1,
             #'name' : 'channel1',
@@ -92,5 +103,12 @@ data = {
         },
     ],
     'active_tokens' : [],
+    'active_reset_codes' : [], #JWT containing User ID as 'u_id'
     'message_count' : 0,
+    'dreams_stats' : {
+        'channels_exist': [], 
+        'dms_exist': [], 
+        'messages_exist': []
+    },
+    'removed_u_ids': [],
 }
