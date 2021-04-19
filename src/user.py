@@ -37,7 +37,6 @@ def users_all_v1(token):
 
     return user_dict
 
-
 def user_profile_v2(token, u_id):
     """
     For a valid user, returns information about their user_id, email, first name, last name, and handle.
@@ -159,4 +158,17 @@ def user_profile_sethandle_v1(token, handle_str):
     
     return {
     }
+
+def user_stats_v1(token):
+    """
+    Fetches the required statistics about this user's use of UNSW Dreams
+    
+    Arguments:
+        token (string)  - Users token
+    Exception:
+        AccessError when token is invalid.
+    Return value:
+        {user_stats}
+    """
+    pass
     
