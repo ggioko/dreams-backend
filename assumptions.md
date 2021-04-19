@@ -17,6 +17,10 @@
 
 ### auth_passwordreset_request
 * It is assumed that no errors for bad input will be raised, to prevent non-users to see which email accounts are registered with Dreams
+* Reset codes do not expire
+
+### auth_passwordreset_reset
+* No checks need to be made about when the reset code was generated.
 
 ## channels
 * In testing Auth_register is working correctly to store user with id 1
