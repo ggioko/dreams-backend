@@ -10,7 +10,7 @@ from src.channel import channel_join_v2, channel_invite_v2, channel_messages_v2,
 from src.dm import dm_create_v1, dm_details_v1, dm_remove_v1, dm_invite_v1, dm_leave_v1, dm_list_v1, dm_messages_v1
 from src.channel import channel_addowner_v1, channel_removeowner_v1, channel_leave_v1
 from src.other import clear_v1, search_v2
-from src.user import users_all_v1, user_profile_v2, user_profile_setemail_v2, user_profile_setname_v2, user_profile_sethandle_v1
+from src.user import users_all_v1, user_profile_v2, user_profile_setemail_v2, user_profile_setname_v2, user_profile_sethandle_v1, user_stats_dreams_v1
 from src.message import message_send_v2, message_remove_v1, message_edit_v2, message_share_v1, message_senddm_v1, message_pin_v1, message_unpin_v1, message_react_v1
 from src.helper import save_data, load_data
 from src.admin import userpermission_change_v1, user_remove_v1
@@ -420,6 +420,21 @@ def set_email():
     
     return dumps({})
 
+@APP.route("/user/stats/v1", methods = ['GET'])
+def dreams_stats():
+    """
+    Fetches the required statistics about the use of UNSW Dreams
+    Returns {dreams_stats} on success
+    """
+    
+    token = request.args.get('token')
+    output = user_stats_dreams_v1(token)
+
+    save_data()
+    
+    return dumps(output)
+
+
 @APP.route("/dm/details/v1", methods=['GET'])
 def dm_details():
     """
@@ -751,7 +766,6 @@ def search():
     )
 
 clear_v1()
-
 
 load_data()  # Gets data from previous server run
 

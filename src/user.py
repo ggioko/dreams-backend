@@ -2,6 +2,7 @@ from src.error import InputError, AccessError
 from src.data import data
 from src.helper import check_token_valid, email_in_use, get_token_user_id, get_user_data
 import re
+from time import time
 
 def users_all_v1(token):
     '''
@@ -36,7 +37,6 @@ def users_all_v1(token):
         })
 
     return user_dict
-
 
 def user_profile_v2(token, u_id):
     """
@@ -170,5 +170,59 @@ def user_profile_sethandle_v1(token, handle_str):
                 user['handle_str'] = handle_str
     
     return {
+    }
+
+def user_stats_dreams_v1(token):
+    """
+    Fetches the required statistics about the use of UNSW Dreams
+    
+    Arguments:
+        token (string)  - Users token
+    Exception:
+        AccessError when token is invalid.
+    Return value:
+        {dreams_stats}
+    """
+
+    # Check if token is valid using helper
+    if check_token_valid(token) == False:
+        raise AccessError(description='Error Invalid token')
+
+    num_channels_exist = len(data['channels'])
+    num_dms_exist = len(data['dms'])
+    num_messages_exist = data['message_count']
+    time_stamp = int(time())
+    total_num_users = len(data['users'])
+    num_users = []
+    channel_users = [data['channels'][c]['all_members'] for c in range(len(data['channels']))]
+    dm_users = [data['dms'][c]['all_members'] for c in range(len(data['dms']))]
+    print(channel_users)
+    if len(channel_users) != 0:
+        for user in channel_users[0]:
+            if user['u_id'] not in num_users:
+                num_users.append(user['u_id'])
+    if len(dm_users) != 0:
+        for user in dm_users[0]:
+            if user['u_id'] not in num_users:
+                num_users.append(user['u_id'])
+
+    data['dreams_stats']['channels_exist'].append({
+        'num_channels_exist' : num_channels_exist, 
+        'time_stamp' : time_stamp
+    })
+    data['dreams_stats']['dms_exist'].append({
+        'num_dms_exist' : num_dms_exist, 
+        'time_stamp' : time_stamp
+    })
+    data['dreams_stats']['messages_exist'].append({
+        'num_messages_exist' : num_messages_exist, 
+        'time_stamp' : time_stamp
+    })
+
+    return {
+        'channels_exist': data['dreams_stats']['channels_exist'][-1], 
+        'dms_exist': data['dreams_stats']['dms_exist'][-1], 
+        'messages_exist': data['dreams_stats']['messages_exist'][-1], 
+        'utilization_rate' : len(num_users) / total_num_users
     }
     

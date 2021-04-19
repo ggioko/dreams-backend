@@ -105,5 +105,10 @@ data = {
     'active_tokens' : [],
     'active_reset_codes' : [], #JWT containing User ID as 'u_id'
     'message_count' : 0,
+    'dreams_stats' : {
+        'channels_exist': [], 
+        'dms_exist': [], 
+        'messages_exist': []
+    },
     'removed_u_ids': [],
 }
