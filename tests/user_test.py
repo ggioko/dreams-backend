@@ -8,11 +8,8 @@ from src.user import users_all_v1, user_profile_v2, user_profile_setemail_v2, \
 from src.helper import generate_token
 from src.channels import channels_create_v2
 from src.channel import channel_details_v2
-<<<<<<< HEAD
 from src.dm import dm_create_v1
-=======
 from src.admin import user_remove_v1
->>>>>>> master
 
 def test_users_all_v1_successful():
     '''
