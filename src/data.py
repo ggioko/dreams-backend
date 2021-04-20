@@ -8,6 +8,7 @@ data = {
             #'name_first': 'Hayden',
             #'name_last': 'Jacobs',
             #'handle_str': 'haydenjacobs',
+            #'notifications': [],
         },
     ],
     'removed_users': [

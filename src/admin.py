@@ -1,4 +1,3 @@
-from src.auth import auth_logout_v1
 from src.error import InputError, AccessError
 from src.data import data
 from src.helper import SECRET, valid_permission_ids, no_check_dreams_change_permission, check_token_valid, get_token_user_id

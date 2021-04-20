@@ -1,6 +1,6 @@
 from src.error import InputError, AccessError
 from src.data import data
-from src.helper import get_token_user_id, check_token_valid
+from src.helper import get_token_user_id, check_token_valid, get_user_handle
 import jwt
 import hashlib
 
@@ -98,7 +98,7 @@ def dm_invite_v1(token, dm_id, u_id):
     for user in data['users']:
         if u_id == user['u_id']:
             uid_valid = True
-            user = {
+            new_user = {
                 'u_id' : user['u_id'],
                 'email' : user['email'],
                 'name_first' : user['name_first'],
@@ -106,13 +106,14 @@ def dm_invite_v1(token, dm_id, u_id):
                 'handle_str' : user['handle_str'],
                 'password' : user['password']
             }
-    
+
     # Raise error if it could not find user
     if uid_valid == False:
         raise InputError(description="U_id does not refer to a valid user")
     
     # Adds new user to DM if authorised user is a member and the dm_id is valid
     user_id = get_token_user_id(token)
+    user_handle = get_user_handle(user_id)
     dm_valid = False
     member_valid = False
     for dm in data['dms']:
@@ -122,7 +123,12 @@ def dm_invite_v1(token, dm_id, u_id):
             for member in dm['all_members']:
                 if user_id == member['u_id']:
                     member_valid = True
-                    dm['all_members'].append(user)
+                    dm['all_members'].append(new_user)
+                    user['notifications'].append({
+                                        'channel_id': -1,
+                                        'dm_id': dm_id,
+                                        'notification_message': f"{user_handle} added you to {dm['name']}"
+                                        })
                     break
             break
 

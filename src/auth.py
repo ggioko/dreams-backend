@@ -137,6 +137,7 @@ def auth_register_v2(email, password, name_first, name_last):
         'name_last': name_last,
         'handle_str': handle,
         'permission_id': permission_id,
+        'notifications': [],
     }
     data['users'].append(user)
     token = get_token(user)
